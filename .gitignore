@@ -38,8 +38,8 @@ Thumbs.db
 *.swp
 *.swo
 
-# Claude Code internal
-.claude/
+# Claude Code internal (keep settings.json, ignore worktrees)
+.claude/worktrees/
 
 # Prisma generated
 prisma/migrations/
