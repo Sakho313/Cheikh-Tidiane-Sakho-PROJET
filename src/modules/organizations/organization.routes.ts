@@ -1,14 +1,8 @@
 import { Router } from 'express';
 import { Role } from '@prisma/client';
-import {
-  authenticate,
-  authorize,
-} from '../../shared/middleware/auth.middleware';
+import { authenticate, authorize } from '../../shared/middleware/auth.middleware';
 import { validate } from '../../shared/middleware/validate.middleware';
-import {
-  CreateOrganizationSchema,
-  UpdateOrganizationSchema,
-} from './organization.schemas';
+import { CreateOrganizationSchema, UpdateOrganizationSchema } from './organization.schemas';
 import {
   getOrganizations,
   getOrganization,

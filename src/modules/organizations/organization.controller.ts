@@ -1,13 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import organizationService from './organization.service';
-import {
-  successResponse,
-  paginatedResponse,
-} from '../../shared/utils/response';
-import {
-  CreateOrganizationInput,
-  UpdateOrganizationInput,
-} from './organization.schemas';
+import { successResponse, paginatedResponse } from '../../shared/utils/response';
+import { CreateOrganizationInput, UpdateOrganizationInput } from './organization.schemas';
 
 export async function getOrganizations(
   req: Request,
@@ -15,8 +9,9 @@ export async function getOrganizations(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { organizations, total, page, limit } =
-      await organizationService.findAll(req.query as Record<string, unknown>);
+    const { organizations, total, page, limit } = await organizationService.findAll(
+      req.query as Record<string, unknown>,
+    );
     paginatedResponse(res, organizations, total, page, limit);
   } catch (err) {
     next(err);
@@ -55,10 +50,7 @@ export async function updateOrganization(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const organization = await organizationService.update(
-      req.params.id,
-      req.body,
-    );
+    const organization = await organizationService.update(req.params.id, req.body);
     successResponse(res, organization, 'Organization updated successfully');
   } catch (err) {
     next(err);

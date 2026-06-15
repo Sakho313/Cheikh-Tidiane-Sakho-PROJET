@@ -87,16 +87,11 @@ export function errorMiddleware(
   // Generic error with status
   if (err instanceof Error) {
     const statusCode =
-      'statusCode' in err && typeof err.statusCode === 'number'
-        ? err.statusCode
-        : 500;
+      'statusCode' in err && typeof err.statusCode === 'number' ? err.statusCode : 500;
 
     const body: ApiResponse<never> = {
       success: false,
-      message:
-        statusCode === 500
-          ? 'An internal server error occurred'
-          : err.message,
+      message: statusCode === 500 ? 'An internal server error occurred' : err.message,
     };
 
     if (process.env['NODE_ENV'] === 'development' && statusCode === 500) {

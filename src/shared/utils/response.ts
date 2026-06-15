@@ -6,12 +6,13 @@ export function successResponse<T>(
   data: T,
   message?: string,
   statusCode = 200,
-): Response<ApiResponse<T>> {
-  return res.status(statusCode).json({
+): void {
+  const body: ApiResponse<T> = {
     success: true,
     data,
     message,
-  });
+  };
+  res.status(statusCode).json(body);
 }
 
 export function errorResponse(
@@ -19,7 +20,7 @@ export function errorResponse(
   message: string,
   statusCode = 400,
   errors?: Array<{ field: string; message: string }>,
-): Response<ApiResponse<never>> {
+): void {
   const body: ApiResponse<never> = {
     success: false,
     message,
@@ -27,7 +28,7 @@ export function errorResponse(
   if (errors && errors.length > 0) {
     body.errors = errors;
   }
-  return res.status(statusCode).json(body);
+  res.status(statusCode).json(body);
 }
 
 export function paginatedResponse<T>(
@@ -36,9 +37,9 @@ export function paginatedResponse<T>(
   total: number,
   page: number,
   limit: number,
-): Response<ApiResponse<PaginatedResponse<T>>> {
+): void {
   const totalPages = Math.ceil(total / limit);
-  return res.status(200).json({
+  const body: ApiResponse<PaginatedResponse<T>> = {
     success: true,
     data: {
       data,
@@ -47,5 +48,6 @@ export function paginatedResponse<T>(
       limit,
       totalPages,
     },
-  });
+  };
+  res.status(200).json(body);
 }

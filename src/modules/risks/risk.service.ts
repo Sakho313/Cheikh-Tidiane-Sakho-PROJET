@@ -196,8 +196,7 @@ export class RiskService {
       const avgScore =
         categoryRisks.length > 0
           ? Math.round(
-              categoryRisks.reduce((sum, r) => sum + r.riskScore, 0) /
-                categoryRisks.length,
+              categoryRisks.reduce((sum, r) => sum + r.riskScore, 0) / categoryRisks.length,
             )
           : 0;
       return { category, count: categoryRisks.length, avgScore };

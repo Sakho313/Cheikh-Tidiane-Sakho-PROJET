@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import complianceService from './compliance.service';
 import { successResponse } from '../../shared/utils/response';
-import {
-  UpsertAssessmentInput,
-  UpdateAssessmentInput,
-} from './compliance.schemas';
+import { UpsertAssessmentInput, UpdateAssessmentInput } from './compliance.schemas';
 import { ComplianceStatus } from '@prisma/client';
 
 export async function getAllControls(
@@ -30,10 +27,10 @@ export async function getAssessments(
       domain?: string;
       status?: ComplianceStatus;
     };
-    const assessments = await complianceService.getAssessments(
-      req.params.orgId,
-      { domain, status },
-    );
+    const assessments = await complianceService.getAssessments(req.params.orgId, {
+      domain,
+      status,
+    });
     successResponse(res, assessments);
   } catch (err) {
     next(err);
@@ -59,10 +56,7 @@ export async function updateAssessment(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const assessment = await complianceService.updateAssessmentById(
-      req.params.id,
-      req.body,
-    );
+    const assessment = await complianceService.updateAssessmentById(req.params.id, req.body);
     successResponse(res, assessment, 'Assessment updated successfully');
   } catch (err) {
     next(err);

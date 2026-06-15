@@ -3,8 +3,10 @@ import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import swaggerUi from 'swagger-ui-express';
 import { env } from './config/env';
 import { errorMiddleware } from './shared/middleware/error.middleware';
+import { swaggerSpec } from './config/swagger';
 
 import authRoutes from './modules/auth/auth.routes';
 import organizationRoutes from './modules/organizations/organization.routes';
@@ -52,6 +54,18 @@ app.use(express.urlencoded({ extended: true }));
 if (env.NODE_ENV !== 'test') {
   app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 }
+
+// ─── API Documentation ────────────────────────────────────────────────────────
+
+app.use(
+  '/api/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'SAO NIS2 API Documentation',
+  }),
+);
+app.get('/api/docs.json', (_req: Request, res: Response) => res.json(swaggerSpec));
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 

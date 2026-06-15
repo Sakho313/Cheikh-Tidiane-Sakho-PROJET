@@ -1,14 +1,8 @@
 import { Router } from 'express';
 import { Role } from '@prisma/client';
-import {
-  authenticate,
-  authorize,
-} from '../../shared/middleware/auth.middleware';
+import { authenticate, authorize } from '../../shared/middleware/auth.middleware';
 import { validate } from '../../shared/middleware/validate.middleware';
-import {
-  UpsertAssessmentSchema,
-  UpdateAssessmentSchema,
-} from './compliance.schemas';
+import { UpsertAssessmentSchema, UpdateAssessmentSchema } from './compliance.schemas';
 import {
   getAllControls,
   getAssessments,
@@ -40,10 +34,6 @@ router.put(
   updateAssessment,
 );
 
-router.post(
-  '/seed-controls',
-  authorize(Role.ADMIN),
-  seedControls,
-);
+router.post('/seed-controls', authorize(Role.ADMIN), seedControls);
 
 export default router;

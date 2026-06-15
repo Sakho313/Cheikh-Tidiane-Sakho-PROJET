@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import riskService from './risk.service';
-import {
-  successResponse,
-  paginatedResponse,
-} from '../../shared/utils/response';
+import { successResponse, paginatedResponse } from '../../shared/utils/response';
 import { RiskCategory, RiskStatus } from '@prisma/client';
 import { CreateRiskInput, UpdateRiskInput } from './risk.schemas';
 

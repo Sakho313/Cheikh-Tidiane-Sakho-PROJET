@@ -159,11 +159,7 @@ export class AuditService {
     });
   }
 
-  async updateFinding(
-    auditId: string,
-    findingId: string,
-    data: UpdateFindingInput,
-  ) {
+  async updateFinding(auditId: string, findingId: string, data: UpdateFindingInput) {
     const finding = await prisma.auditFinding.findFirst({
       where: { id: findingId, auditId },
     });
@@ -175,8 +171,7 @@ export class AuditService {
     }
 
     const closedAt =
-      data.status === FindingStatus.CLOSED &&
-      finding.status !== FindingStatus.CLOSED
+      data.status === FindingStatus.CLOSED && finding.status !== FindingStatus.CLOSED
         ? new Date()
         : finding.closedAt;
 

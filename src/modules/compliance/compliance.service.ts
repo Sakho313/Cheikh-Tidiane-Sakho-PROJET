@@ -27,21 +27,24 @@ const NIS2_CONTROLS = [
   {
     article: 'Article 21(2)(d)',
     domain: 'Supply Chain Security',
-    requirement: 'Supply chain security including security aspects of relationships with direct suppliers and service providers',
+    requirement:
+      'Supply chain security including security aspects of relationships with direct suppliers and service providers',
     description:
       'Organizations must assess and manage security risks arising from their supply chain, including evaluating security practices of direct suppliers and service providers and establishing contractual security requirements.',
   },
   {
     article: 'Article 21(2)(e)',
     domain: 'Network Security',
-    requirement: 'Security in network and information systems acquisition, development, and maintenance',
+    requirement:
+      'Security in network and information systems acquisition, development, and maintenance',
     description:
       'Organizations must implement security measures throughout the lifecycle of network and information systems, including vulnerability handling, secure development practices, and security testing.',
   },
   {
     article: 'Article 21(2)(f)',
     domain: 'Security Assessment',
-    requirement: 'Policies and procedures to assess the effectiveness of cybersecurity risk-management measures',
+    requirement:
+      'Policies and procedures to assess the effectiveness of cybersecurity risk-management measures',
     description:
       'Organizations must establish processes to regularly assess the effectiveness of their security measures, including security audits, penetration testing, and continuous monitoring of the security posture.',
   },
@@ -55,7 +58,8 @@ const NIS2_CONTROLS = [
   {
     article: 'Article 21(2)(h)',
     domain: 'Cryptography',
-    requirement: 'Policies and procedures regarding the use of cryptography and, where appropriate, encryption',
+    requirement:
+      'Policies and procedures regarding the use of cryptography and, where appropriate, encryption',
     description:
       'Organizations must establish policies for the use of cryptography including encryption of data at rest and in transit, key management procedures, and appropriate cryptographic standards aligned with current best practices.',
   },
@@ -97,10 +101,7 @@ export class ComplianceService {
     });
   }
 
-  async getAssessments(
-    orgId: string,
-    filters?: { domain?: string; status?: ComplianceStatus },
-  ) {
+  async getAssessments(orgId: string, filters?: { domain?: string; status?: ComplianceStatus }) {
     const where: Record<string, unknown> = { organizationId: orgId };
 
     if (filters?.status) {
@@ -134,10 +135,9 @@ export class ComplianceService {
     });
 
     const reviewedAt =
-      data.status === ComplianceStatus.COMPLIANT ||
-      data.status === ComplianceStatus.NOT_APPLICABLE
+      data.status === ComplianceStatus.COMPLIANT || data.status === ComplianceStatus.NOT_APPLICABLE
         ? new Date()
-        : existing?.reviewedAt ?? undefined;
+        : (existing?.reviewedAt ?? undefined);
 
     return prisma.complianceAssessment.upsert({
       where: {
@@ -185,10 +185,9 @@ export class ComplianceService {
     }
 
     const reviewedAt =
-      data.status === ComplianceStatus.COMPLIANT ||
-      data.status === ComplianceStatus.NOT_APPLICABLE
+      data.status === ComplianceStatus.COMPLIANT || data.status === ComplianceStatus.NOT_APPLICABLE
         ? new Date()
-        : existing.reviewedAt ?? undefined;
+        : (existing.reviewedAt ?? undefined);
 
     return prisma.complianceAssessment.update({
       where: { id },
@@ -218,48 +217,30 @@ export class ComplianceService {
 
     const domains = [...new Set(controls.map((c) => c.domain))];
 
-    const domainScores: Record<
-      string,
-      { compliant: number; total: number; score: number }
-    > = {};
+    const domainScores: Record<string, { compliant: number; total: number; score: number }> = {};
 
     for (const domain of domains) {
-      const domainAssessments = assessments.filter(
-        (a) => a.control.domain === domain,
-      );
+      const domainAssessments = assessments.filter((a) => a.control.domain === domain);
       const applicable = domainAssessments.filter(
         (a) => a.status !== ComplianceStatus.NOT_APPLICABLE,
       );
-      const compliant = applicable.filter(
-        (a) => a.status === ComplianceStatus.COMPLIANT,
-      );
+      const compliant = applicable.filter((a) => a.status === ComplianceStatus.COMPLIANT);
 
       domainScores[domain] = {
         compliant: compliant.length,
         total: applicable.length,
-        score:
-          applicable.length > 0
-            ? Math.round((compliant.length / applicable.length) * 100)
-            : 0,
+        score: applicable.length > 0 ? Math.round((compliant.length / applicable.length) * 100) : 0,
       };
     }
 
-    const allApplicable = assessments.filter(
-      (a) => a.status !== ComplianceStatus.NOT_APPLICABLE,
-    );
-    const allCompliant = allApplicable.filter(
-      (a) => a.status === ComplianceStatus.COMPLIANT,
-    );
+    const allApplicable = assessments.filter((a) => a.status !== ComplianceStatus.NOT_APPLICABLE);
+    const allCompliant = allApplicable.filter((a) => a.status === ComplianceStatus.COMPLIANT);
     const overallScore =
-      allApplicable.length > 0
-        ? Math.round((allCompliant.length / allApplicable.length) * 100)
-        : 0;
+      allApplicable.length > 0 ? Math.round((allCompliant.length / allApplicable.length) * 100) : 0;
 
     const statusBreakdown: Record<string, number> = {};
     for (const status of Object.values(ComplianceStatus)) {
-      statusBreakdown[status] = assessments.filter(
-        (a) => a.status === status,
-      ).length;
+      statusBreakdown[status] = assessments.filter((a) => a.status === status).length;
     }
 
     return {

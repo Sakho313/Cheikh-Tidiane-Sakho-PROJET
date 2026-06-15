@@ -1,9 +1,6 @@
 import { prisma } from '../../config/database';
 import { parsePagination } from '../../shared/utils/pagination';
-import {
-  CreateOrganizationInput,
-  UpdateOrganizationInput,
-} from './organization.schemas';
+import { CreateOrganizationInput, UpdateOrganizationInput } from './organization.schemas';
 import { ComplianceStatus } from '@prisma/client';
 
 export class OrganizationService {
@@ -122,12 +119,7 @@ export class OrganizationService {
   }
 
   async getStats(orgId: string) {
-    const [
-      incidentCounts,
-      riskCounts,
-      auditCounts,
-      assessmentCounts,
-    ] = await Promise.all([
+    const [incidentCounts, riskCounts, auditCounts, assessmentCounts] = await Promise.all([
       prisma.incident.groupBy({
         by: ['severity'],
         where: { organizationId: orgId },
@@ -150,18 +142,12 @@ export class OrganizationService {
       }),
     ]);
 
-    const totalAssessments = assessmentCounts.reduce(
-      (sum, c) => sum + c._count.id,
-      0,
-    );
-    const compliantCount = assessmentCounts.find(
-      (c) => c.status === ComplianceStatus.COMPLIANT,
-    )?._count.id ?? 0;
+    const totalAssessments = assessmentCounts.reduce((sum, c) => sum + c._count.id, 0);
+    const compliantCount =
+      assessmentCounts.find((c) => c.status === ComplianceStatus.COMPLIANT)?._count.id ?? 0;
 
     const complianceScore =
-      totalAssessments > 0
-        ? Math.round((compliantCount / totalAssessments) * 100)
-        : 0;
+      totalAssessments > 0 ? Math.round((compliantCount / totalAssessments) * 100) : 0;
 
     return {
       incidents: {

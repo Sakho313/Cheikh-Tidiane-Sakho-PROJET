@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import incidentService from './incident.service';
-import {
-  successResponse,
-  paginatedResponse,
-} from '../../shared/utils/response';
+import { successResponse, paginatedResponse } from '../../shared/utils/response';
 import { IncidentSeverity, IncidentStatus } from '@prisma/client';
 import { CreateIncidentInput, UpdateIncidentInput } from './incident.schemas';
 
@@ -78,11 +75,7 @@ export async function reportToAuthority(
       req.params.id,
       req.body.authorityReference,
     );
-    successResponse(
-      res,
-      incident,
-      'Incident reported to authority successfully',
-    );
+    successResponse(res, incident, 'Incident reported to authority successfully');
   } catch (err) {
     next(err);
   }

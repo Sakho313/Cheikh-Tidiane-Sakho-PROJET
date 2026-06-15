@@ -16,7 +16,7 @@ const server = app.listen(env.PORT, () => {
 });
 
 // Graceful shutdown
-async function shutdown(signal: string): Promise<void> {
+function shutdown(signal: string): void {
   console.log(`\nReceived ${signal}. Gracefully shutting down...`);
 
   server.close(async () => {
@@ -39,8 +39,8 @@ async function shutdown(signal: string): Promise<void> {
   }, 10000);
 }
 
-process.on('SIGTERM', () => void shutdown('SIGTERM'));
-process.on('SIGINT', () => void shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 process.on('unhandledRejection', (reason: unknown) => {
   console.error('Unhandled Promise Rejection:', reason);

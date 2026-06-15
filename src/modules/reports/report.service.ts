@@ -1,17 +1,24 @@
 import { prisma } from '../../config/database';
-import { ReportType, ComplianceStatus } from '@prisma/client';
+import { ReportType, ComplianceStatus, Prisma } from '@prisma/client';
 
 export interface ReportPeriod {
   start?: Date;
   end?: Date;
 }
 
+/**
+ * Serialise un objet de rapport en valeur JSON compatible Prisma.
+ * Le round-trip JSON convertit les Date en chaînes ISO, ce qui rend
+ * la structure réellement assignable à `Prisma.InputJsonValue`.
+ */
+function toReportJson(value: unknown): Prisma.InputJsonValue {
+  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
+
 export class ReportService {
   async generateComplianceReport(orgId: string, period: ReportPeriod, generatedById: string) {
     const dateFilter =
-      period.start && period.end
-        ? { createdAt: { gte: period.start, lte: period.end } }
-        : {};
+      period.start && period.end ? { createdAt: { gte: period.start, lte: period.end } } : {};
 
     const [assessments, scoreData, controlsByDomain] = await Promise.all([
       prisma.complianceAssessment.findMany({
@@ -34,9 +41,7 @@ export class ReportService {
       (a) => a.status === ComplianceStatus.COMPLIANT,
     ).length;
     const overallScore =
-      totalAssessments > 0
-        ? Math.round((compliantCount / totalAssessments) * 100)
-        : 0;
+      totalAssessments > 0 ? Math.round((compliantCount / totalAssessments) * 100) : 0;
 
     const nonCompliant = assessments
       .filter((a) => a.status === ComplianceStatus.NON_COMPLIANT)
@@ -82,16 +87,14 @@ export class ReportService {
         periodStart: period.start,
         periodEnd: period.end,
         generatedById,
-        data,
+        data: toReportJson(data),
       },
     });
   }
 
   async generateIncidentReport(orgId: string, period: ReportPeriod, generatedById: string) {
     const dateFilter =
-      period.start && period.end
-        ? { detectedAt: { gte: period.start, lte: period.end } }
-        : {};
+      period.start && period.end ? { detectedAt: { gte: period.start, lte: period.end } } : {};
 
     const [incidents, bySeverity, byStatus] = await Promise.all([
       prisma.incident.findMany({
@@ -120,8 +123,7 @@ export class ReportService {
       incidents
         .filter((i) => i.resolvedAt)
         .reduce((sum, i) => {
-          const hours =
-            (i.resolvedAt!.getTime() - i.detectedAt.getTime()) / 3600000;
+          const hours = (i.resolvedAt!.getTime() - i.detectedAt.getTime()) / 3600000;
           return sum + hours;
         }, 0) / Math.max(incidents.filter((i) => i.resolvedAt).length, 1);
 
@@ -160,16 +162,14 @@ export class ReportService {
         periodStart: period.start,
         periodEnd: period.end,
         generatedById,
-        data,
+        data: toReportJson(data),
       },
     });
   }
 
   async generateRiskReport(orgId: string, period: ReportPeriod, generatedById: string) {
     const dateFilter =
-      period.start && period.end
-        ? { createdAt: { gte: period.start, lte: period.end } }
-        : {};
+      period.start && period.end ? { createdAt: { gte: period.start, lte: period.end } } : {};
 
     const [risks, byCategory, byStatus] = await Promise.all([
       prisma.risk.findMany({
@@ -235,16 +235,14 @@ export class ReportService {
         periodStart: period.start,
         periodEnd: period.end,
         generatedById,
-        data,
+        data: toReportJson(data),
       },
     });
   }
 
   async generateAuditReport(orgId: string, period: ReportPeriod, generatedById: string) {
     const dateFilter =
-      period.start && period.end
-        ? { startDate: { gte: period.start, lte: period.end } }
-        : {};
+      period.start && period.end ? { startDate: { gte: period.start, lte: period.end } } : {};
 
     const [audits, byType, byStatus, findingsBySeverity] = await Promise.all([
       prisma.audit.findMany({
@@ -306,7 +304,7 @@ export class ReportService {
         periodStart: period.start,
         periodEnd: period.end,
         generatedById,
-        data,
+        data: toReportJson(data),
       },
     });
   }
@@ -324,16 +322,9 @@ export class ReportService {
     }
 
     const dateFilter =
-      period.start && period.end
-        ? { createdAt: { gte: period.start, lte: period.end } }
-        : {};
+      period.start && period.end ? { createdAt: { gte: period.start, lte: period.end } } : {};
 
-    const [
-      complianceScoreData,
-      incidentCounts,
-      riskCounts,
-      auditCounts,
-    ] = await Promise.all([
+    const [complianceScoreData, incidentCounts, riskCounts, auditCounts] = await Promise.all([
       prisma.complianceAssessment.groupBy({
         by: ['status'],
         where: { organizationId: orgId },
@@ -360,13 +351,10 @@ export class ReportService {
     const compliantCount =
       complianceScoreData.find((c) => c.status === ComplianceStatus.COMPLIANT)?._count.id ?? 0;
     const complianceScore =
-      totalAssessments > 0
-        ? Math.round((compliantCount / totalAssessments) * 100)
-        : 0;
+      totalAssessments > 0 ? Math.round((compliantCount / totalAssessments) * 100) : 0;
 
     const totalIncidents = incidentCounts.reduce((s, c) => s + c._count.id, 0);
-    const criticalIncidents =
-      incidentCounts.find((c) => c.severity === 'CRITICAL')?._count.id ?? 0;
+    const criticalIncidents = incidentCounts.find((c) => c.severity === 'CRITICAL')?._count.id ?? 0;
 
     const totalRisks = riskCounts.reduce((s, c) => s + c._count.id, 0);
     const openRisks = riskCounts
@@ -427,7 +415,7 @@ export class ReportService {
         periodStart: period.start,
         periodEnd: period.end,
         generatedById,
-        data,
+        data: toReportJson(data),
       },
     });
   }

@@ -10,7 +10,11 @@ export const UpsertAssessmentSchema = z.object({
   evidence: z.string().max(5000).optional(),
   notes: z.string().max(2000).optional(),
   assignedToId: z.string().uuid('Must be a valid user UUID').optional(),
-  dueDate: z.string().datetime().optional().transform((val) => val ? new Date(val) : undefined),
+  dueDate: z
+    .string()
+    .datetime()
+    .optional()
+    .transform((val) => (val ? new Date(val) : undefined)),
 });
 
 export const UpdateAssessmentSchema = UpsertAssessmentSchema.omit({

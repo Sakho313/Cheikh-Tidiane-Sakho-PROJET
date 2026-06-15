@@ -13,11 +13,7 @@ declare global {
   }
 }
 
-export function authenticate(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export function authenticate(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.headers['authorization'];
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -44,11 +40,7 @@ export function authorize(...roles: Role[]) {
     }
 
     if (!roles.includes(req.user.role)) {
-      errorResponse(
-        res,
-        'You do not have permission to perform this action',
-        403,
-      );
+      errorResponse(res, 'You do not have permission to perform this action', 403);
       return;
     }
 

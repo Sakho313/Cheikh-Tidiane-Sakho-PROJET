@@ -42,11 +42,7 @@ export async function refresh(
   }
 }
 
-export async function getProfile(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+export async function getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const userId = req.user!.userId;
     const profile = await authService.getProfile(userId);

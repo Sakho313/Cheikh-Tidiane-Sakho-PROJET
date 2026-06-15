@@ -1,10 +1,5 @@
 import { z } from 'zod';
-import {
-  AuditType,
-  AuditStatus,
-  FindingSeverity,
-  FindingStatus,
-} from '@prisma/client';
+import { AuditType, AuditStatus, FindingSeverity, FindingStatus } from '@prisma/client';
 
 export const CreateAuditSchema = z.object({
   organizationId: z.string().uuid('Must be a valid organization UUID'),

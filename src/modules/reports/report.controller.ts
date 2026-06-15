@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import reportService, { ReportPeriod } from './report.service';
-import {
-  successResponse,
-  paginatedResponse,
-} from '../../shared/utils/response';
+import { successResponse, paginatedResponse } from '../../shared/utils/response';
 import { ReportType } from '@prisma/client';
 
 interface GenerateReportBody {
@@ -39,7 +36,11 @@ export async function generateReport(
 
     switch (type) {
       case ReportType.COMPLIANCE:
-        report = await reportService.generateComplianceReport(organizationId, period, generatedById);
+        report = await reportService.generateComplianceReport(
+          organizationId,
+          period,
+          generatedById,
+        );
         break;
       case ReportType.INCIDENT:
         report = await reportService.generateIncidentReport(organizationId, period, generatedById);

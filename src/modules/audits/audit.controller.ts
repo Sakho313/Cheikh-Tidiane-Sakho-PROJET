@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import auditService from './audit.service';
-import {
-  successResponse,
-  paginatedResponse,
-} from '../../shared/utils/response';
+import { successResponse, paginatedResponse } from '../../shared/utils/response';
 import { AuditType, AuditStatus } from '@prisma/client';
 import {
   CreateAuditInput,
@@ -104,11 +101,7 @@ export async function updateFinding(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const finding = await auditService.updateFinding(
-      req.params.id,
-      req.params.findingId,
-      req.body,
-    );
+    const finding = await auditService.updateFinding(req.params.id, req.params.findingId, req.body);
     successResponse(res, finding, 'Finding updated successfully');
   } catch (err) {
     next(err);

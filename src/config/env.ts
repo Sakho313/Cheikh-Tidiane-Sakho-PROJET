@@ -11,9 +11,7 @@ const envSchema = z.object({
     .default('3000')
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().positive()),
-  NODE_ENV: z
-    .enum(['development', 'production', 'test'])
-    .default('development'),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
   RATE_LIMIT_WINDOW_MS: z
     .string()

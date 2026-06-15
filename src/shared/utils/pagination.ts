@@ -10,9 +10,7 @@ export function parsePagination(query: Record<string, unknown>): ParsedPaginatio
 
   const rawSearch = query['search'];
   const search =
-    typeof rawSearch === 'string' && rawSearch.trim().length > 0
-      ? rawSearch.trim()
-      : undefined;
+    typeof rawSearch === 'string' && rawSearch.trim().length > 0 ? rawSearch.trim() : undefined;
 
   return { page, limit, skip, search };
 }

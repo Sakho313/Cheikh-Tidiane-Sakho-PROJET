@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { ZodSchema, ZodError } from 'zod';
+import { ZodError, ZodTypeAny } from 'zod';
 import { errorResponse } from '../utils/response';
 
-export function validate(schema: ZodSchema) {
+export function validate(schema: ZodTypeAny) {
   return (req: Request, res: Response, next: NextFunction): void => {
     try {
-      req.body = schema.parse(req.body);
+      // Zod renvoie le type de sortie du schéma ; on le convertit en `unknown`
+      // pour l'assigner à `req.body` sans introduire de valeur `any` non sûre.
+      req.body = schema.parse(req.body) as unknown;
       next();
     } catch (err) {
       if (err instanceof ZodError) {
