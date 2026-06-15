@@ -4,8 +4,9 @@ jest.mock('../../src/shared/utils/jwt', () => ({
 }));
 
 import { Request, Response, NextFunction } from 'express';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
+import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import { authenticate, authorize } from '../../src/shared/middleware/auth.middleware';
 import { validate } from '../../src/shared/middleware/validate.middleware';
 import { errorMiddleware } from '../../src/shared/middleware/error.middleware';
@@ -239,6 +240,97 @@ describe('middleware', () => {
         success: false,
         message: 'An unexpected error occurred',
       });
+    });
+
+    it('should map a ZodError to 400 with field-level errors', () => {
+      let err: ZodError;
+      try {
+        z.object({ email: z.string().email() }).parse({ email: 'not-an-email' });
+        throw new Error('should not reach');
+      } catch (e) {
+        err = e as ZodError;
+      }
+
+      errorMiddleware(err, req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      const body = (res.json as jest.Mock).mock.calls[0][0] as {
+        success: boolean;
+        message: string;
+        errors: { field: string; message: string }[];
+      };
+      expect(body.success).toBe(false);
+      expect(body.message).toBe('Validation failed');
+      expect(Array.isArray(body.errors)).toBe(true);
+      expect(body.errors[0].field).toBe('email');
+    });
+
+    it('should map a PrismaClientValidationError to 400', () => {
+      const err = new Prisma.PrismaClientValidationError('Missing required field', {
+        clientVersion: '5.7.0',
+      });
+
+      errorMiddleware(err, req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: 'Invalid data provided to the database',
+      });
+    });
+
+    it('should map a Prisma other error code (not P2002/P2025) to 500', () => {
+      const err = new Prisma.PrismaClientKnownRequestError('Connection error', {
+        code: 'P1001',
+        clientVersion: '5.7.0',
+      });
+
+      errorMiddleware(err, req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: 'Database operation failed',
+      });
+    });
+
+    it('should map a TokenExpiredError to 401', () => {
+      const err = new TokenExpiredError('jwt expired', new Date());
+
+      errorMiddleware(err, req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: 'Token has expired',
+      });
+    });
+
+    it('should map a JsonWebTokenError to 401', () => {
+      const err = new JsonWebTokenError('invalid signature');
+
+      errorMiddleware(err, req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: 'Invalid token',
+      });
+    });
+
+    it('should log to console.error in development mode for 500 errors', () => {
+      const originalEnv = process.env['NODE_ENV'];
+      process.env['NODE_ENV'] = 'development';
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+
+      const err = new Error('Internal boom');
+      errorMiddleware(err, req, res, next);
+
+      expect(consoleSpy).toHaveBeenCalledWith('[ERROR]', err);
+      expect(res.status).toHaveBeenCalledWith(500);
+
+      consoleSpy.mockRestore();
+      process.env['NODE_ENV'] = originalEnv;
     });
   });
 });

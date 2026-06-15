@@ -425,4 +425,146 @@ describe('RiskService', () => {
       expect(mockPrismaRisk.delete).not.toHaveBeenCalled();
     });
   });
+
+  // ─── findAll() ─────────────────────────────────────────────────────────────
+
+  describe('findAll()', () => {
+    it('should return paginated risks for an org with default pagination', async () => {
+      mockPrismaRisk.findMany.mockResolvedValue([mockRiskRow] as never);
+      mockPrismaRisk.count.mockResolvedValue(1 as never);
+
+      const result = await service.findAll(ORG_ID, {});
+
+      expect(mockPrismaRisk.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { organizationId: ORG_ID }, skip: 0, take: 20 }),
+      );
+      expect(result.risks).toHaveLength(1);
+      expect(result.total).toBe(1);
+      expect(result.page).toBe(1);
+      expect(result.limit).toBe(20);
+    });
+
+    it('should apply a category filter', async () => {
+      mockPrismaRisk.findMany.mockResolvedValue([] as never);
+      mockPrismaRisk.count.mockResolvedValue(0 as never);
+
+      await service.findAll(ORG_ID, {}, { category: 'NETWORK' as const });
+
+      expect(mockPrismaRisk.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ category: 'NETWORK' }),
+        }),
+      );
+    });
+
+    it('should apply a status filter', async () => {
+      mockPrismaRisk.findMany.mockResolvedValue([] as never);
+      mockPrismaRisk.count.mockResolvedValue(0 as never);
+
+      await service.findAll(ORG_ID, {}, { status: 'MITIGATED' as const });
+
+      expect(mockPrismaRisk.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ status: 'MITIGATED' }),
+        }),
+      );
+    });
+
+    it('should apply a full-text search across title and description', async () => {
+      mockPrismaRisk.findMany.mockResolvedValue([] as never);
+      mockPrismaRisk.count.mockResolvedValue(0 as never);
+
+      await service.findAll(ORG_ID, { search: 'ransomware' });
+
+      expect(mockPrismaRisk.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            OR: [
+              { title: { contains: 'ransomware', mode: 'insensitive' } },
+              { description: { contains: 'ransomware', mode: 'insensitive' } },
+            ],
+          }),
+        }),
+      );
+    });
+
+    it('should respect custom page and limit', async () => {
+      mockPrismaRisk.findMany.mockResolvedValue([] as never);
+      mockPrismaRisk.count.mockResolvedValue(50 as never);
+
+      const result = await service.findAll(ORG_ID, { page: '3', limit: '5' });
+
+      expect(mockPrismaRisk.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 10, take: 5 }),
+      );
+      expect(result.page).toBe(3);
+      expect(result.limit).toBe(5);
+      expect(result.total).toBe(50);
+    });
+  });
+
+  // ─── getStats() ────────────────────────────────────────────────────────────
+
+  describe('getStats()', () => {
+    it('should return aggregated stats for an organisation', async () => {
+      const byCategoryResult = [
+        { category: 'NETWORK', _count: { id: 3 }, _avg: { riskScore: 18.3 } },
+        { category: 'SUPPLY_CHAIN', _count: { id: 2 }, _avg: { riskScore: 10.0 } },
+      ];
+      const byStatusResult = [
+        { status: 'IDENTIFIED', _count: { id: 2 } },
+        { status: 'MITIGATED', _count: { id: 3 } },
+      ];
+      const topRisksResult = [mockRiskRow].map(
+        ({ id, title, riskScore, likelihood, impact, category, status }) => ({
+          id,
+          title,
+          riskScore,
+          likelihood,
+          impact,
+          category,
+          status,
+        }),
+      );
+
+      mockPrismaRisk.groupBy
+        .mockResolvedValueOnce(byCategoryResult as never)
+        .mockResolvedValueOnce(byStatusResult as never);
+      mockPrismaRisk.findMany.mockResolvedValue(topRisksResult as never);
+
+      const result = await service.getStats(ORG_ID);
+
+      expect(result.total).toBe(5);
+      expect(result.byCategory).toHaveLength(2);
+      expect(result.byCategory[0]).toEqual({ category: 'NETWORK', count: 3, avgScore: 18 });
+      expect(result.byStatus).toHaveLength(2);
+      expect(result.topRisks).toHaveLength(1);
+    });
+
+    it('should return zero total and empty arrays for an org with no risks', async () => {
+      mockPrismaRisk.groupBy.mockResolvedValue([] as never);
+      mockPrismaRisk.findMany.mockResolvedValue([] as never);
+
+      const result = await service.getStats(ORG_ID);
+
+      expect(result.total).toBe(0);
+      expect(result.byCategory).toHaveLength(0);
+      expect(result.byStatus).toHaveLength(0);
+      expect(result.topRisks).toHaveLength(0);
+    });
+
+    it('should round avgScore and handle null _avg.riskScore', async () => {
+      const byCategoryWithNull = [
+        { category: 'HUMAN', _count: { id: 1 }, _avg: { riskScore: null } },
+      ];
+      mockPrismaRisk.groupBy
+        .mockResolvedValueOnce(byCategoryWithNull as never)
+        .mockResolvedValueOnce([] as never);
+      mockPrismaRisk.findMany.mockResolvedValue([] as never);
+
+      const result = await service.getStats(ORG_ID);
+
+      expect(result.byCategory[0].avgScore).toBe(0);
+    });
+  });
 });

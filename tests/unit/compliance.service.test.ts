@@ -296,4 +296,184 @@ describe('ComplianceService', () => {
       );
     });
   });
+
+  // ─── getAssessments() ──────────────────────────────────────────────────────
+
+  describe('getAssessments()', () => {
+    const mockAssessment = {
+      id: 'a0000000-0000-0000-0000-000000000001',
+      organizationId: ORG_ID,
+      controlId: CONTROL_ID_1,
+      status: 'COMPLIANT',
+      evidence: null,
+      notes: null,
+      assignedToId: null,
+      dueDate: null,
+      reviewedAt: null,
+      control: mockControls[0],
+      assignedTo: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    it('should return all assessments for an org without filters', async () => {
+      mockComplianceAssessment.findMany.mockResolvedValue([mockAssessment] as never);
+
+      const result = await service.getAssessments(ORG_ID);
+
+      expect(mockComplianceAssessment.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { organizationId: ORG_ID } }),
+      );
+      expect(result).toHaveLength(1);
+    });
+
+    it('should apply a status filter when provided', async () => {
+      mockComplianceAssessment.findMany.mockResolvedValue([mockAssessment] as never);
+
+      await service.getAssessments(ORG_ID, { status: 'COMPLIANT' as const });
+
+      expect(mockComplianceAssessment.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ status: 'COMPLIANT' }),
+        }),
+      );
+    });
+
+    it('should apply a domain filter when provided', async () => {
+      mockComplianceAssessment.findMany.mockResolvedValue([mockAssessment] as never);
+
+      await service.getAssessments(ORG_ID, { domain: 'Risk Management' });
+
+      expect(mockComplianceAssessment.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ control: { domain: 'Risk Management' } }),
+        }),
+      );
+    });
+
+    it('should apply both filters simultaneously', async () => {
+      mockComplianceAssessment.findMany.mockResolvedValue([] as never);
+
+      await service.getAssessments(ORG_ID, {
+        status: 'NON_COMPLIANT' as const,
+        domain: 'Incident Handling',
+      });
+
+      expect(mockComplianceAssessment.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'NON_COMPLIANT',
+            control: { domain: 'Incident Handling' },
+          }),
+        }),
+      );
+    });
+  });
+
+  // ─── updateAssessmentById() ────────────────────────────────────────────────
+
+  describe('updateAssessmentById()', () => {
+    const ASSESSMENT_ID = 'a0000000-0000-0000-0000-000000000001';
+    const existingAssessment = {
+      id: ASSESSMENT_ID,
+      organizationId: ORG_ID,
+      controlId: CONTROL_ID_1,
+      status: 'PARTIAL',
+      reviewedAt: null,
+    };
+    const updated = { ...existingAssessment, status: 'COMPLIANT', reviewedAt: new Date() };
+
+    it('should update and return the assessment', async () => {
+      mockComplianceAssessment.findUnique.mockResolvedValue(existingAssessment as never);
+      mockComplianceAssessment.update.mockResolvedValue(updated as never);
+
+      const result = await service.updateAssessmentById(ASSESSMENT_ID, {
+        status: 'COMPLIANT' as const,
+      });
+
+      expect(mockComplianceAssessment.update).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: ASSESSMENT_ID } }),
+      );
+      expect(result).toEqual(updated);
+    });
+
+    it('should set reviewedAt when transitioning to COMPLIANT', async () => {
+      mockComplianceAssessment.findUnique.mockResolvedValue(existingAssessment as never);
+      mockComplianceAssessment.update.mockResolvedValue(updated as never);
+
+      await service.updateAssessmentById(ASSESSMENT_ID, { status: 'COMPLIANT' as const });
+
+      expect(mockComplianceAssessment.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ reviewedAt: expect.any(Date) }),
+        }),
+      );
+    });
+
+    it('should set reviewedAt when transitioning to NOT_APPLICABLE', async () => {
+      mockComplianceAssessment.findUnique.mockResolvedValue(existingAssessment as never);
+      mockComplianceAssessment.update.mockResolvedValue({
+        ...existingAssessment,
+        status: 'NOT_APPLICABLE',
+      } as never);
+
+      await service.updateAssessmentById(ASSESSMENT_ID, { status: 'NOT_APPLICABLE' as const });
+
+      expect(mockComplianceAssessment.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ reviewedAt: expect.any(Date) }),
+        }),
+      );
+    });
+
+    it('should preserve existing reviewedAt for non-terminal statuses', async () => {
+      const alreadyReviewed = { ...existingAssessment, reviewedAt: new Date('2024-06-01') };
+      mockComplianceAssessment.findUnique.mockResolvedValue(alreadyReviewed as never);
+      mockComplianceAssessment.update.mockResolvedValue(alreadyReviewed as never);
+
+      await service.updateAssessmentById(ASSESSMENT_ID, { status: 'PARTIAL' as const });
+
+      expect(mockComplianceAssessment.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ reviewedAt: alreadyReviewed.reviewedAt }),
+        }),
+      );
+    });
+
+    it('should throw 404 when the assessment does not exist', async () => {
+      mockComplianceAssessment.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.updateAssessmentById('nonexistent-id', { status: 'COMPLIANT' as const }),
+      ).rejects.toMatchObject({ message: 'Assessment not found', statusCode: 404 });
+
+      expect(mockComplianceAssessment.update).not.toHaveBeenCalled();
+    });
+  });
+
+  // ─── seedControls() ────────────────────────────────────────────────────────
+
+  describe('seedControls()', () => {
+    it('should skip seeding when controls already exist', async () => {
+      mockComplianceControl.count.mockResolvedValue(12 as never);
+
+      await service.seedControls();
+
+      expect(mockComplianceControl.createMany).not.toHaveBeenCalled();
+    });
+
+    it('should create all NIS2 controls when none exist', async () => {
+      mockComplianceControl.count.mockResolvedValue(0 as never);
+      mockComplianceControl.createMany.mockResolvedValue({ count: 12 } as never);
+
+      await service.seedControls();
+
+      expect(mockComplianceControl.createMany).toHaveBeenCalledTimes(1);
+      const callArg = (mockComplianceControl.createMany as jest.Mock).mock.calls[0][0] as {
+        data: unknown[];
+      };
+      expect(Array.isArray(callArg.data)).toBe(true);
+      expect((callArg.data as unknown[]).length).toBeGreaterThan(0);
+    });
+  });
 });
