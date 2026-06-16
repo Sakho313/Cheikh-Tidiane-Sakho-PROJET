@@ -36,7 +36,23 @@ npm run build       # vérification des types + build de production (dist/)
 npm run preview     # prévisualise le build de production
 npm run lint        # ESLint
 npm run type-check  # tsc --noEmit
+npm run test:e2e    # tests E2E Playwright (API + base doivent tourner)
 ```
+
+## Tests E2E (Playwright)
+
+Les tests `e2e/` valident les parcours réels dans un navigateur Chromium :
+authentification, routes protégées et **création** d'incidents, de risques et
+d'organisations via les formulaires.
+
+```bash
+npx playwright install chromium   # 1ʳᵉ fois uniquement
+npm run test:e2e                   # démarre Vite automatiquement, cible l'API :3000
+npm run test:e2e:report            # génère un rapport HTML
+```
+
+Prérequis : le backend (`:3000`) et sa base doivent tourner et être seedés
+(`make setup` à la racine s'en charge).
 
 ## Structure
 
@@ -55,6 +71,7 @@ src/
 ├── types/         # Types miroir du backend
 ├── App.tsx        # Routes
 └── main.tsx       # Point d'entrée (providers)
+e2e/               # Tests Playwright (auth, incidents, risks, organizations)
 ```
 
 ## Fonctionnalités

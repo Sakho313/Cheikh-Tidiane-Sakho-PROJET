@@ -89,8 +89,9 @@ export function OrganizationsPage() {
           )}
           <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="form-label">Nom</label>
+              <label htmlFor="org-name" className="form-label">Nom</label>
               <input
+                id="org-name"
                 required
                 className="form-input"
                 value={form.name}
@@ -98,8 +99,9 @@ export function OrganizationsPage() {
               />
             </div>
             <div>
-              <label className="form-label">Pays</label>
+              <label htmlFor="org-country" className="form-label">Pays</label>
               <input
+                id="org-country"
                 required
                 className="form-input"
                 value={form.country}
@@ -107,8 +109,9 @@ export function OrganizationsPage() {
               />
             </div>
             <div>
-              <label className="form-label">Secteur</label>
+              <label htmlFor="org-sector" className="form-label">Secteur</label>
               <select
+                id="org-sector"
                 className="form-input"
                 value={form.sector}
                 onChange={(e) => setForm({ ...form, sector: e.target.value as Sector })}
@@ -121,8 +124,9 @@ export function OrganizationsPage() {
               </select>
             </div>
             <div>
-              <label className="form-label">Type d'entité</label>
+              <label htmlFor="org-entity-type" className="form-label">Type d'entité</label>
               <select
+                id="org-entity-type"
                 className="form-input"
                 value={form.entityType}
                 onChange={(e) => setForm({ ...form, entityType: e.target.value as EntityType })}
@@ -135,8 +139,9 @@ export function OrganizationsPage() {
               </select>
             </div>
             <div>
-              <label className="form-label">E-mail de contact</label>
+              <label htmlFor="org-email" className="form-label">E-mail de contact</label>
               <input
+                id="org-email"
                 required
                 type="email"
                 className="form-input"
@@ -145,8 +150,9 @@ export function OrganizationsPage() {
               />
             </div>
             <div>
-              <label className="form-label">Téléphone (optionnel)</label>
+              <label htmlFor="org-phone" className="form-label">Téléphone (optionnel)</label>
               <input
+                id="org-phone"
                 className="form-input"
                 value={form.contactPhone ?? ''}
                 onChange={(e) => setForm({ ...form, contactPhone: e.target.value })}

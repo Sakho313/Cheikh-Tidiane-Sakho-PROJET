@@ -19,6 +19,7 @@ Cette plateforme permet aux organisations de suivre leur posture de conformité,
 - [Tests](#tests)
 - [Frontend](#frontend)
 - [Intégration continue](#intégration-continue)
+- [Déploiement](#déploiement)
 - [Contexte NIS2](#contexte-nis2)
 
 ---
@@ -93,7 +94,19 @@ Chaque module suit une architecture en couches : `routes → controller → serv
 
 ## Démarrage rapide
 
-### Option A — Docker Compose (recommandé)
+### Option A — Makefile (le plus simple)
+
+Avec Node.js 18+ et une instance PostgreSQL accessible (voir `.env`) :
+
+```bash
+make setup     # installe tout, applique le schéma et seed la base
+make dev       # démarre l'API (:3000) ET le frontend (:5173)
+```
+
+Ouvrez ensuite **http://localhost:5173** et connectez-vous avec les
+identifiants de démonstration ci-dessous. `make help` liste toutes les cibles.
+
+### Option B — Docker Compose
 
 Lance l'API **et** PostgreSQL en une commande :
 
@@ -101,14 +114,22 @@ Lance l'API **et** PostgreSQL en une commande :
 docker compose up --build
 ```
 
-L'API démarre sur `http://localhost:3000`. Dans un autre terminal, applique les migrations et le seed :
+L'API démarre sur `http://localhost:3000`. Dans un autre terminal, applique le schéma et le seed :
 
 ```bash
-docker compose exec api npx prisma migrate deploy
+docker compose exec api npx prisma db push
 docker compose exec api npm run seed
 ```
 
-### Option B — Installation locale
+Pour la **stack de production complète** (PostgreSQL + API + frontend nginx) :
+
+```bash
+cp .env.production .env.prod.local        # renseigner les secrets
+docker compose -f docker-compose.prod.yml --env-file .env.prod.local up -d --build
+# → frontend servi sur http://localhost (port 80)
+```
+
+### Option C — Installation locale manuelle
 
 **Prérequis** : Node.js 18+, une instance PostgreSQL accessible.
 
@@ -121,13 +142,16 @@ cp .env.example .env        # puis éditer les valeurs (DATABASE_URL, secrets JW
 
 # 3. Générer le client Prisma + créer le schéma
 npm run generate
-npm run migrate
+npx prisma db push
 
 # 4. Peupler la base (admin, organisation d'exemple, contrôles NIS2)
 npm run seed
 
 # 5. Démarrer en mode développement (hot-reload)
-npm run dev
+npm run dev                 # API sur http://localhost:3000
+
+# 6. Dans un autre terminal, démarrer le frontend
+cd frontend && npm install && npm run dev   # http://localhost:5173
 ```
 
 ### Scripts disponibles
@@ -305,18 +329,27 @@ Le flux d'authentification repose sur deux tokens :
 
 ## Tests
 
+Trois niveaux de tests couvrent le backend et le frontend :
+
 - **Tests unitaires** (180) — logique métier (services), utilitaires et middlewares ; mock de Prisma. Couverture ~99 %.
 - **Tests d'intégration** (29) — bout en bout via **supertest** contre l'app Express et un vrai PostgreSQL (auth, organisations, conformité, incidents).
+- **Tests E2E** (18, **Playwright**) — parcours utilisateur réels dans un navigateur Chromium contre la pile complète (frontend + API + base) : connexion/déconnexion, routes protégées, et **création** d'incidents, de risques et d'organisations via les formulaires.
 
 ```bash
-npm test               # Tests unitaires
-npm run test:watch     # Mode watch
-npm run test:coverage  # Unitaires + couverture (seuil 70 %)
+# Backend
+npm test                  # Tests unitaires
+npm run test:coverage     # Unitaires + couverture (seuil 70 %)
 npm run test:integration  # Tests d'intégration (PostgreSQL requis)
+
+# Frontend E2E (API + base doivent tourner)
+cd frontend
+npx playwright install chromium   # 1ʳᵉ fois : télécharge le navigateur
+npm run test:e2e
 ```
 
 Le rapport HTML de couverture est généré dans `coverage/`. Les tests d'intégration
-lisent `DATABASE_URL` (défaut `postgresql://nis2:nis2@localhost:5433/nis2_test`).
+lisent `DATABASE_URL`. Les tests E2E démarrent automatiquement le serveur Vite et
+ciblent l'API sur `http://localhost:3000`.
 
 ---
 
@@ -339,13 +372,51 @@ Voir [`frontend/README.md`](./frontend/README.md) pour les détails.
 
 ## Intégration continue
 
-Le pipeline GitHub Actions (`.github/workflows/ci.yml`) comprend cinq jobs :
+Le pipeline GitHub Actions (`.github/workflows/ci.yml`) comprend six jobs :
 
 1. **Code Quality** — `type-check`, `lint`, `format:check`
 2. **Unit Tests** — tests + couverture, artefact uploadé
 3. **Integration Tests** — exécutés contre un service PostgreSQL (`prisma db push`)
 4. **Frontend Build** — `lint` + `build` de l'application React
-5. **Build Docker** — construction de l'image de production (avec cache)
+5. **E2E Tests** — Playwright contre la pile complète (backend buildé + seedé + frontend), rapport uploadé en cas d'échec
+6. **Build Docker** — construction des images de production backend **et** frontend (avec cache)
+
+Un job de **déploiement** (Render) est préconfiguré mais commenté dans le workflow,
+prêt à activer sur la branche `main`.
+
+---
+
+## Déploiement
+
+La plateforme se déploie de deux façons.
+
+### Conteneurs (auto-hébergé)
+
+La stack de production est décrite dans `docker-compose.prod.yml` : PostgreSQL,
+l'API (image multi-stage non-root) et le frontend servi par **nginx** (qui fait
+aussi office de reverse-proxy `/api` → API).
+
+```bash
+cp .env.production .env.prod.local     # renseigner DB_PASSWORD, JWT_SECRET, JWT_REFRESH_SECRET…
+docker compose -f docker-compose.prod.yml --env-file .env.prod.local up -d --build
+docker compose -f docker-compose.prod.yml exec api npx prisma db push   # init du schéma
+docker compose -f docker-compose.prod.yml exec api npm run seed         # (optionnel)
+```
+
+Le frontend est alors accessible sur `http://localhost` (port 80). Seul ce port
+est exposé : PostgreSQL et l'API restent sur le réseau interne Docker.
+
+### PaaS — Render (un clic)
+
+Le blueprint `render.yaml` provisionne une base PostgreSQL, le service API
+(Docker) et le frontend (site statique avec proxy `/api`). Connectez le dépôt
+dans Render, choisissez **Blueprint**, puis renseignez les secrets
+`JWT_SECRET` et `JWT_REFRESH_SECRET`. Adaptez `CORS_ORIGIN` à l'URL publique du
+frontend.
+
+> Checklist production : secrets JWT forts (≥ 32 caractères, distincts),
+> `NODE_ENV=production`, `CORS_ORIGIN` restreint au domaine du frontend,
+> `RATE_LIMIT_MAX` ajusté, et identifiants de seed changés.
 
 ---
 

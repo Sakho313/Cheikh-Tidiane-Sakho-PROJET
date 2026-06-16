@@ -11,7 +11,8 @@ test.describe('Risks', () => {
   test('shows risk matrix and stats cards', async ({ page }) => {
     await expect(page.locator('text=Total risques')).toBeVisible();
     await expect(page.locator('text=Matrice des risques')).toBeVisible();
-    await expect(page.locator('text=Registre des risques')).toBeVisible();
+    // "Registre des risques" also appears in the page description, so target the heading.
+    await expect(page.getByRole('heading', { name: 'Registre des risques' })).toBeVisible();
   });
 
   test('opens and closes the creation form', async ({ page }) => {
@@ -53,9 +54,11 @@ test.describe('Risks', () => {
     // Form closes on success
     await expect(page.getByRole('heading', { name: 'Enregistrer un risque' })).not.toBeVisible();
 
-    // New risk appears in the register table (score = 4 × 5 = 20)
-    await expect(page.getByRole('cell', { name: title })).toBeVisible();
-    await expect(page.getByRole('cell', { name: '20' })).toBeVisible();
+    // New risk appears in the register — scope to its unique row so the score
+    // assertion (4 × 5 = 20) does not collide with other risks sharing a score.
+    const row = page.locator('tr', { hasText: title });
+    await expect(row).toBeVisible();
+    await expect(row.getByText('20')).toBeVisible();
   });
 
   test('validates required fields before submitting', async ({ page }) => {

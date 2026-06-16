@@ -38,17 +38,22 @@ test.describe('Organizations', () => {
     // Form closes on success
     await expect(page.getByText('Créer une organisation')).not.toBeVisible();
 
-    // New organization appears in the table
-    await expect(page.getByRole('cell', { name: orgName })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'France' })).toBeVisible();
+    // New organization appears in the table — scope to its unique row so the
+    // assertion is robust against other organizations (e.g. the seeded one
+    // also located in France).
+    const row = page.locator('tr', { hasText: orgName });
+    await expect(row).toBeVisible();
+    await expect(row.getByText('France')).toBeVisible();
   });
 
   test('shows organization details on clicking Détails', async ({ page }) => {
     const rows = page.locator('tbody tr');
     await rows.first().getByRole('button', { name: 'Détails' }).click();
-    // Stats panel appears
-    await expect(page.locator('text=Score de conformité')).toBeVisible();
-    await expect(page.locator('text=Incidents')).toBeVisible();
-    await expect(page.locator('text=Risques')).toBeVisible();
+    // Stats panel appears — scope to the definition list to avoid matching the
+    // sidebar nav links ("Incidents", "Risques").
+    const stats = page.locator('dl');
+    await expect(stats.getByText('Score de conformité')).toBeVisible();
+    await expect(stats.getByText('Incidents')).toBeVisible();
+    await expect(stats.getByText('Risques')).toBeVisible();
   });
 });

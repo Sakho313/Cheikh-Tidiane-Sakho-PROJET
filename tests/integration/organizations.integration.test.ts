@@ -59,9 +59,7 @@ describe('Organizations integration', () => {
   });
 
   it('GET /api/v1/organizations returns a paginated list (200)', async () => {
-    const res = await request(app)
-      .get('/api/v1/organizations')
-      .set(authHeader(viewer.accessToken));
+    const res = await request(app).get('/api/v1/organizations').set(authHeader(viewer.accessToken));
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);

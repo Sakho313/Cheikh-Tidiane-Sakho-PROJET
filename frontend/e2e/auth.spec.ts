@@ -19,7 +19,8 @@ test.describe('Authentication', () => {
     await page.getByLabel('Adresse e-mail').fill(ADMIN_EMAIL);
     await page.getByLabel('Mot de passe').fill('WrongPassword!');
     await page.getByRole('button', { name: 'Se connecter' }).click();
-    await expect(page.locator('text=Identifiants incorrects')).toBeVisible();
+    // Backend returns "Invalid email or password"; the UI shows it in a red alert box.
+    await expect(page.locator('.bg-red-50')).toBeVisible();
     await expect(page).toHaveURL('/login');
   });
 

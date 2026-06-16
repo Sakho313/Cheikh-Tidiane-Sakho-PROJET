@@ -8,5 +8,5 @@ export async function login(page: Page, email = ADMIN_EMAIL, password = ADMIN_PA
   await page.getByLabel('Adresse e-mail').fill(email);
   await page.getByLabel('Mot de passe').fill(password);
   await page.getByRole('button', { name: 'Se connecter' }).click();
-  await page.waitForURL('/', { timeout: 10_000 });
+  await page.waitForURL('**/dashboard', { timeout: 10_000 });
 }
