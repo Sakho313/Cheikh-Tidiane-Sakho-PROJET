@@ -1,36 +1,39 @@
-## Render.com deployment blueprint
+## Render.com deployment blueprint  —  100% free plan (test)
 ## Docs: https://render.com/docs/blueprint-spec
 ##
-## Creates:
-##   - PostgreSQL database (nis2-db)
-##   - Backend API web service (nis2-api)   — Render native Node runtime
-##   - Frontend static site  (nis2-frontend)
+## Creates three free resources:
+##   - PostgreSQL database (nis2-db)          plan: free
+##   - Backend API web service (nis2-api)     plan: free  (native Node runtime)
+##   - Frontend static site  (nis2-frontend)  plan: free  (static sites are free)
 ##
 ## Usage:
 ##   1. Push this repo to GitHub.
 ##   2. In Render: New + → "Blueprint" → select this repository.
-##   3. Render reads this file and provisions all three resources.
-##      JWT secrets are generated automatically; no manual secrets required.
+##   3. Render reads this file and asks you to fill the secret env vars marked
+##      `sync: false` below: JWT_SECRET, JWT_REFRESH_SECRET, ADMIN_PASSWORD
+##      (and optionally OFFICER_PASSWORD). Everything else is set automatically.
 ##
 ## On every deploy the API runs `prisma db push` (creates/updates the schema)
-## and the idempotent seed (NIS2 controls + demo admin user), so the database
-## is ready on first boot. Default login: admin@nis2.example.com / Admin@1234.
+## and the idempotent seed (NIS2 controls + admin user), so the DB is ready on
+## first boot. The admin password comes from ADMIN_PASSWORD — the default demo
+## password is NOT used online.
 
 databases:
   - name: nis2-db
     databaseName: nis2_db
     user: nis2user
     plan: free
+    region: frankfurt
 
 services:
-  # ── Backend API (native Node runtime) ────────────────────────────────────────
+  # ── Backend API (native Node runtime, free) ──────────────────────────────────
   - type: web
     name: nis2-api
     runtime: node
     plan: free
-    region: frankfurt
+    region: frankfurt          # must match the database region for private networking
     healthCheckPath: /health
-    # --include=dev keeps prisma CLI + ts-node available for db push & seed.
+    # --include=dev keeps the prisma CLI + ts-node available for db push & seed.
     buildCommand: npm ci --include=dev && npx prisma generate && npm run build
     # Bootstrap the schema and seed (both idempotent), then start the server.
     startCommand: npx prisma db push --skip-generate && npm run seed && npm start
@@ -38,11 +41,15 @@ services:
       - key: DATABASE_URL
         fromDatabase:
           name: nis2-db
-          property: connectionString
+          property: connectionString   # injected automatically, leave blank
       - key: JWT_SECRET
-        generateValue: true        # Render generates a secure 256-bit value
+        sync: false                     # ⟵ paste a strong random value in Render
       - key: JWT_REFRESH_SECRET
-        generateValue: true        # Render generates a secure 256-bit value
+        sync: false                     # ⟵ paste a different strong random value
+      - key: ADMIN_PASSWORD
+        sync: false                     # ⟵ password for admin@nis2.example.com
+      - key: OFFICER_PASSWORD
+        sync: false                     # ⟵ (optional) password for the officer demo account
       - key: JWT_EXPIRES_IN
         value: 15m
       - key: JWT_REFRESH_EXPIRES_IN
@@ -58,7 +65,7 @@ services:
       - key: RATE_LIMIT_MAX
         value: 100
 
-  # ── Frontend (static site) ──────────────────────────────────────────────────
+  # ── Frontend (static site, free) ─────────────────────────────────────────────
   - type: web
     name: nis2-frontend
     runtime: static
@@ -66,10 +73,14 @@ services:
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
+    # No VITE_API_BASE_URL here on purpose: the app falls back to the relative
+    # `/api/v1` path, which the rewrite below proxies to the backend server-side
+    # (browser stays same-origin → no CORS). Set VITE_API_BASE_URL only if you
+    # drop the proxy and call the backend cross-origin.
     routes:
-      # Server-side proxy of /api/* to the backend (so the browser stays
-      # same-origin and no CORS is involved). If Render assigns the API a
-      # different hostname than nis2-api.onrender.com, update it here.
+      # Server-side proxy of /api/* to the backend.
+      # If Render assigns the API a host other than nis2-api.onrender.com,
+      # update this destination (and CORS_ORIGIN above) accordingly.
       - type: rewrite
         source: /api/*
         destination: https://nis2-api.onrender.com/api/:splat

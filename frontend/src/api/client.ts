@@ -30,8 +30,13 @@ export function clearTokens(): void {
   localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
+// Base URL of the API. In production the static frontend proxies /api/* to the
+// backend server-side (same-origin → no CORS), so the relative default works.
+// Set VITE_API_BASE_URL to a full URL only for cross-origin calls (no proxy).
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
+
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: '/api/v1',
+  baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -105,7 +110,7 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
       try {
         const { data } = await axios.post<ApiResponse<{ accessToken: string }>>(
-          '/api/v1/auth/refresh',
+          `${API_BASE_URL}/auth/refresh`,
           { refreshToken },
         );
         const newAccessToken = data.data?.accessToken;

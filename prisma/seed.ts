@@ -149,7 +149,10 @@ async function seedAdminUser(organizationId: string): Promise<void> {
     return;
   }
 
-  const passwordHash = await bcrypt.hash('Admin@1234', 12);
+  // Password comes from ADMIN_PASSWORD so the default demo account is never
+  // exposed online; falls back to the demo password only for local dev.
+  const password = process.env.ADMIN_PASSWORD ?? 'Admin@1234';
+  const passwordHash = await bcrypt.hash(password, 12);
 
   const admin = await prisma.user.create({
     data: {
@@ -164,7 +167,11 @@ async function seedAdminUser(organizationId: string): Promise<void> {
   });
 
   console.log(`  Created admin user: ${admin.email}`);
-  console.log(`    Password: Admin@1234`);
+  console.log(
+    process.env.ADMIN_PASSWORD
+      ? '    Password: (defined via ADMIN_PASSWORD)'
+      : '    Password: Admin@1234',
+  );
 }
 
 async function seedComplianceOfficer(organizationId: string): Promise<void> {
@@ -179,7 +186,8 @@ async function seedComplianceOfficer(organizationId: string): Promise<void> {
     return;
   }
 
-  const passwordHash = await bcrypt.hash('Officer@1234', 12);
+  const password = process.env.OFFICER_PASSWORD ?? 'Officer@1234';
+  const passwordHash = await bcrypt.hash(password, 12);
 
   const officer = await prisma.user.create({
     data: {
@@ -194,7 +202,11 @@ async function seedComplianceOfficer(organizationId: string): Promise<void> {
   });
 
   console.log(`  Created compliance officer: ${officer.email}`);
-  console.log(`    Password: Officer@1234`);
+  console.log(
+    process.env.OFFICER_PASSWORD
+      ? '    Password: (defined via OFFICER_PASSWORD)'
+      : '    Password: Officer@1234',
+  );
 }
 
 async function main(): Promise<void> {
@@ -223,11 +235,19 @@ async function main(): Promise<void> {
     console.log('');
     console.log('  Admin credentials:');
     console.log('    Email   : admin@nis2.example.com');
-    console.log('    Password: Admin@1234');
+    console.log(
+      process.env.ADMIN_PASSWORD
+        ? '    Password: (defined via ADMIN_PASSWORD)'
+        : '    Password: Admin@1234',
+    );
     console.log('');
     console.log('  Officer credentials:');
     console.log('    Email   : officer@nis2.example.com');
-    console.log('    Password: Officer@1234');
+    console.log(
+      process.env.OFFICER_PASSWORD
+        ? '    Password: (defined via OFFICER_PASSWORD)'
+        : '    Password: Officer@1234',
+    );
     console.log('');
   } catch (error) {
     console.error('Error during seeding:', error);

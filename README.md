@@ -416,22 +416,34 @@ proxy `/api`). Marche à suivre :
 2. Dans Render : **New + → Blueprint**, puis sélectionner le dépôt.
 3. Render lit `render.yaml` et crée les trois ressources.
 
-Aucun secret à saisir : `JWT_SECRET` et `JWT_REFRESH_SECRET` sont **générés
-automatiquement** par Render (`generateValue`). À chaque déploiement, l'API
-exécute `prisma db push` (création/MAJ du schéma) puis le seed idempotent
-(contrôles NIS2 + admin de démonstration) — la base est donc prête au premier
-démarrage.
+À l'**Apply**, Render demande de renseigner les variables marquées
+`sync: false` :
 
-Connexion par défaut : `admin@nis2.example.com` / `Admin@1234` (à changer en
-production).
+| Variable | Valeur |
+| --- | --- |
+| `JWT_SECRET` | chaîne aléatoire robuste — `openssl rand -base64 48` |
+| `JWT_REFRESH_SECRET` | autre chaîne aléatoire robuste (différente) |
+| `ADMIN_PASSWORD` | mot de passe du compte `admin@nis2.example.com` |
+| `OFFICER_PASSWORD` | *(optionnel)* mot de passe du compte officer de démo |
+
+Toutes les autres variables sont déjà définies dans le blueprint (dont
+`DATABASE_URL`, injectée automatiquement depuis la base).
+
+À chaque déploiement, l'API exécute `prisma db push` (création/MAJ du schéma)
+puis le seed idempotent (contrôles NIS2 + admin) — la base est prête au premier
+démarrage. Le mot de passe admin provient de `ADMIN_PASSWORD` : le mot de passe
+de démo n'est **jamais** utilisé en ligne.
+
+Connexion : `admin@nis2.example.com` / *(votre `ADMIN_PASSWORD`)*.
 
 > Si Render attribue à l'API un hôte différent de `nis2-api.onrender.com`,
 > mettez à jour la destination de la règle `rewrite` `/api/*` (frontend) et la
 > variable `CORS_ORIGIN`.
 
-> Checklist production : changer les identifiants de seed, restreindre
-> `CORS_ORIGIN` au domaine du frontend, ajuster `RATE_LIMIT_MAX`, et envisager
-> un plan payant (les bases PostgreSQL gratuites de Render expirent).
+> Checklist production : secrets JWT forts et distincts, `ADMIN_PASSWORD`
+> robuste, restreindre `CORS_ORIGIN` au domaine du frontend, ajuster
+> `RATE_LIMIT_MAX`, et envisager un plan payant (les bases PostgreSQL gratuites
+> de Render expirent).
 
 ---
 

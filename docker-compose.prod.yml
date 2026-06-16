@@ -43,6 +43,8 @@ services:
       CORS_ORIGIN:               ${CORS_ORIGIN:-http://localhost}
       RATE_LIMIT_WINDOW_MS:      ${RATE_LIMIT_WINDOW_MS:-900000}
       RATE_LIMIT_MAX:            ${RATE_LIMIT_MAX:-100}
+      ADMIN_PASSWORD:            ${ADMIN_PASSWORD:-}
+      OFFICER_PASSWORD:          ${OFFICER_PASSWORD:-}
     depends_on:
       postgres:
         condition: service_healthy
