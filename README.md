@@ -17,6 +17,7 @@ Cette plateforme permet aux organisations de suivre leur posture de conformité,
 - [Documentation de l'API](#documentation-de-lapi)
 - [Authentification & rôles](#authentification--rôles)
 - [Tests](#tests)
+- [Frontend](#frontend)
 - [Intégration continue](#intégration-continue)
 - [Contexte NIS2](#contexte-nis2)
 
@@ -304,26 +305,47 @@ Le flux d'authentification repose sur deux tokens :
 
 ## Tests
 
-Les tests unitaires couvrent la logique métier (services), les utilitaires et les middlewares. Les routes et contrôleurs (fine délégation) sont validés par les tests d'intégration en CI.
+- **Tests unitaires** (180) — logique métier (services), utilitaires et middlewares ; mock de Prisma. Couverture ~99 %.
+- **Tests d'intégration** (29) — bout en bout via **supertest** contre l'app Express et un vrai PostgreSQL (auth, organisations, conformité, incidents).
 
 ```bash
-npm test               # Lance la suite de tests
+npm test               # Tests unitaires
 npm run test:watch     # Mode watch
-npm run test:coverage  # Avec rapport de couverture (seuil 70 %)
+npm run test:coverage  # Unitaires + couverture (seuil 70 %)
+npm run test:integration  # Tests d'intégration (PostgreSQL requis)
 ```
 
-Le rapport HTML de couverture est généré dans `coverage/`.
+Le rapport HTML de couverture est généré dans `coverage/`. Les tests d'intégration
+lisent `DATABASE_URL` (défaut `postgresql://nis2:nis2@localhost:5433/nis2_test`).
+
+---
+
+## Frontend
+
+Une interface web React vit dans [`frontend/`](./frontend) (Vite + React 18 +
+TypeScript, Tailwind, TanStack Query). Elle consomme cette API et couvre les
+sept modules (tableau de bord, organisations, conformité, incidents, risques,
+audits, rapports).
+
+```bash
+cd frontend
+npm install
+npm run dev      # http://localhost:5173 (proxy /api → http://localhost:3000)
+```
+
+Voir [`frontend/README.md`](./frontend/README.md) pour les détails.
 
 ---
 
 ## Intégration continue
 
-Le pipeline GitHub Actions (`.github/workflows/ci.yml`) comprend quatre jobs :
+Le pipeline GitHub Actions (`.github/workflows/ci.yml`) comprend cinq jobs :
 
 1. **Code Quality** — `type-check`, `lint`, `format:check`
 2. **Unit Tests** — tests + couverture, artefact uploadé
-3. **Integration Tests** — exécutés contre un service PostgreSQL (migrate + seed)
-4. **Build Docker** — construction de l'image de production (avec cache)
+3. **Integration Tests** — exécutés contre un service PostgreSQL (`prisma db push`)
+4. **Frontend Build** — `lint` + `build` de l'application React
+5. **Build Docker** — construction de l'image de production (avec cache)
 
 ---
 
