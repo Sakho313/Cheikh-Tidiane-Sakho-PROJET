@@ -1,20 +1,25 @@
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, type FormEvent, useMemo } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { risksApi } from '@/api/risks';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card, StatCard } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { OrgSelector } from '@/components/OrgSelector';
 import { LoadingBlock } from '@/components/ui/Spinner';
 import { Table, THead, TBody, TR, TH, TD, EmptyRow } from '@/components/ui/Table';
 import { useSelectedOrg } from '@/hooks/useSelectedOrg';
+import { extractErrorMessage } from '@/api/client';
 import {
   riskCategoryLabels,
   riskStatusLabels,
   riskStatusTone,
   riskLevelLabels,
 } from '@/lib/labels';
-import type { RiskLevel, RiskMatrixCell } from '@/types';
+import type { RiskCategory, RiskLevel, RiskMatrixCell, RiskPayload } from '@/types';
+
+const CATEGORIES = Object.keys(riskCategoryLabels) as RiskCategory[];
+const SCALE = [1, 2, 3, 4, 5];
 
 const levelCellClass: Record<RiskLevel, string> = {
   LOW: 'bg-green-200 text-green-900',
@@ -23,8 +28,21 @@ const levelCellClass: Record<RiskLevel, string> = {
   CRITICAL: 'bg-red-300 text-red-900',
 };
 
+const initialForm = () => ({
+  title: '',
+  description: '',
+  category: 'NETWORK' as RiskCategory,
+  likelihood: 3,
+  impact: 3,
+  mitigationPlan: '',
+});
+
 export function RisksPage() {
   const [orgId, setOrgId] = useSelectedOrg();
+  const queryClient = useQueryClient();
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState(initialForm);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const matrixQuery = useQuery({
     queryKey: ['risk-matrix', orgId],
@@ -38,8 +56,32 @@ export function RisksPage() {
     enabled: Boolean(orgId),
   });
 
-  // Index matrix cells by "likelihood-impact" so rendering is independent of
-  // the backend's array orientation.
+  const createMutation = useMutation({
+    mutationFn: (payload: RiskPayload) => risksApi.create(payload),
+    onSuccess: () => {
+      setFormError(null);
+      setShowForm(false);
+      setForm(initialForm);
+      void queryClient.invalidateQueries({ queryKey: ['risks', orgId] });
+      void queryClient.invalidateQueries({ queryKey: ['risk-matrix', orgId] });
+    },
+    onError: (err) => setFormError(extractErrorMessage(err)),
+  });
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    createMutation.mutate({
+      organizationId: orgId as string,
+      title: form.title,
+      description: form.description,
+      category: form.category,
+      likelihood: form.likelihood,
+      impact: form.impact,
+      mitigationPlan: form.mitigationPlan.trim() || undefined,
+    });
+  };
+
   const cellByCoord = useMemo(() => {
     const map = new Map<string, RiskMatrixCell>();
     (matrixQuery.data?.matrix ?? []).flat().forEach((cell) => {
@@ -50,14 +92,22 @@ export function RisksPage() {
 
   const summary = matrixQuery.data?.summary;
   const risks = listQuery.data?.data ?? [];
-  const axis = [1, 2, 3, 4, 5];
 
   return (
     <div>
       <PageHeader
         title="Gestion des risques"
         description="Matrice 5×5 (probabilité × impact) et registre des risques"
-        actions={<OrgSelector value={orgId} onChange={setOrgId} />}
+        actions={
+          <>
+            <OrgSelector value={orgId} onChange={setOrgId} />
+            {orgId && (
+              <Button variant="secondary" onClick={() => setShowForm((v) => !v)}>
+                {showForm ? 'Fermer' : 'Nouveau risque'}
+              </Button>
+            )}
+          </>
+        }
       />
 
       {!orgId ? (
@@ -66,6 +116,107 @@ export function RisksPage() {
         </Card>
       ) : (
         <>
+          {showForm && (
+            <Card title="Enregistrer un risque" className="mb-6">
+              {formError && (
+                <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {formError}
+                </div>
+              )}
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <label htmlFor="risk-title" className="form-label">Titre</label>
+                  <input
+                    id="risk-title"
+                    required
+                    className="form-input"
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="risk-category" className="form-label">Catégorie</label>
+                  <select
+                    id="risk-category"
+                    className="form-input"
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value as RiskCategory })}
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c} value={c}>
+                        {riskCategoryLabels[c]}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="risk-likelihood" className="form-label">Probabilité (1-5)</label>
+                    <select
+                      id="risk-likelihood"
+                      className="form-input"
+                      value={form.likelihood}
+                      onChange={(e) => setForm({ ...form, likelihood: Number(e.target.value) })}
+                    >
+                      {SCALE.map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="risk-impact" className="form-label">Impact (1-5)</label>
+                    <select
+                      id="risk-impact"
+                      className="form-input"
+                      value={form.impact}
+                      onChange={(e) => setForm({ ...form, impact: Number(e.target.value) })}
+                    >
+                      {SCALE.map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="risk-description" className="form-label">Description</label>
+                  <textarea
+                    id="risk-description"
+                    required
+                    rows={3}
+                    className="form-input"
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="risk-mitigation" className="form-label">
+                    Plan de mitigation{' '}
+                    <span className="font-normal text-gray-400">(optionnel)</span>
+                  </label>
+                  <textarea
+                    id="risk-mitigation"
+                    rows={2}
+                    className="form-input"
+                    value={form.mitigationPlan}
+                    onChange={(e) => setForm({ ...form, mitigationPlan: e.target.value })}
+                  />
+                </div>
+                <div className="sm:col-span-2 flex items-center gap-3">
+                  <Button type="submit" isLoading={createMutation.isPending}>
+                    Enregistrer
+                  </Button>
+                  <span className="text-sm text-gray-500">
+                    Score calculé : {form.likelihood * form.impact} / 25
+                  </span>
+                </div>
+              </form>
+            </Card>
+          )}
+
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <StatCard label="Total risques" value={summary?.total ?? 0} />
             <StatCard label="Critiques" value={summary?.critical ?? 0} accent="text-red-600" />
@@ -86,13 +237,12 @@ export function RisksPage() {
                       </span>
                     </div>
                     <div className="flex-1">
-                      {/* Rows: impact 5 (top) → 1 (bottom) */}
                       {[5, 4, 3, 2, 1].map((impact) => (
                         <div key={impact} className="flex">
                           <div className="flex w-6 items-center justify-center text-xs font-medium text-gray-400">
                             {impact}
                           </div>
-                          {axis.map((likelihood) => {
+                          {SCALE.map((likelihood) => {
                             const cell = cellByCoord.get(`${likelihood}-${impact}`);
                             const level: RiskLevel = cell?.level ?? 'LOW';
                             return (
@@ -110,7 +260,7 @@ export function RisksPage() {
                       ))}
                       <div className="flex">
                         <div className="w-6" />
-                        {axis.map((likelihood) => (
+                        {SCALE.map((likelihood) => (
                           <div
                             key={likelihood}
                             className="flex-1 text-center text-xs font-medium text-gray-400"
