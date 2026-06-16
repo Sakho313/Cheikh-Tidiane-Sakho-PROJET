@@ -1,0 +1,64 @@
+version: '3.9'
+
+# Production stack: PostgreSQL + Express API + React/nginx frontend
+# Usage:
+#   cp .env.production .env.prod.local   # fill in secrets
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod.local up -d
+#
+# First-time DB setup:
+#   docker compose -f docker-compose.prod.yml exec api npx prisma db push
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${DB_USER:-nis2user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in your env file}
+      POSTGRES_DB:       ${DB_NAME:-nis2_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-nis2user} -d ${DB_NAME:-nis2_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Not exposed outside the docker network in production
+    expose:
+      - "5432"
+
+  api:
+    build:
+      context: .
+      target: production
+    restart: unless-stopped
+    environment:
+      DATABASE_URL:              postgresql://${DB_USER:-nis2user}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-nis2_db}
+      JWT_SECRET:                ${JWT_SECRET:?Set JWT_SECRET in your env file}
+      JWT_REFRESH_SECRET:        ${JWT_REFRESH_SECRET:?Set JWT_REFRESH_SECRET in your env file}
+      JWT_EXPIRES_IN:            ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_EXPIRES_IN:    ${JWT_REFRESH_EXPIRES_IN:-7d}
+      NODE_ENV:                  production
+      PORT:                      3000
+      CORS_ORIGIN:               ${CORS_ORIGIN:-http://localhost}
+      RATE_LIMIT_WINDOW_MS:      ${RATE_LIMIT_WINDOW_MS:-900000}
+      RATE_LIMIT_MAX:            ${RATE_LIMIT_MAX:-100}
+      ADMIN_PASSWORD:            ${ADMIN_PASSWORD:-}
+      OFFICER_PASSWORD:          ${OFFICER_PASSWORD:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "3000"
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
