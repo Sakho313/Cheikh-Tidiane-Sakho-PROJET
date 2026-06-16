@@ -2,9 +2,9 @@
 ## Docs: https://render.com/docs/blueprint-spec
 ##
 ## Creates three free resources:
-##   - PostgreSQL database (nis2-db)          plan: free
-##   - Backend API web service (nis2-api)     plan: free  (native Node runtime)
-##   - Frontend static site  (nis2-frontend)  plan: free  (static sites are free)
+##   - PostgreSQL database (nis2-db)          plan: free    (databases accept "free")
+##   - Backend API web service (nis2-api)     plan: starter (free tier for web services)
+##   - Frontend static site  (nis2-frontend)  toujours gratuit, pas de plan à définir
 ##
 ## Usage:
 ##   1. Push this repo to GitHub.
@@ -30,8 +30,8 @@ services:
   - type: web
     name: nis2-api
     runtime: node
-    plan: free
-    region: frankfurt          # must match the database region for private networking
+    plan: starter          # "starter" = niveau gratuit pour les web services Render
+    region: frankfurt      # doit correspondre à la région de la base de données
     healthCheckPath: /health
     # --include=dev keeps the prisma CLI + ts-node available for db push & seed.
     buildCommand: npm ci --include=dev && npx prisma generate && npm run build
@@ -65,11 +65,11 @@ services:
       - key: RATE_LIMIT_MAX
         value: 100
 
-  # ── Frontend (static site, free) ─────────────────────────────────────────────
+  # ── Frontend (static site) ────────────────────────────────────────────────────
+  # Static sites are always free on Render — no plan field needed.
   - type: web
     name: nis2-frontend
     runtime: static
-    plan: free
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
