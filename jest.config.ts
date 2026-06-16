@@ -5,6 +5,9 @@ const config: Config = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: ['**/__tests__/**/*.ts', '**/*.test.ts', '**/*.spec.ts'],
+  // Les tests d'intégration (base PostgreSQL réelle) ont leur propre config
+  // (jest.integration.config.ts) et ne doivent pas être exécutés par `npm test`.
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/tests/integration/'],
   transform: {
     '^.+\\.ts$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
   },

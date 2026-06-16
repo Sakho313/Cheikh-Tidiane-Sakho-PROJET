@@ -78,9 +78,8 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npx prisma generate
-      - run: npx prisma migrate deploy
-      - run: npm run seed
-      - run: npm run test:coverage -- --testPathPattern=integration
+      - run: npx prisma db push
+      - run: npm run test:integration
 
   build:
     name: Build Docker Image

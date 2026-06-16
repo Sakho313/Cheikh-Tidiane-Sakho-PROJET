@@ -141,7 +141,19 @@ export class AuthService {
       throw error;
     }
 
-    const tokens = generateTokens(payload);
+    // `verifyRefreshToken` returns the decoded token, which also carries the
+    // JWT registered claims (`iat`, `exp`). Re-signing that object would make
+    // `jsonwebtoken` throw ("payload already has an exp property") because
+    // `generateTokens` also passes `expiresIn`. Rebuild a clean AuthPayload
+    // with only the domain claims before issuing new tokens.
+    const newPayload: AuthPayload = {
+      userId: payload.userId,
+      email: payload.email,
+      role: payload.role,
+      organizationId: payload.organizationId,
+    };
+
+    const tokens = generateTokens(newPayload);
     return { accessToken: tokens.accessToken };
   }
 
