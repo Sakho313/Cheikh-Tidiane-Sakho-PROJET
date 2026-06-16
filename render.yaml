@@ -1,0 +1,67 @@
+## Render.com deployment blueprint
+## Docs: https://render.com/docs/blueprint-spec
+##
+## Creates:
+##   - PostgreSQL database (nis2-db)
+##   - Backend API web service (nis2-api)
+##   - Frontend static site  (nis2-frontend)
+##
+## Usage: Connect your GitHub repo in Render, select "Blueprint" and point to this file.
+## Set the required secret environment variables in the Render dashboard:
+##   DB_PASSWORD, JWT_SECRET, JWT_REFRESH_SECRET
+
+databases:
+  - name: nis2-db
+    databaseName: nis2_db
+    user: nis2user
+    plan: free
+
+services:
+  # ── Backend API ─────────────────────────────────────────────────────────────
+  - type: web
+    name: nis2-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nis2-db
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false          # set in Render dashboard
+      - key: JWT_REFRESH_SECRET
+        sync: false          # set in Render dashboard
+      - key: JWT_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: CORS_ORIGIN
+        value: https://nis2-frontend.onrender.com   # update to your frontend URL
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 100
+
+  # ── Frontend (static site) ──────────────────────────────────────────────────
+  - type: web
+    name: nis2-frontend
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    rootDir: frontend
+    plan: free
+    routes:
+      # Proxy /api/* to the backend
+      - type: rewrite
+        source: /api/*
+        destination: https://nis2-api.onrender.com/api/:splat
+      # SPA fallback
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -46,3 +46,7 @@ prisma/migrations/
 
 # TypeScript
 *.tsbuildinfo
+
+# Playwright
+frontend/playwright-report/
+frontend/test-results/
