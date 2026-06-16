@@ -408,15 +408,30 @@ est exposé : PostgreSQL et l'API restent sur le réseau interne Docker.
 
 ### PaaS — Render (un clic)
 
-Le blueprint `render.yaml` provisionne une base PostgreSQL, le service API
-(Docker) et le frontend (site statique avec proxy `/api`). Connectez le dépôt
-dans Render, choisissez **Blueprint**, puis renseignez les secrets
-`JWT_SECRET` et `JWT_REFRESH_SECRET`. Adaptez `CORS_ORIGIN` à l'URL publique du
-frontend.
+Le blueprint `render.yaml` provisionne trois ressources : une base PostgreSQL,
+le service API (runtime **Node** natif) et le frontend (site statique avec
+proxy `/api`). Marche à suivre :
 
-> Checklist production : secrets JWT forts (≥ 32 caractères, distincts),
-> `NODE_ENV=production`, `CORS_ORIGIN` restreint au domaine du frontend,
-> `RATE_LIMIT_MAX` ajusté, et identifiants de seed changés.
+1. Pousser le dépôt sur GitHub.
+2. Dans Render : **New + → Blueprint**, puis sélectionner le dépôt.
+3. Render lit `render.yaml` et crée les trois ressources.
+
+Aucun secret à saisir : `JWT_SECRET` et `JWT_REFRESH_SECRET` sont **générés
+automatiquement** par Render (`generateValue`). À chaque déploiement, l'API
+exécute `prisma db push` (création/MAJ du schéma) puis le seed idempotent
+(contrôles NIS2 + admin de démonstration) — la base est donc prête au premier
+démarrage.
+
+Connexion par défaut : `admin@nis2.example.com` / `Admin@1234` (à changer en
+production).
+
+> Si Render attribue à l'API un hôte différent de `nis2-api.onrender.com`,
+> mettez à jour la destination de la règle `rewrite` `/api/*` (frontend) et la
+> variable `CORS_ORIGIN`.
+
+> Checklist production : changer les identifiants de seed, restreindre
+> `CORS_ORIGIN` au domaine du frontend, ajuster `RATE_LIMIT_MAX`, et envisager
+> un plan payant (les bases PostgreSQL gratuites de Render expirent).
 
 ---
 

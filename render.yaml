@@ -3,12 +3,18 @@
 ##
 ## Creates:
 ##   - PostgreSQL database (nis2-db)
-##   - Backend API web service (nis2-api)
+##   - Backend API web service (nis2-api)   — Render native Node runtime
 ##   - Frontend static site  (nis2-frontend)
 ##
-## Usage: Connect your GitHub repo in Render, select "Blueprint" and point to this file.
-## Set the required secret environment variables in the Render dashboard:
-##   DB_PASSWORD, JWT_SECRET, JWT_REFRESH_SECRET
+## Usage:
+##   1. Push this repo to GitHub.
+##   2. In Render: New + → "Blueprint" → select this repository.
+##   3. Render reads this file and provisions all three resources.
+##      JWT secrets are generated automatically; no manual secrets required.
+##
+## On every deploy the API runs `prisma db push` (creates/updates the schema)
+## and the idempotent seed (NIS2 controls + demo admin user), so the database
+## is ready on first boot. Default login: admin@nis2.example.com / Admin@1234.
 
 databases:
   - name: nis2-db
@@ -17,32 +23,36 @@ databases:
     plan: free
 
 services:
-  # ── Backend API ─────────────────────────────────────────────────────────────
+  # ── Backend API (native Node runtime) ────────────────────────────────────────
   - type: web
     name: nis2-api
-    runtime: docker
-    dockerfilePath: ./Dockerfile
+    runtime: node
     plan: free
+    region: frankfurt
     healthCheckPath: /health
+    # --include=dev keeps prisma CLI + ts-node available for db push & seed.
+    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
+    # Bootstrap the schema and seed (both idempotent), then start the server.
+    startCommand: npx prisma db push --skip-generate && npm run seed && npm start
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: nis2-db
           property: connectionString
       - key: JWT_SECRET
-        sync: false          # set in Render dashboard
+        generateValue: true        # Render generates a secure 256-bit value
       - key: JWT_REFRESH_SECRET
-        sync: false          # set in Render dashboard
+        generateValue: true        # Render generates a secure 256-bit value
       - key: JWT_EXPIRES_IN
         value: 15m
       - key: JWT_REFRESH_EXPIRES_IN
         value: 7d
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3000
       - key: CORS_ORIGIN
-        value: https://nis2-frontend.onrender.com   # update to your frontend URL
+        # Same-origin in practice (the frontend proxies /api/*), kept as a
+        # sensible default. Update if your frontend URL differs.
+        value: https://nis2-frontend.onrender.com
       - key: RATE_LIMIT_WINDOW_MS
         value: 900000
       - key: RATE_LIMIT_MAX
@@ -52,16 +62,18 @@ services:
   - type: web
     name: nis2-frontend
     runtime: static
+    plan: free
+    rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
-    rootDir: frontend
-    plan: free
     routes:
-      # Proxy /api/* to the backend
+      # Server-side proxy of /api/* to the backend (so the browser stays
+      # same-origin and no CORS is involved). If Render assigns the API a
+      # different hostname than nis2-api.onrender.com, update it here.
       - type: rewrite
         source: /api/*
         destination: https://nis2-api.onrender.com/api/:splat
-      # SPA fallback
+      # SPA fallback — every other path serves the app shell.
       - type: rewrite
         source: /*
         destination: /index.html
