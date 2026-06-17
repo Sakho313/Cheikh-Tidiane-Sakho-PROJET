@@ -9,9 +9,10 @@
 ## Usage:
 ##   1. Push this repo to GitHub.
 ##   2. In Render: New + → "Blueprint" → select this repository.
-##   3. Render reads this file and asks you to fill the secret env vars marked
-##      `sync: false` below: JWT_SECRET, JWT_REFRESH_SECRET, ADMIN_PASSWORD
-##      (and optionally OFFICER_PASSWORD). Everything else is set automatically.
+##   3. Render reads this file and asks you to fill the `sync: false` env vars:
+##      - nis2-api      : JWT_SECRET, JWT_REFRESH_SECRET, ADMIN_PASSWORD, OFFICER_PASSWORD
+##      - nis2-frontend : VITE_API_URL = the public nis2-api URL
+##      Everything else is set automatically.
 ##
 ## On every deploy the API runs `prisma db push` (creates/updates the schema)
 ## and the idempotent seed (NIS2 controls + admin user), so the DB is ready on
@@ -57,8 +58,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: CORS_ORIGIN
-        # Same-origin in practice (the frontend proxies /api/*), kept as a
-        # sensible default. Update if your frontend URL differs.
+        # Frontend origin allowed to call the API cross-origin. The backend also
+        # accepts any *.onrender.com origin for convenience; set this to your
+        # exact frontend URL (and tighten the code) for production.
         value: https://nis2-frontend.onrender.com
       - key: RATE_LIMIT_WINDOW_MS
         value: 900000
@@ -73,18 +75,15 @@ services:
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
-    # No VITE_API_BASE_URL here on purpose: the app falls back to the relative
-    # `/api/v1` path, which the rewrite below proxies to the backend server-side
-    # (browser stays same-origin → no CORS). Set VITE_API_BASE_URL only if you
-    # drop the proxy and call the backend cross-origin.
+    envVars:
+      # Public URL of the backend API. Set this to the exact nis2-api URL shown
+      # in your Render dashboard (e.g. https://nis2-api.onrender.com). The app
+      # calls it directly (cross-origin) and appends /api/v1.
+      - key: VITE_API_URL
+        sync: false
     routes:
-      # Server-side proxy of /api/* to the backend.
-      # If Render assigns the API a host other than nis2-api.onrender.com,
-      # update this destination (and CORS_ORIGIN above) accordingly.
-      - type: rewrite
-        source: /api/*
-        destination: https://nis2-api.onrender.com/api/:splat
-      # SPA fallback — every other path serves the app shell.
+      # SPA fallback — every path serves the app shell. API calls go straight to
+      # VITE_API_URL (cross-origin), so no /api proxy is needed here.
       - type: rewrite
         source: /*
         destination: /index.html

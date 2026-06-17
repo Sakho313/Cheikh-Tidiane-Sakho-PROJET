@@ -18,13 +18,42 @@ import reportRoutes from './modules/reports/report.routes';
 
 const app = express();
 
+// Render (and most PaaS) run the app behind a reverse proxy. Trust the first
+// hop so req.ip / rate-limiting see the real client IP and express-rate-limit
+// accepts the X-Forwarded-For header.
+app.set('trust proxy', 1);
+
 // ─── Security middleware ──────────────────────────────────────────────────────
 
 app.use(helmet());
 
+// Build the CORS allow-list from CORS_ORIGIN (comma-separated; scheme optional).
+const allowedOrigins = env.CORS_ORIGIN.split(',')
+  .map((o) => o.trim())
+  .filter(Boolean)
+  .map((o) => (/^https?:\/\//.test(o) ? o : `https://${o}`).replace(/\/+$/, ''));
+
+function isAllowedOrigin(origin: string): boolean {
+  if (allowedOrigins.includes(origin)) return true;
+  // Test convenience: allow any Render-hosted frontend (*.onrender.com).
+  try {
+    const url = new URL(origin);
+    return url.protocol === 'https:' && url.hostname.endsWith('.onrender.com');
+  } catch {
+    return false;
+  }
+}
+
 app.use(
   cors({
-    origin: env.CORS_ORIGIN,
+    origin(origin, callback) {
+      // No Origin header = same-origin or non-browser client (curl, health checks).
+      if (!origin || isAllowedOrigin(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error(`Origin ${origin} is not allowed by CORS`));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -69,7 +98,7 @@ app.get('/api/docs.json', (_req: Request, res: Response) => res.json(swaggerSpec
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 
-app.get('/health', (_req: Request, res: Response) => {
+const healthHandler = (_req: Request, res: Response): void => {
   res.status(200).json({
     success: true,
     data: {
@@ -79,7 +108,12 @@ app.get('/health', (_req: Request, res: Response) => {
       version: process.env['npm_package_version'] ?? '1.0.0',
     },
   });
-});
+};
+
+// Exposed at /health (Render health check) and /api/health (reachable via the
+// API path used by clients).
+app.get('/health', healthHandler);
+app.get('/api/health', healthHandler);
 
 // ─── API routes ───────────────────────────────────────────────────────────────
 

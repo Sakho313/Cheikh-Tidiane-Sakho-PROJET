@@ -2,12 +2,11 @@
 
 interface ImportMetaEnv {
   /**
-   * Base URL of the backend API.
-   * Leave unset in production to use the same-origin `/api` proxy (no CORS);
-   * set to a full URL (e.g. https://nis2-api.onrender.com/api/v1) only when
-   * the frontend calls the backend cross-origin without a proxy.
+   * Public base URL of the backend API, e.g. https://nis2-api.onrender.com
+   * The client appends /api/v1. Leave unset in local dev to use the Vite
+   * proxy (relative /api/v1).
    */
-  readonly VITE_API_BASE_URL?: string;
+  readonly VITE_API_URL?: string;
 }
 
 interface ImportMeta {

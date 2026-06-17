@@ -30,10 +30,18 @@ export function clearTokens(): void {
   localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
-// Base URL of the API. In production the static frontend proxies /api/* to the
-// backend server-side (same-origin → no CORS), so the relative default works.
-// Set VITE_API_BASE_URL to a full URL only for cross-origin calls (no proxy).
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
+// Base URL of the API. In production, set VITE_API_URL to the backend's public
+// URL (e.g. https://nis2-api.onrender.com) — the client calls it cross-origin
+// and appends /api/v1. When unset (local dev), it falls back to the relative
+// /api/v1 path served by the Vite dev proxy.
+function resolveApiBaseUrl(): string {
+  const raw = import.meta.env.VITE_API_URL?.trim();
+  if (!raw) return '/api/v1';
+  const origin = (/^https?:\/\//.test(raw) ? raw : `https://${raw}`).replace(/\/+$/, '');
+  return origin.endsWith('/api/v1') ? origin : `${origin}/api/v1`;
+}
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
