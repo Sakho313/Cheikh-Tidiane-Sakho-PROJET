@@ -126,6 +126,8 @@ export function AppLayout() {
   const supplierCount = orgId ? pendingEvaluationCount(suppliers) : 0;
   const vulnCount = orgId ? criticalOpenCount(vulns) : 0;
 
+  const isDemo = user?.role === 'VIEWER';
+
   const handleLogout = () => {
     logout();
     navigate('/login', { replace: true });
@@ -222,6 +224,14 @@ export function AppLayout() {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
+        {/* Demo mode banner (read-only VIEWER account) */}
+        {isDemo && (
+          <div className="flex shrink-0 items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 px-4 py-1.5 text-center text-[12px] font-semibold text-white">
+            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+            Mode démonstration — exploration libre en lecture seule. Vos modifications ne sont pas enregistrées sur le serveur.
+          </div>
+        )}
+
         {/* Top bar */}
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6 shadow-sm">
           <button

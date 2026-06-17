@@ -50,6 +50,12 @@ services:
         sync: false                     # ⟵ password for admin@nis2.example.com
       - key: OFFICER_PASSWORD
         sync: false                     # ⟵ (optional) password for the officer demo account
+      # Shared read-only demo account (the "Accéder à la démonstration" button).
+      # Public by design; must match the frontend's VITE_DEMO_* below.
+      - key: DEMO_EMAIL
+        value: demo@sao-nis2.com
+      - key: DEMO_PASSWORD
+        value: Demo2024NIS2!
       - key: JWT_EXPIRES_IN
         value: 15m
       - key: JWT_REFRESH_EXPIRES_IN
@@ -77,6 +83,13 @@ services:
     # `/api/v1` path, which the rewrite below proxies to the backend server-side
     # (browser stays same-origin → no CORS). Set VITE_API_BASE_URL only if you
     # drop the proxy and call the backend cross-origin.
+    envVars:
+      # Credentials for the one-click demo button. Inlined at build time.
+      # Must match DEMO_EMAIL / DEMO_PASSWORD on the API service above.
+      - key: VITE_DEMO_EMAIL
+        value: demo@sao-nis2.com
+      - key: VITE_DEMO_PASSWORD
+        value: Demo2024NIS2!
     routes:
       # Server-side proxy of /api/* to the backend.
       # If Render assigns the API a host other than nis2-api.onrender.com,
