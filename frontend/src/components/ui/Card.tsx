@@ -9,10 +9,10 @@ interface CardProps {
 
 export function Card({ children, className = '', title, actions }: CardProps) {
   return (
-    <div className={`rounded-lg border border-gray-200 bg-white shadow-card ${className}`}>
+    <div className={`rounded-xl border border-slate-200 bg-white shadow-sm ${className}`}>
       {(title || actions) && (
-        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3">
-          {title ? <h3 className="text-sm font-semibold text-gray-700">{title}</h3> : <span />}
+        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
+          {title ? <h3 className="text-sm font-semibold text-slate-700">{title}</h3> : <span />}
           {actions}
         </div>
       )}
@@ -30,10 +30,10 @@ interface StatCardProps {
 
 export function StatCard({ label, value, hint, accent = 'text-primary-600' }: StatCardProps) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-card">
-      <p className="text-sm font-medium text-gray-500">{label}</p>
+    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{label}</p>
       <p className={`mt-2 text-3xl font-bold ${accent}`}>{value}</p>
-      {hint && <p className="mt-1 text-xs text-gray-400">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
     </div>
   );
 }

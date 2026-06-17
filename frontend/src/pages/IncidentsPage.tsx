@@ -100,10 +100,10 @@ export function IncidentsPage() {
   const stats = statsQuery.data;
 
   return (
-    <div>
+    <div className="p-4 sm:p-6 lg:p-8">
       <PageHeader
-        title="Incidents de sécurité"
-        description="Gestion du cycle de vie et notification réglementaire (Article 23)"
+        title="Gestion de crise"
+        description="Cycle de vie des incidents et notification réglementaire NIS2 Article 23"
         actions={
           <>
             <OrgSelector value={orgId} onChange={setOrgId} />
