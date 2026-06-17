@@ -94,10 +94,10 @@ export function RisksPage() {
   const risks = listQuery.data?.data ?? [];
 
   return (
-    <div>
+    <div className="p-4 sm:p-6 lg:p-8">
       <PageHeader
-        title="Gestion des risques"
-        description="Matrice 5×5 (probabilité × impact) et registre des risques"
+        title="Risques EBIOS RM"
+        description="Analyse des risques (probabilité × impact) et registre EBIOS"
         actions={
           <>
             <OrgSelector value={orgId} onChange={setOrgId} />

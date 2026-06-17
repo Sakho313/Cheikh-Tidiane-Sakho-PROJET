@@ -69,7 +69,7 @@ export function OrganizationsPage() {
   const selected: Organization | undefined = organizations.find((o) => o.id === detailId);
 
   return (
-    <div>
+    <div className="p-4 sm:p-6 lg:p-8">
       <PageHeader
         title="Organisations"
         description="Entités régulées sous le régime NIS2"

@@ -55,10 +55,10 @@ export function CompliancePage() {
   const score = scoreQuery.data;
 
   return (
-    <div>
+    <div className="p-4 sm:p-6 lg:p-8">
       <PageHeader
-        title="Conformité NIS2"
-        description="Suivi des mesures de sécurité de l'Article 21"
+        title="Gouvernance & Gap"
+        description="Évaluation des mesures de sécurité NIS2 Article 21"
         actions={<OrgSelector value={orgId} onChange={setOrgId} />}
       />
 

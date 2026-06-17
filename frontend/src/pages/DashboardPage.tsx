@@ -1,26 +1,122 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { organizationsApi } from '@/api/organizations';
 import { complianceApi } from '@/api/compliance';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { StatCard, Card } from '@/components/ui/Card';
+import { risksApi } from '@/api/risks';
+import { auditsApi } from '@/api/audits';
 import { OrgSelector } from '@/components/OrgSelector';
 import { LoadingBlock } from '@/components/ui/Spinner';
-import { Badge } from '@/components/ui/Badge';
 import { useSelectedOrg } from '@/hooks/useSelectedOrg';
-import {
-  formatDate,
-  incidentSeverityLabels,
-  incidentSeverityTone,
-  incidentStatusLabels,
-} from '@/lib/labels';
-import { incidentsApi } from '@/api/incidents';
 
-function scoreAccent(score: number): string {
-  if (score >= 75) return 'text-green-600';
-  if (score >= 40) return 'text-orange-500';
-  return 'text-red-600';
+// ── Circular gauge (arc style like the screenshot) ───────────────────────────
+function MaturityGauge({ score }: { score: number }) {
+  // Draw an arc from ~200° to 340° (lower half arc)
+  const R = 58;
+  const cx = 70;
+  const cy = 75;
+  const startAngle = -220; // degrees
+  const endAngle = 40;
+  const totalSpan = endAngle - startAngle; // 260°
+
+  function polarToXY(angle: number, r: number) {
+    const rad = (angle * Math.PI) / 180;
+    return {
+      x: cx + r * Math.cos(rad),
+      y: cy + r * Math.sin(rad),
+    };
+  }
+
+  function describeArc(start: number, end: number) {
+    const s = polarToXY(start, R);
+    const e = polarToXY(end, R);
+    const large = end - start > 180 ? 1 : 0;
+    return `M ${s.x} ${s.y} A ${R} ${R} 0 ${large} 1 ${e.x} ${e.y}`;
+  }
+
+  const filledEnd = startAngle + (score / 100) * totalSpan;
+
+  return (
+    <div className="flex items-center justify-center">
+      <div className="relative w-36 h-32">
+        <svg viewBox="0 0 140 120" className="w-full h-full">
+          {/* Track */}
+          <path
+            d={describeArc(startAngle, endAngle)}
+            fill="none"
+            stroke="#e2e8f0"
+            strokeWidth="10"
+            strokeLinecap="round"
+          />
+          {/* Fill — orange/amber like screenshot */}
+          <path
+            d={describeArc(startAngle, filledEnd)}
+            fill="none"
+            stroke="#f59e0b"
+            strokeWidth="10"
+            strokeLinecap="round"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pb-2">
+          <span className="text-3xl font-bold text-slate-800">{score}%</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+            Maturité
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
+// ── Coverage bar ──────────────────────────────────────────────────────────────
+function CoverageBar({
+  label,
+  value,
+  max = 100,
+  unit = '%',
+  color = 'bg-amber-400',
+}: {
+  label: string;
+  value: number;
+  max?: number;
+  unit?: string;
+  color?: string;
+}) {
+  const pct = max > 0 ? Math.min((value / max) * 100, 100) : 0;
+  return (
+    <div>
+      <div className="flex items-center justify-between text-sm mb-1">
+        <span className="text-slate-700">{label}</span>
+        <span className="font-semibold text-slate-800">
+          {value}
+          {unit !== '%' ? '' : '%'}
+          {unit !== '%' && (
+            <span className="text-slate-500 font-normal ml-0.5">{unit}</span>
+          )}
+        </span>
+      </div>
+      <div className="h-2 w-full rounded-full bg-slate-200">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+// ── Domain bar (right panel) ──────────────────────────────────────────────────
+function DomainRow({ domain, score }: { domain: string; score: number }) {
+  const color =
+    score < 30 ? 'bg-red-500' : score < 60 ? 'bg-amber-400' : 'bg-emerald-500';
+  return (
+    <div className="flex items-center gap-3">
+      <span className="w-36 shrink-0 text-xs text-slate-700 truncate">{domain}</span>
+      <div className="flex-1 h-2 rounded-full bg-slate-100">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${score}%` }} />
+      </div>
+      <span className="w-8 text-right text-xs font-semibold text-slate-500">{score}%</span>
+    </div>
+  );
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
 export function DashboardPage() {
   const [orgId, setOrgId] = useSelectedOrg();
 
@@ -36,102 +132,197 @@ export function DashboardPage() {
     enabled: Boolean(orgId),
   });
 
-  const incidentStatsQuery = useQuery({
-    queryKey: ['incident-stats', orgId],
-    queryFn: () => incidentsApi.getStats(orgId as string),
+  const riskMatrixQuery = useQuery({
+    queryKey: ['risk-matrix', orgId],
+    queryFn: () => risksApi.getMatrix(orgId as string),
     enabled: Boolean(orgId),
   });
 
-  const stats = statsQuery.data;
+  const auditStatsQuery = useQuery({
+    queryKey: ['audit-stats', orgId],
+    queryFn: () => auditsApi.getStats(orgId as string),
+    enabled: Boolean(orgId),
+  });
+
+  const complianceQuery = useQuery({
+    queryKey: ['compliance-assessments', orgId],
+    queryFn: () => complianceApi.getAssessments(orgId as string),
+    enabled: Boolean(orgId),
+  });
+
   const score = scoreQuery.data;
+  const riskSummary = riskMatrixQuery.data?.summary;
+  const maturity = score?.overallScore ?? 0;
+  const conformityRate = score?.overallScore ?? 0;
+
+  // MFA coverage = score of 'Multi-Factor Authentication' domain (or 0)
+  const mfaScore =
+    score?.domainScores?.['Multi-Factor Authentication']?.score ?? 0;
+
+  // EDR ≈ Network Security score
+  const edrScore =
+    score?.domainScores?.['Network Security']?.score ?? 0;
+
+  // Exercices = completed audits this year
+  const exercisesCount =
+    auditStatsQuery.data?.byStatus.find((s) => s.status === 'COMPLETED')?.count ?? 0;
+
+  // Actions en retard = non-compliant with past due date
+  const overdueCount = (complianceQuery.data ?? []).filter(
+    (a) =>
+      (a.status === 'NON_COMPLIANT' || a.status === 'PARTIAL') &&
+      a.dueDate &&
+      new Date(a.dueDate) < new Date(),
+  ).length;
+
+  const domainEntries = Object.entries(score?.domainScores ?? {}).sort(
+    (a, b) => a[1].score - b[1].score,
+  );
+
+  const isLoading = statsQuery.isLoading || scoreQuery.isLoading;
 
   return (
-    <div>
-      <PageHeader
-        title="Tableau de bord"
-        description="Vue d'ensemble de la posture de conformité NIS2"
-        actions={<OrgSelector value={orgId} onChange={setOrgId} />}
-      />
+    <div className="p-4 sm:p-6 lg:p-8">
+      {/* Page title + org selector */}
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Tableau de bord</h1>
+          <p className="mt-0.5 text-sm text-slate-500">Vue consolidée du pilotage NIS2</p>
+        </div>
+        <OrgSelector value={orgId} onChange={setOrgId} />
+      </div>
 
       {!orgId ? (
-        <Card>
-          <p className="text-sm text-gray-500">
-            Sélectionnez une organisation pour afficher ses indicateurs.
+        <div className="rounded-xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+          <p className="text-slate-500">
+            Sélectionnez une organisation pour afficher le tableau de bord.
           </p>
-        </Card>
-      ) : statsQuery.isLoading || scoreQuery.isLoading ? (
+        </div>
+      ) : isLoading ? (
         <LoadingBlock />
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              label="Score de conformité"
-              value={`${score?.overallScore ?? 0}%`}
-              hint={`${score?.compliantControls ?? 0} / ${score?.applicableControls ?? 0} contrôles conformes`}
-              accent={scoreAccent(score?.overallScore ?? 0)}
-            />
-            <StatCard
-              label="Incidents"
-              value={stats?.incidents.total ?? 0}
-              hint={`${incidentStatsQuery.data?.totalUnreported ?? 0} non notifié(s)`}
-            />
-            <StatCard label="Risques" value={stats?.risks.total ?? 0} hint="Risques recensés" />
-            <StatCard label="Audits" value={stats?.audits.total ?? 0} hint="Audits enregistrés" />
+          {/* ── Top 4 stat cards ── */}
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
+            {/* 1 — Maturité (dark teal card) */}
+            <div
+              className="rounded-xl p-5 shadow-sm text-white"
+              style={{ backgroundColor: '#0d4a3a' }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">
+                Maturité NIS2 globale
+              </p>
+              <p className="text-4xl font-bold">{maturity}%</p>
+              <p className="mt-1 text-xs text-white/50">moyenne art. 21 + ReCyF</p>
+            </div>
+
+            {/* 2 — Taux de conformité */}
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+                Taux de conformité
+              </p>
+              <p className={`text-4xl font-bold ${conformityRate === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+                {conformityRate}%
+              </p>
+              <p className="mt-1 text-xs text-slate-400">exigences conformes</p>
+            </div>
+
+            {/* 3 — Risques ouverts */}
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+                Risques ouverts
+              </p>
+              <p className="text-4xl font-bold text-slate-800">
+                {riskSummary?.total ?? 0}
+                {(riskSummary?.critical ?? 0) > 0 && (
+                  <span className="ml-2 text-base font-semibold text-red-500">
+                    · {riskSummary?.critical} critique{riskSummary!.critical > 1 ? 's' : ''}
+                  </span>
+                )}
+                {(riskSummary?.critical ?? 0) === 0 && riskSummary && (
+                  <span className="ml-2 text-base font-semibold text-red-400">
+                    · 0 critique
+                  </span>
+                )}
+              </p>
+              <p className="mt-1 text-xs text-slate-400">registre EBIOS RM</p>
+            </div>
+
+            {/* 4 — Actions en retard */}
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+                Actions en retard
+              </p>
+              <p className={`text-4xl font-bold ${overdueCount > 0 ? 'text-red-500' : 'text-slate-800'}`}>
+                {overdueCount}
+              </p>
+              <p className="mt-1 text-xs text-slate-400">
+                {(complianceQuery.data ?? []).filter(
+                  (a) => a.status === 'NON_COMPLIANT' || a.status === 'PARTIAL',
+                ).length}{' '}
+                actions ouvertes
+              </p>
+            </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <Card title="Conformité par domaine">
-              {score && Object.keys(score.domainScores).length > 0 ? (
-                <ul className="space-y-3">
-                  {Object.entries(score.domainScores)
-                    .sort((a, b) => b[1].score - a[1].score)
-                    .map(([domain, d]) => (
-                      <li key={domain}>
-                        <div className="mb-1 flex items-center justify-between text-sm">
-                          <span className="text-gray-700">{domain}</span>
-                          <span className="font-medium text-gray-600">{d.score}%</span>
-                        </div>
-                        <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
-                          <div
-                            className={`h-full rounded-full ${
-                              d.score >= 75
-                                ? 'bg-green-500'
-                                : d.score >= 40
-                                  ? 'bg-orange-400'
-                                  : 'bg-red-500'
-                            }`}
-                            style={{ width: `${d.score}%` }}
-                          />
-                        </div>
-                      </li>
-                    ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-gray-400">Aucune évaluation de conformité enregistrée.</p>
-              )}
-            </Card>
+          {/* ── Bottom panels ── */}
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {/* Left — Maturité & couverture */}
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="text-base font-bold text-slate-800">Maturité &amp; couverture</h2>
+              <p className="text-xs text-slate-400 mb-5">État de préparation global</p>
 
-            <Card title="Incidents récents">
-              {incidentStatsQuery.data && incidentStatsQuery.data.recentIncidents.length > 0 ? (
-                <ul className="divide-y divide-gray-100">
-                  {incidentStatsQuery.data.recentIncidents.map((inc) => (
-                    <li key={inc.id} className="flex items-center justify-between py-2">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-gray-700">{inc.title}</p>
-                        <p className="text-xs text-gray-400">
-                          {incidentStatusLabels[inc.status]} · {formatDate(inc.detectedAt)}
-                        </p>
-                      </div>
-                      <Badge tone={incidentSeverityTone[inc.severity]}>
-                        {incidentSeverityLabels[inc.severity]}
-                      </Badge>
-                    </li>
-                  ))}
-                </ul>
+              <div className="flex items-center gap-6">
+                <MaturityGauge score={maturity} />
+                <div className="flex-1 space-y-4 min-w-0">
+                  <CoverageBar
+                    label="Couverture MFA"
+                    value={mfaScore}
+                    color="bg-amber-400"
+                  />
+                  <CoverageBar
+                    label="Couverture EDR"
+                    value={edrScore}
+                    color="bg-amber-400"
+                  />
+                  <CoverageBar
+                    label="Exercices réalisés (année)"
+                    value={exercisesCount}
+                    max={Math.max(exercisesCount, 5)}
+                    unit=" ex."
+                    color="bg-teal-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Right — Maturité par domaine */}
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="flex items-start justify-between mb-1">
+                <div>
+                  <h2 className="text-base font-bold text-slate-800">Maturité par domaine</h2>
+                  <p className="text-xs text-slate-400">Les plus faibles en premier</p>
+                </div>
+                <Link
+                  to="/compliance"
+                  className="text-xs font-semibold text-teal-600 hover:text-teal-700 whitespace-nowrap"
+                >
+                  Détail →
+                </Link>
+              </div>
+
+              {domainEntries.length === 0 ? (
+                <p className="mt-4 text-sm text-slate-400">
+                  Aucune évaluation enregistrée.
+                </p>
               ) : (
-                <p className="text-sm text-gray-400">Aucun incident récent.</p>
+                <div className="mt-4 space-y-3">
+                  {domainEntries.map(([domain, d]) => (
+                    <DomainRow key={domain} domain={domain} score={d.score} />
+                  ))}
+                </div>
               )}
-            </Card>
+            </div>
           </div>
         </>
       )}

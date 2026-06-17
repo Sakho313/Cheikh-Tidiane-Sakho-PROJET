@@ -48,9 +48,9 @@ export function ReportsPage() {
   const reports = listQuery.data?.data ?? [];
 
   return (
-    <div>
+    <div className="p-4 sm:p-6 lg:p-8">
       <PageHeader
-        title="Rapports"
+        title="Rapport de conformité"
         description="Génération de rapports de conformité, incidents, risques et synthèses"
         actions={<OrgSelector value={orgId} onChange={setOrgId} />}
       />

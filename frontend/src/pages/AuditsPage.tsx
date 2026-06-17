@@ -28,9 +28,9 @@ export function AuditsPage() {
   const stats = statsQuery.data;
 
   return (
-    <div>
+    <div className="p-4 sm:p-6 lg:p-8">
       <PageHeader
-        title="Audits"
+        title="Audit NIS2"
         description="Audits internes, externes, réglementaires et fournisseurs"
         actions={<OrgSelector value={orgId} onChange={setOrgId} />}
       />
