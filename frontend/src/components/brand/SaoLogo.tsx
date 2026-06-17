@@ -1,9 +1,33 @@
-import { useId } from 'react';
+import { useId, useEffect, useState } from 'react';
+
+/** Path to an optional raster brand asset. Drop your file at
+ *  `frontend/public/logo.png` and it is used automatically everywhere;
+ *  otherwise the inline SVG mark below is shown. */
+const RASTER_SRC = '/logo.png';
+
+// Module-level cache so the existence check runs once per page load.
+let rasterStatus: 'unknown' | 'ok' | 'missing' = 'unknown';
+const rasterListeners = new Set<(s: typeof rasterStatus) => void>();
+
+function probeRaster() {
+  if (rasterStatus !== 'unknown' || typeof window === 'undefined') return;
+  const img = new Image();
+  img.onload = () => {
+    rasterStatus = img.naturalWidth > 0 ? 'ok' : 'missing';
+    rasterListeners.forEach((fn) => fn(rasterStatus));
+  };
+  img.onerror = () => {
+    rasterStatus = 'missing';
+    rasterListeners.forEach((fn) => fn(rasterStatus));
+  };
+  img.src = RASTER_SRC;
+}
 
 /**
- * SAO Consulting brand mark — a metallic hexagonal security shield with a
- * teal neon glow and an interlocking triskelion emblem. Pure SVG so it stays
- * crisp at any size and can be animated (the teal glow + emblem pulse).
+ * SAO Consulting brand mark. Uses the raster logo at `/logo.png` when present,
+ * otherwise renders a metallic hexagonal security shield with a teal neon glow
+ * and an interlocking triskelion emblem — pure SVG so it stays crisp at any
+ * size and can be animated (the teal glow + emblem pulse).
  */
 export function SaoLogo({
   size = 48,
@@ -18,6 +42,33 @@ export function SaoLogo({
 }) {
   // Unique gradient/filter ids so multiple logos on one page don't collide.
   const uid = useId().replace(/:/g, '');
+  const [status, setStatus] = useState(rasterStatus);
+  useEffect(() => {
+    if (rasterStatus !== 'unknown') {
+      setStatus(rasterStatus);
+      return;
+    }
+    rasterListeners.add(setStatus);
+    probeRaster();
+    return () => {
+      rasterListeners.delete(setStatus);
+    };
+  }, []);
+
+  // Real brand asset available → use it (rounded, never distorted).
+  if (status === 'ok') {
+    return (
+      <img
+        src={RASTER_SRC}
+        alt={title}
+        width={size}
+        height={size}
+        className={`rounded-xl object-contain ${className}`}
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+
   const metal = `metal-${uid}`;
   const teal = `teal-${uid}`;
   const core = `core-${uid}`;
