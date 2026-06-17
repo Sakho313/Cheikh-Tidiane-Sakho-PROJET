@@ -52,14 +52,14 @@ export const DEFAULT_REQUIREMENTS: GapRequirement[] = [
   { id: 'g5', domaine: 'Notification', ref: 'Art.23', exigence: 'Circuit de notification 24h/72h/1 mois testé', maturite: 1, responsable: 'RSSI', preuve: '' },
   { id: 'g6', domaine: 'Continuité', ref: 'Art.21.2.c', exigence: 'PCA/PRA et sauvegardes testés', maturite: 2, responsable: 'DSI', preuve: 'PV de test' },
   { id: 'g7', domaine: "Chaîne d'appro.", ref: 'Art.21.2.d', exigence: "Sécurité de la chaîne d'approvisionnement", maturite: 1, responsable: 'Achats', preuve: '' },
-  { id: 'g8', domaine: 'Acquisition/Dev', ref: 'Art.21.2.e', exigence: 'Sécurité acquisition, développement et maintenance', maturite: 2, responsable: 'DSI', preuve: 'Politique SDLC' },
+  { id: 'g8', domaine: 'Acquisition/Dev', ref: 'Art.21.2.e', exigence: 'Sécurité acquisition, développement, maintenance', maturite: 2, responsable: 'DSI', preuve: 'Politique SDLC' },
   { id: 'g9', domaine: 'Efficacité', ref: 'Art.21.2.f', exigence: "Évaluation de l'efficacité des mesures de sécurité", maturite: 1, responsable: 'RSSI', preuve: '' },
-  { id: 'g10', domaine: 'Hygiène & formation', ref: 'Art.21.2.g', exigence: 'Cyber-hygiène de base et formation du personnel', maturite: 3, responsable: 'RH', preuve: 'Plan de formation' },
-  { id: 'g11', domaine: 'Cryptographie', ref: 'Art.21.2.h', exigence: 'Politique de chiffrement et gestion des clés', maturite: 1, responsable: 'DSI', preuve: '' },
-  { id: 'g12', domaine: "Contrôle d'accès", ref: 'Art.21.2.i', exigence: "RH, contrôle d'accès et gestion des actifs", maturite: 3, responsable: 'DSI', preuve: 'Matrice habilitations' },
-  { id: 'g13', domaine: 'MFA', ref: 'Art.21.2.j', exigence: 'MFA et authentification continue', maturite: 3, responsable: 'DSI', preuve: 'Config MFA' },
-  { id: 'g14', domaine: 'Vulnérabilités', ref: 'ReCyF V1', exigence: 'Gestion des vulnérabilités et des correctifs', maturite: 1, responsable: 'SOC', preuve: '' },
-  { id: 'g15', domaine: 'Sensibilisation', ref: 'ReCyF H1', exigence: 'Programme de sensibilisation continue', maturite: 3, responsable: 'RH', preuve: 'Support e-learning' },
+  { id: 'g10', domaine: 'Hygiène', ref: 'Art.21.2.g', exigence: 'Hygiène cyber et sensibilisation du personnel', maturite: 3, responsable: 'RH', preuve: 'Plan de formation' },
+  { id: 'g11', domaine: 'Cryptographie', ref: 'Art.21.2.h', exigence: 'Politique de chiffrement et gestion des clés', maturite: 2, responsable: 'DSI', preuve: '' },
+  { id: 'g12', domaine: 'Sécurité RH', ref: 'Art.21.2.i', exigence: "Sécurité RH, contrôle d'accès, gestion des actifs", maturite: 3, responsable: 'DSI', preuve: 'Matrice habilitations' },
+  { id: 'g13', domaine: "Contrôle d'accès", ref: 'Art.21.2.j', exigence: 'Authentification multifacteur et communications sécurisées', maturite: 3, responsable: 'DSI', preuve: 'Config MFA' },
+  { id: 'g14', domaine: 'Gestion des actifs', ref: 'ReCyF O7', exigence: 'Inventaire des actifs et des données à jour', maturite: 3, responsable: 'DSI', preuve: '' },
+  { id: 'g15', domaine: 'Vulnérabilités', ref: 'ReCyF O9', exigence: 'Gestion des vulnérabilités et des correctifs', maturite: 3, responsable: 'SOC', preuve: '' },
 ];
 
 // ── Persistence + live sync ───────────────────────────────────────────────────
