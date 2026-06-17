@@ -196,6 +196,10 @@ export function AppLayout() {
         <NavItem to="/response" label="Réponse à incident" iconKey="response" onClick={close} />
         <NavItem to="/audits" label="Audit NIS2" iconKey="audit" onClick={close} />
         <NavItem to="/suppliers" label="Fournisseurs" iconKey="suppliers" onClick={close} />
+
+        <SectionHeader label="Capital humain & docs" />
+        <NavItem to="/sensibilisation" label="Sensibilisation" iconKey="governance" onClick={close} />
+        <NavItem to="/documentation" label="Documentation" iconKey="report" badge={7} onClick={close} />
       </div>
 
       {/* User */}

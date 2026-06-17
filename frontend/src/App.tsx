@@ -14,6 +14,8 @@ import { AssetsPage } from '@/pages/AssetsPage';
 import { BCPPage } from '@/pages/BCPPage';
 import { SuppliersPage } from '@/pages/SuppliersPage';
 import { ResponsePage } from '@/pages/ResponsePage';
+import { SensibilisationPage } from '@/pages/SensibilisationPage';
+import { DocumentationPage } from '@/pages/DocumentationPage';
 
 export function App() {
   return (
@@ -39,6 +41,8 @@ export function App() {
         <Route path="/audits" element={<AuditsPage />} />
         <Route path="/suppliers" element={<SuppliersPage />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/sensibilisation" element={<SensibilisationPage />} />
+        <Route path="/documentation" element={<DocumentationPage />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
