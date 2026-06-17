@@ -1,110 +1,110 @@
-import { useQuery } from '@tanstack/react-query';
-import { auditsApi } from '@/api/audits';
+import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Card, StatCard } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { OrgSelector } from '@/components/OrgSelector';
-import { LoadingBlock } from '@/components/ui/Spinner';
-import { Table, THead, TBody, TR, TH, TD, EmptyRow } from '@/components/ui/Table';
 import { useSelectedOrg } from '@/hooks/useSelectedOrg';
-import { auditStatusLabels, auditStatusTone, auditTypeLabels, formatDate } from '@/lib/labels';
+import {
+  useGap,
+  statusFromMaturity,
+  gapStatusBadge,
+  type GapStatus,
+  type GapRequirement,
+} from '@/lib/gapAnalysis';
+
+// Clicking a conformity badge cycles the control through the three states,
+// writing a representative maturity back so the change syncs to the gap
+// analysis, the dashboard and the report.
+const STATUS_ORDER: GapStatus[] = ['NON CONFORME', 'PARTIEL', 'CONFORME'];
+const STATUS_TO_MATURITY: Record<GapStatus, number> = {
+  'NON CONFORME': 1,
+  PARTIEL: 3,
+  CONFORME: 5,
+};
 
 export function AuditsPage() {
   const [orgId, setOrgId] = useSelectedOrg();
+  const navigate = useNavigate();
+  const { reqs, setReqs } = useGap(orgId);
 
-  const listQuery = useQuery({
-    queryKey: ['audits', orgId],
-    queryFn: () => auditsApi.list(orgId as string, { limit: 100 }),
-    enabled: Boolean(orgId),
-  });
-
-  const statsQuery = useQuery({
-    queryKey: ['audit-stats', orgId],
-    queryFn: () => auditsApi.getStats(orgId as string),
-    enabled: Boolean(orgId),
-  });
-
-  const audits = listQuery.data?.data ?? [];
-  const stats = statsQuery.data;
+  function cycleStatus(req: GapRequirement) {
+    const current = statusFromMaturity(req.maturite);
+    const next = STATUS_ORDER[(STATUS_ORDER.indexOf(current) + 1) % STATUS_ORDER.length];
+    setReqs(
+      reqs.map((r) =>
+        r.id === req.id ? { ...r, maturite: STATUS_TO_MATURITY[next] } : r,
+      ),
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <PageHeader
-        title="Audit NIS2"
-        description="Audits internes, externes, réglementaires et fournisseurs"
-        actions={<OrgSelector value={orgId} onChange={setOrgId} />}
-      />
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <PageHeader title="Audit NIS2" description="Contrôles de conformité NIS2" />
+        <OrgSelector value={orgId} onChange={setOrgId} />
+      </div>
 
       {!orgId ? (
-        <Card>
-          <p className="text-sm text-gray-500">Sélectionnez une organisation.</p>
-        </Card>
+        <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <p className="text-slate-500 text-sm">Sélectionnez une organisation.</p>
+        </div>
       ) : (
-        <>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <StatCard label="Total audits" value={stats?.total ?? 0} />
-            <StatCard
-              label="En cours"
-              value={stats?.byStatus.find((s) => s.status === 'IN_PROGRESS')?.count ?? 0}
-              accent="text-orange-500"
-            />
-            <StatCard
-              label="Terminés"
-              value={stats?.byStatus.find((s) => s.status === 'COMPLETED')?.count ?? 0}
-              accent="text-green-600"
-            />
-            <StatCard
-              label="Constats critiques"
-              value={stats?.findings.bySeverity.find((s) => s.severity === 'CRITICAL')?.count ?? 0}
-              accent="text-red-600"
-            />
+        <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div className="flex flex-wrap items-start justify-between gap-3 px-5 py-4 border-b border-slate-100">
+            <div>
+              <h2 className="text-sm font-bold text-slate-800">Contrôles de conformité NIS2</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Cochez les contrôles satisfaits — la conformité reflète l&apos;analyse d&apos;écart.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/reports')}
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 hover:border-teal-300 hover:text-teal-700 transition-colors"
+            >
+              Rapport →
+            </button>
           </div>
 
-          <div className="mt-6">
-            {listQuery.isLoading ? (
-              <LoadingBlock />
-            ) : (
-              <Table>
-                <THead>
-                  <TR>
-                    <TH>Titre</TH>
-                    <TH>Type</TH>
-                    <TH>Statut</TH>
-                    <TH>Début</TH>
-                    <TH>Fin</TH>
-                    <TH>Constats</TH>
-                  </TR>
-                </THead>
-                <TBody>
-                  {audits.length === 0 ? (
-                    <EmptyRow colSpan={6} message="Aucun audit enregistré." />
-                  ) : (
-                    audits.map((audit) => (
-                      <TR key={audit.id} className="hover:bg-gray-50">
-                        <TD className="font-medium text-gray-800">{audit.title}</TD>
-                        <TD className="text-gray-600">{auditTypeLabels[audit.type]}</TD>
-                        <TD>
-                          <Badge tone={auditStatusTone[audit.status]}>
-                            {auditStatusLabels[audit.status]}
-                          </Badge>
-                        </TD>
-                        <TD className="whitespace-nowrap text-gray-600">
-                          {formatDate(audit.startDate)}
-                        </TD>
-                        <TD className="whitespace-nowrap text-gray-600">
-                          {formatDate(audit.endDate)}
-                        </TD>
-                        <TD className="font-semibold text-gray-700">
-                          {audit._count?.findings ?? audit.findings?.length ?? 0}
-                        </TD>
-                      </TR>
-                    ))
-                  )}
-                </TBody>
-              </Table>
-            )}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  {['Domaine', 'Contrôle', 'Réf.', 'Conforme'].map((h) => (
+                    <th
+                      key={h}
+                      className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {reqs.map((req) => {
+                  const status = statusFromMaturity(req.maturite);
+                  return (
+                    <tr key={req.id} className="hover:bg-slate-50/50">
+                      <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">{req.domaine}</td>
+                      <td className="px-5 py-3.5 text-slate-600">{req.exigence}</td>
+                      <td className="px-5 py-3.5 font-mono text-xs text-slate-400 whitespace-nowrap">
+                        {req.ref}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <button
+                          type="button"
+                          onClick={() => cycleStatus(req)}
+                          title="Cliquer pour changer le statut"
+                          className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide transition-colors duration-300 hover:opacity-80 ${gapStatusBadge[status]}`}
+                        >
+                          {status}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
