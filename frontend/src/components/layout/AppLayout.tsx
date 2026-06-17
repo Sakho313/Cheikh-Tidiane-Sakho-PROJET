@@ -8,6 +8,7 @@ import { useGap, nonConformCount } from '@/lib/gapAnalysis';
 import { useEbios } from '@/lib/ebios';
 import { useSuppliers, pendingEvaluationCount } from '@/lib/suppliers';
 import { useVulns, criticalOpenCount } from '@/lib/vulnerabilities';
+import { SaoLogo } from '@/components/brand/SaoLogo';
 
 // ── SVG icon helper ────────────────────────────────────────────────────────────
 function Icon({ d, size = 17 }: { d: string; size?: number }) {
@@ -137,11 +138,15 @@ export function AppLayout() {
   const close = () => setMobileOpen(false);
 
   const sidebar = (
-    <nav className="flex h-full flex-col" style={{ backgroundColor: '#0d2e26' }}>
+    <nav className="relative flex h-full flex-col overflow-hidden" style={{ backgroundColor: '#0d2e26' }}>
+      {/* Subtle cyber grid accent behind the nav */}
+      <div className="cyber-grid pointer-events-none absolute inset-0 opacity-[0.12]" aria-hidden />
+
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-4 py-5 border-b border-white/10">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-400">
-          <Icon d={ICONS.shield} size={18} />
+      <div className="relative flex items-center gap-2.5 px-4 py-5 border-b border-white/10">
+        <div className="relative shrink-0">
+          <div className="absolute inset-0 -z-10 rounded-full bg-teal-400/25 blur-lg animate-sao-glow" aria-hidden />
+          <SaoLogo size={40} animated />
         </div>
         <div>
           <p className="text-sm font-bold text-white leading-tight">
@@ -155,7 +160,7 @@ export function AppLayout() {
       </div>
 
       {/* Nav */}
-      <div className="flex-1 overflow-y-auto px-2 pb-3">
+      <div className="relative flex-1 overflow-y-auto px-2 pb-3">
         <SectionHeader label="Pilotage" />
         <NavItem to="/dashboard" label="Tableau de bord" iconKey="dashboard" onClick={close} />
         <NavItem to="/direction" label="Vue Direction" iconKey="direction" onClick={close} />
@@ -181,7 +186,7 @@ export function AppLayout() {
       </div>
 
       {/* User */}
-      <div className="border-t border-white/10 p-3">
+      <div className="relative border-t border-white/10 p-3">
         <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-400 text-xs font-bold text-slate-900">
             {initials}
