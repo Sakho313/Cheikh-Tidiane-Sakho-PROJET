@@ -116,6 +116,38 @@ function DomainRow({ domain, score }: { domain: string; score: number }) {
   );
 }
 
+// ── Priority actions (demo data) ─────────────────────────────────────────────
+type ActionPriorite = 'HAUTE' | 'MOYENNE' | 'BASSE';
+type ActionStatut = 'EN COURS' | 'À FAIRE' | 'TERMINÉ';
+
+interface PriorityAction {
+  action: string;
+  responsable: string;
+  echeance: string;
+  priorite: ActionPriorite;
+  statut: ActionStatut;
+}
+
+const PRIORITY_ACTIONS: PriorityAction[] = [
+  { action: "Tester le circuit de notification d'incident", responsable: 'RSSI', echeance: '2026-07-31', priorite: 'HAUTE', statut: 'EN COURS' },
+  { action: 'Constituer le registre des fournisseurs critiques', responsable: 'Achats', echeance: '2026-08-15', priorite: 'HAUTE', statut: 'À FAIRE' },
+  { action: 'Généraliser le MFA aux comptes à privilèges', responsable: 'DSI', echeance: '2026-09-30', priorite: 'MOYENNE', statut: 'EN COURS' },
+  { action: 'Réaliser un exercice de gestion de crise (Table Top)', responsable: 'RSSI', echeance: '2026-10-15', priorite: 'MOYENNE', statut: 'À FAIRE' },
+  { action: "Mettre à jour l'analyse de risque EBIOS RM", responsable: 'RSSI', echeance: '2026-07-20', priorite: 'HAUTE', statut: 'EN COURS' },
+];
+
+const prioriteBadge: Record<ActionPriorite, string> = {
+  HAUTE: 'bg-red-50 text-red-600 border border-red-200',
+  MOYENNE: 'bg-amber-50 text-amber-700 border border-amber-200',
+  BASSE: 'bg-slate-50 text-slate-600 border border-slate-200',
+};
+
+const statutBadge: Record<ActionStatut, string> = {
+  'EN COURS': 'bg-teal-50 text-teal-700 border border-teal-200',
+  'À FAIRE': 'bg-slate-50 text-slate-500 border border-slate-200',
+  TERMINÉ: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+};
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 export function DashboardPage() {
   const [orgId, setOrgId] = useSelectedOrg();
@@ -322,6 +354,54 @@ export function DashboardPage() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* ── Actions prioritaires ── */}
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <div className="flex items-start justify-between px-6 py-5">
+              <div>
+                <h2 className="text-base font-bold text-slate-800">Actions prioritaires</h2>
+                <p className="text-xs text-slate-400">Échéances et statuts</p>
+              </div>
+              <Link
+                to="/roadmap"
+                className="shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-teal-600 hover:border-teal-300 hover:text-teal-700 transition-colors whitespace-nowrap"
+              >
+                Feuille de route →
+              </Link>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-y border-slate-100">
+                    {['Action', 'Responsable', 'Échéance', 'Priorité', 'Statut'].map((h) => (
+                      <th key={h} className="px-6 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {PRIORITY_ACTIONS.map((a) => (
+                    <tr key={a.action} className="hover:bg-slate-50/50">
+                      <td className="px-6 py-3.5 font-medium text-slate-800">{a.action}</td>
+                      <td className="px-6 py-3.5 text-slate-600">{a.responsable}</td>
+                      <td className="px-6 py-3.5 text-slate-600 whitespace-nowrap">{a.echeance}</td>
+                      <td className="px-6 py-3.5">
+                        <span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold tracking-wide ${prioriteBadge[a.priorite]}`}>
+                          {a.priorite}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3.5">
+                        <span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold tracking-wide ${statutBadge[a.statut]}`}>
+                          {a.statut}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </>
