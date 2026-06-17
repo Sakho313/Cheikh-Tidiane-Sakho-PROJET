@@ -6,6 +6,7 @@ import { useOrganizations } from '@/hooks/useOrganizations';
 import { entityTypeLabels } from '@/lib/labels';
 import { useGap, nonConformCount } from '@/lib/gapAnalysis';
 import { useEbios } from '@/lib/ebios';
+import { useSuppliers, pendingEvaluationCount } from '@/lib/suppliers';
 
 // ── SVG icon helper ────────────────────────────────────────────────────────────
 function Icon({ d, size = 17 }: { d: string; size?: number }) {
@@ -109,13 +110,15 @@ export function AppLayout() {
   const orgs = orgsPage?.data;
   const selectedOrg = orgs?.find((o) => o.id === orgId);
 
-  // Live badge counts derived from the local gap-analysis + EBIOS data.
+  // Live badge counts derived from the local gap-analysis + EBIOS + suppliers data.
   const { reqs } = useGap(orgId);
   const { risks } = useEbios(orgId);
+  const { suppliers } = useSuppliers(orgId);
 
-  const gapCount = orgId ? reqs.length : 0; // total requirements assessed
-  const roadmapCount = orgId ? nonConformCount(reqs) : 0; // non-conform = priority actions
+  const gapCount = orgId ? reqs.length : 0;
+  const roadmapCount = orgId ? nonConformCount(reqs) : 0;
   const riskCount = orgId ? risks.length : 0;
+  const supplierCount = orgId ? pendingEvaluationCount(suppliers) : 0;
 
   const handleLogout = () => {
     logout();
@@ -163,7 +166,7 @@ export function AppLayout() {
         <SectionHeader label="Opérations" />
         <NavItem to="/response" label="Réponse à incident" iconKey="response" onClick={close} />
         <NavItem to="/audits" label="Audit NIS2" iconKey="audit" onClick={close} />
-        <NavItem to="/suppliers" label="Fournisseurs" iconKey="suppliers" onClick={close} />
+        <NavItem to="/suppliers" label="Fournisseurs" iconKey="suppliers" badge={supplierCount} onClick={close} />
 
         <SectionHeader label="Capital humain & docs" />
         <NavItem to="/sensibilisation" label="Sensibilisation" iconKey="governance" onClick={close} />
