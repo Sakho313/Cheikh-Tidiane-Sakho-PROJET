@@ -84,12 +84,15 @@ services:
     # (browser stays same-origin → no CORS). Set VITE_API_BASE_URL only if you
     # drop the proxy and call the backend cross-origin.
     envVars:
-      # Credentials for the one-click demo button. Inlined at build time.
+      # Credentials for the demo access. Inlined at build time.
       # Must match DEMO_EMAIL / DEMO_PASSWORD on the API service above.
       - key: VITE_DEMO_EMAIL
         value: demo@sao-nis2.com
       - key: VITE_DEMO_PASSWORD
         value: Demo2024NIS2!
+      # Access code clients type to unlock the demo (case-insensitive).
+      - key: VITE_ACCESS_CODE
+        value: SAO2026
     routes:
       # Server-side proxy of /api/* to the backend.
       # If Render assigns the API a host other than nis2-api.onrender.com,

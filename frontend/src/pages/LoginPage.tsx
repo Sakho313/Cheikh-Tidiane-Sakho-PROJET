@@ -1,14 +1,18 @@
-import { useState, type FormEvent } from 'react';
+import { useCallback, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
 import { extractErrorMessage } from '@/api/client';
 import { SaoLogo } from '@/components/brand/SaoLogo';
 import { CyberBackground } from '@/components/CyberBackground';
+import { AccessCodeGate } from '@/components/AccessCodeGate';
+import { AccessGrantedOverlay } from '@/components/AccessGrantedOverlay';
 
 // Shared, read-only demo account. Defaults match the backend seed; override
 // at build time with VITE_DEMO_EMAIL / VITE_DEMO_PASSWORD on the static site.
 const DEMO_EMAIL = (import.meta.env.VITE_DEMO_EMAIL as string) || 'demo@sao-nis2.com';
 const DEMO_PASSWORD = (import.meta.env.VITE_DEMO_PASSWORD as string) || 'Demo2024NIS2!';
+// Access code clients enter to unlock the demo. Override with VITE_ACCESS_CODE.
+const ACCESS_CODE = ((import.meta.env.VITE_ACCESS_CODE as string) || 'SAO2026').toUpperCase();
 
 export function LoginPage() {
   const { login, isAuthenticated } = useAuth();
@@ -17,9 +21,11 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [demoLoading, setDemoLoading] = useState(false);
+  const [granting, setGranting] = useState(false);
+  const demoLogin = useRef<Promise<void> | null>(null);
 
-  if (isAuthenticated) {
+  // Already authenticated (and not mid-animation) → straight to the app.
+  if (isAuthenticated && !granting) {
     navigate('/dashboard', { replace: true });
   }
 
@@ -37,33 +43,40 @@ export function LoginPage() {
     }
   };
 
-  const handleDemo = async () => {
+  // Kick off the demo login and play the cyber "access granted" sequence.
+  const startDemo = useCallback(() => {
+    if (granting) return;
     setError(null);
-    setDemoLoading(true);
+    setGranting(true);
+    demoLogin.current = login({ email: DEMO_EMAIL, password: DEMO_PASSWORD });
+  }, [granting, login]);
+
+  // Fires once the unlock animation finishes — wait for the login, then enter.
+  const onGrantComplete = useCallback(async () => {
     try {
-      await login({ email: DEMO_EMAIL, password: DEMO_PASSWORD });
+      await demoLogin.current;
       navigate('/dashboard', { replace: true });
     } catch (err) {
+      setGranting(false);
       setError(
         extractErrorMessage(
           err,
           "La démonstration n'est pas disponible pour le moment. Réessayez dans un instant.",
         ),
       );
-    } finally {
-      setDemoLoading(false);
     }
-  };
+  }, [navigate]);
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
       <CyberBackground variant="full" />
 
+      {granting && <AccessGrantedOverlay onComplete={onGrantComplete} />}
+
       <div className="relative w-full max-w-md">
         {/* Logo / brand */}
         <div className="mb-8 flex flex-col items-center text-center">
           <div className="relative mb-5">
-            {/* Glow halo behind the mark */}
             <div className="absolute inset-0 -z-10 rounded-full bg-teal-400/20 blur-2xl animate-sao-glow" />
             <SaoLogo size={104} animated />
           </div>
@@ -83,25 +96,30 @@ export function LoginPage() {
             </div>
           )}
 
-          {/* Primary CTA — frictionless demo access */}
-          <button
-            type="button"
-            onClick={handleDemo}
-            disabled={demoLoading}
-            className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl
-              bg-gradient-to-r from-teal-500 to-emerald-500 px-4 py-3 text-sm font-bold text-white shadow-lg
-              shadow-teal-500/20 transition-all hover:from-teal-400 hover:to-emerald-400 hover:shadow-teal-500/40
-              disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            <span className="absolute inset-0 -z-0 animate-sao-scan bg-gradient-to-b from-transparent via-white/20 to-transparent" />
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 3l14 9-14 9V3z" />
+          {/* Access code gate */}
+          <div className="mb-1 flex items-center justify-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
-            {demoLoading ? 'Ouverture de la démonstration…' : 'Accéder à la démonstration'}
-          </button>
-          <p className="mt-2 text-center text-[11px] text-slate-400">
-            Visite libre en <span className="font-semibold text-teal-300">lecture seule</span> · aucune inscription, aucune donnée modifiée
+            <h2 className="text-sm font-bold uppercase tracking-widest text-white">Code d'accès sécurisé</h2>
+          </div>
+          <p className="mb-5 text-center text-xs text-slate-400">
+            Entrez votre code pour déverrouiller la démonstration
           </p>
+
+          <AccessCodeGate code={ACCESS_CODE} onUnlock={startDemo} disabled={granting} />
+
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={startDemo}
+              disabled={granting}
+              className="text-xs font-medium text-teal-300/80 underline-offset-2 transition-colors hover:text-teal-200 hover:underline disabled:opacity-50"
+            >
+              Pas de code ? Lancer la démonstration →
+            </button>
+          </div>
 
           {/* Divider */}
           <div className="my-6 flex items-center gap-3">

@@ -78,6 +78,42 @@
   animation: sao-grid-drift 3.5s linear infinite;
 }
 
+/* ── Access-code gate animations ────────────────────────────────────────────── */
+@keyframes sao-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-7px); }
+  40%, 80% { transform: translateX(7px); }
+}
+@keyframes sao-line-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes sao-progress {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+@keyframes sao-pop {
+  0%   { transform: scale(0); opacity: 0; }
+  60%  { transform: scale(1.18); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes sao-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes sao-cell-pop {
+  0%   { transform: scale(0.8); }
+  60%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.animate-sao-shake    { animation: sao-shake 0.42s ease-in-out; }
+.animate-sao-line-in  { animation: sao-line-in 0.35s ease-out both; }
+.animate-sao-progress { animation: sao-progress 2.4s ease-in-out forwards; }
+.animate-sao-pop      { animation: sao-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+.animate-sao-blink    { animation: sao-blink 1s step-end infinite; }
+.animate-sao-cell-pop { animation: sao-cell-pop 0.18s ease-out; }
+
 @media (prefers-reduced-motion: reduce) {
   .animate-sao-glow,
   .animate-sao-float,
@@ -86,7 +122,13 @@
   .animate-sao-scan,
   .animate-sao-dash,
   .animate-sao-ring,
+  .animate-sao-shake,
+  .animate-sao-line-in,
+  .animate-sao-pop,
+  .animate-sao-cell-pop,
   .cyber-grid {
     animation: none !important;
   }
+  /* Keep the progress bar visible (full) without animating. */
+  .animate-sao-progress { width: 100%; animation: none !important; }
 }
