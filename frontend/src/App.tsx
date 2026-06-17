@@ -5,7 +5,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { OrganizationsPage } from '@/pages/OrganizationsPage';
 import { CompliancePage } from '@/pages/CompliancePage';
-import { IncidentsPage } from '@/pages/IncidentsPage';
+import { CrisisPage } from '@/pages/CrisisPage';
 import { RisksPage } from '@/pages/RisksPage';
 import { AuditsPage } from '@/pages/AuditsPage';
 import { ReportsPage } from '@/pages/ReportsPage';
@@ -36,7 +36,7 @@ export function App() {
         <Route path="/risks" element={<RisksPage />} />
         <Route path="/assets" element={<AssetsPage />} />
         <Route path="/bcp" element={<BCPPage />} />
-        <Route path="/incidents" element={<IncidentsPage />} />
+        <Route path="/incidents" element={<CrisisPage />} />
         <Route path="/response" element={<ResponsePage />} />
         <Route path="/audits" element={<AuditsPage />} />
         <Route path="/suppliers" element={<SuppliersPage />} />
