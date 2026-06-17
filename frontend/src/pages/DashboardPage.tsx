@@ -1,12 +1,26 @@
-import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { organizationsApi } from '@/api/organizations';
-import { complianceApi } from '@/api/compliance';
-import { risksApi } from '@/api/risks';
-import { auditsApi } from '@/api/audits';
 import { OrgSelector } from '@/components/OrgSelector';
-import { LoadingBlock } from '@/components/ui/Spinner';
 import { useSelectedOrg } from '@/hooks/useSelectedOrg';
+import {
+  useGap,
+  globalMaturity,
+  conformityRate,
+  domainScores,
+} from '@/lib/gapAnalysis';
+import { useEbios, openRisksCount, criticalRisksCount } from '@/lib/ebios';
+import {
+  useRoadmap,
+  sortedActions,
+  overdueCount as roadmapOverdue,
+  openCount as roadmapOpen,
+  prioriteBadge,
+  statutBadge,
+} from '@/lib/roadmap';
+
+// Operational coverage KPIs (not captured in the gap table) — demo values.
+const MFA_COVERAGE = 62;
+const EDR_COVERAGE = 48;
+const EXERCISES_DONE = 2;
 
 // ── Circular gauge (arc style like the screenshot) ───────────────────────────
 function MaturityGauge({ score }: { score: number }) {
@@ -119,67 +133,32 @@ function DomainRow({ domain, score }: { domain: string; score: number }) {
 // ── Page ─────────────────────────────────────────────────────────────────────
 export function DashboardPage() {
   const [orgId, setOrgId] = useSelectedOrg();
+  const { reqs } = useGap(orgId);
+  const { risks } = useEbios(orgId);
+  const { actions } = useRoadmap(orgId);
 
-  const statsQuery = useQuery({
-    queryKey: ['org-stats', orgId],
-    queryFn: () => organizationsApi.getStats(orgId as string),
-    enabled: Boolean(orgId),
-  });
+  // Maturity + conformity derived from the live gap-analysis data.
+  const maturity = globalMaturity(reqs);
+  const conformity = conformityRate(reqs);
 
-  const scoreQuery = useQuery({
-    queryKey: ['compliance-score', orgId],
-    queryFn: () => complianceApi.getScore(orgId as string),
-    enabled: Boolean(orgId),
-  });
+  // Risk KPIs from the live EBIOS register.
+  const openRisks = openRisksCount(risks);
+  const criticalRisks = criticalRisksCount(risks);
 
-  const riskMatrixQuery = useQuery({
-    queryKey: ['risk-matrix', orgId],
-    queryFn: () => risksApi.getMatrix(orgId as string),
-    enabled: Boolean(orgId),
-  });
+  // Operational coverage (demo constants).
+  const mfaScore = MFA_COVERAGE;
+  const edrScore = EDR_COVERAGE;
+  const exercisesCount = EXERCISES_DONE;
 
-  const auditStatsQuery = useQuery({
-    queryKey: ['audit-stats', orgId],
-    queryFn: () => auditsApi.getStats(orgId as string),
-    enabled: Boolean(orgId),
-  });
+  // Priority actions from the live roadmap (top 6, weakest/soonest first).
+  const priorityActions = sortedActions(actions).slice(0, 6);
+  const overdueCount = roadmapOverdue(actions);
+  const openActionsCount = roadmapOpen(actions);
 
-  const complianceQuery = useQuery({
-    queryKey: ['compliance-assessments', orgId],
-    queryFn: () => complianceApi.getAssessments(orgId as string),
-    enabled: Boolean(orgId),
-  });
-
-  const score = scoreQuery.data;
-  const riskSummary = riskMatrixQuery.data?.summary;
-  const maturity = score?.overallScore ?? 0;
-  const conformityRate = score?.overallScore ?? 0;
-
-  // MFA coverage = score of 'Multi-Factor Authentication' domain (or 0)
-  const mfaScore =
-    score?.domainScores?.['Multi-Factor Authentication']?.score ?? 0;
-
-  // EDR ≈ Network Security score
-  const edrScore =
-    score?.domainScores?.['Network Security']?.score ?? 0;
-
-  // Exercices = completed audits this year
-  const exercisesCount =
-    auditStatsQuery.data?.byStatus.find((s) => s.status === 'COMPLETED')?.count ?? 0;
-
-  // Actions en retard = non-compliant with past due date
-  const overdueCount = (complianceQuery.data ?? []).filter(
-    (a) =>
-      (a.status === 'NON_COMPLIANT' || a.status === 'PARTIAL') &&
-      a.dueDate &&
-      new Date(a.dueDate) < new Date(),
-  ).length;
-
-  const domainEntries = Object.entries(score?.domainScores ?? {}).sort(
-    (a, b) => a[1].score - b[1].score,
-  );
-
-  const isLoading = statsQuery.isLoading || scoreQuery.isLoading;
+  // Domains sorted weakest first.
+  const domainEntries = domainScores(reqs)
+    .map((d) => [d.domaine, d.score] as [string, number])
+    .sort((a, b) => a[1] - b[1]);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -198,8 +177,6 @@ export function DashboardPage() {
             Sélectionnez une organisation pour afficher le tableau de bord.
           </p>
         </div>
-      ) : isLoading ? (
-        <LoadingBlock />
       ) : (
         <>
           {/* ── Top 4 stat cards ── */}
@@ -221,8 +198,8 @@ export function DashboardPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
                 Taux de conformité
               </p>
-              <p className={`text-4xl font-bold ${conformityRate === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
-                {conformityRate}%
+              <p className={`text-4xl font-bold ${conformity === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+                {conformity}%
               </p>
               <p className="mt-1 text-xs text-slate-400">exigences conformes</p>
             </div>
@@ -233,17 +210,12 @@ export function DashboardPage() {
                 Risques ouverts
               </p>
               <p className="text-4xl font-bold text-slate-800">
-                {riskSummary?.total ?? 0}
-                {(riskSummary?.critical ?? 0) > 0 && (
-                  <span className="ml-2 text-base font-semibold text-red-500">
-                    · {riskSummary?.critical} critique{riskSummary!.critical > 1 ? 's' : ''}
-                  </span>
-                )}
-                {(riskSummary?.critical ?? 0) === 0 && riskSummary && (
-                  <span className="ml-2 text-base font-semibold text-red-400">
-                    · 0 critique
-                  </span>
-                )}
+                {openRisks}
+                <span
+                  className={`ml-2 text-base font-semibold ${criticalRisks > 0 ? 'text-red-500' : 'text-red-400'}`}
+                >
+                  · {criticalRisks} critique{criticalRisks > 1 ? 's' : ''}
+                </span>
               </p>
               <p className="mt-1 text-xs text-slate-400">registre EBIOS RM</p>
             </div>
@@ -253,15 +225,10 @@ export function DashboardPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
                 Actions en retard
               </p>
-              <p className={`text-4xl font-bold ${overdueCount > 0 ? 'text-red-500' : 'text-slate-800'}`}>
+              <p className={`text-4xl font-bold ${overdueCount > 0 ? 'text-red-500' : 'text-emerald-600'}`}>
                 {overdueCount}
               </p>
-              <p className="mt-1 text-xs text-slate-400">
-                {(complianceQuery.data ?? []).filter(
-                  (a) => a.status === 'NON_COMPLIANT' || a.status === 'PARTIAL',
-                ).length}{' '}
-                actions ouvertes
-              </p>
+              <p className="mt-1 text-xs text-slate-400">{openActionsCount} actions ouvertes</p>
             </div>
           </div>
 
@@ -317,11 +284,59 @@ export function DashboardPage() {
                 </p>
               ) : (
                 <div className="mt-4 space-y-3">
-                  {domainEntries.map(([domain, d]) => (
-                    <DomainRow key={domain} domain={domain} score={d.score} />
+                  {domainEntries.map(([domain, score]) => (
+                    <DomainRow key={domain} domain={domain} score={score} />
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* ── Actions prioritaires ── */}
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <div className="flex items-start justify-between px-6 py-5">
+              <div>
+                <h2 className="text-base font-bold text-slate-800">Actions prioritaires</h2>
+                <p className="text-xs text-slate-400">Échéances et statuts</p>
+              </div>
+              <Link
+                to="/roadmap"
+                className="shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-teal-600 hover:border-teal-300 hover:text-teal-700 transition-colors whitespace-nowrap"
+              >
+                Feuille de route →
+              </Link>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-y border-slate-100">
+                    {['Action', 'Responsable', 'Échéance', 'Priorité', 'Statut'].map((h) => (
+                      <th key={h} className="px-6 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {priorityActions.map((a) => (
+                    <tr key={a.id} className="hover:bg-slate-50/50">
+                      <td className="px-6 py-3.5 font-medium text-slate-800">{a.action}</td>
+                      <td className="px-6 py-3.5 text-slate-600">{a.responsable}</td>
+                      <td className="px-6 py-3.5 text-slate-600 whitespace-nowrap">{a.echeance}</td>
+                      <td className="px-6 py-3.5">
+                        <span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${prioriteBadge[a.priorite]}`}>
+                          {a.priorite}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3.5">
+                        <span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${statutBadge[a.statut]}`}>
+                          {a.statut}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </>

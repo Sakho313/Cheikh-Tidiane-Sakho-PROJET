@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/auth/AuthContext';
 import { useSelectedOrg } from '@/hooks/useSelectedOrg';
 import { useOrganizations } from '@/hooks/useOrganizations';
 import { entityTypeLabels } from '@/lib/labels';
-import { complianceApi } from '@/api/compliance';
-import { risksApi } from '@/api/risks';
+import { useGap, nonConformCount } from '@/lib/gapAnalysis';
+import { useEbios } from '@/lib/ebios';
+import { useSuppliers, pendingEvaluationCount } from '@/lib/suppliers';
+import { useVulns, criticalOpenCount } from '@/lib/vulnerabilities';
 
 // ── SVG icon helper ────────────────────────────────────────────────────────────
 function Icon({ d, size = 17 }: { d: string; size?: number }) {
@@ -30,6 +31,7 @@ function Icon({ d, size = 17 }: { d: string; size?: number }) {
 
 const ICONS = {
   dashboard: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
+  direction: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',
   governance: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
   roadmap: 'M9 18V5l12-2v13 M6 15.7a3 3 0 1 0 0 5.3 M18 13.7a3 3 0 1 0 0 5.3',
   report: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
@@ -40,6 +42,7 @@ const ICONS = {
   response: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M9 12l2 2 4-4',
   audit: 'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7 M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z',
   suppliers: 'M1 3h15v13H1z M16 8h4l3 3v5h-7V8z M5.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z M18.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
+  vulns: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M8 11l2 2 4-5',
   logout: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9',
   menu: 'M3 12h18 M3 6h18 M3 18h18',
   shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
@@ -110,44 +113,17 @@ export function AppLayout() {
   const orgs = orgsPage?.data;
   const selectedOrg = orgs?.find((o) => o.id === orgId);
 
-  // Badge counts fetched from cache (already loaded by pages)
-  const complianceQuery = useQuery({
-    queryKey: ['compliance-assessments', orgId],
-    queryFn: () => complianceApi.getAssessments(orgId as string),
-    enabled: Boolean(orgId),
-    staleTime: 30_000,
-  });
-  const controlsQuery = useQuery({
-    queryKey: ['compliance-controls'],
-    queryFn: () => complianceApi.getControls(),
-    staleTime: 60_000,
-  });
-  const riskMatrixQuery = useQuery({
-    queryKey: ['risk-matrix', orgId],
-    queryFn: () => risksApi.getMatrix(orgId as string),
-    enabled: Boolean(orgId),
-    staleTime: 30_000,
-  });
+  // Live badge counts derived from the local gap-analysis + EBIOS + suppliers + vulns data.
+  const { reqs } = useGap(orgId);
+  const { risks } = useEbios(orgId);
+  const { suppliers } = useSuppliers(orgId);
+  const { vulns } = useVulns(orgId);
 
-  // Governance gap count = controls not yet compliant
-  const gapCount = (() => {
-    if (!controlsQuery.data) return 0;
-    const byControl = new Map(
-      (complianceQuery.data ?? []).map((a) => [a.controlId, a.status]),
-    );
-    return controlsQuery.data.filter((c) => {
-      const s = byControl.get(c.id);
-      return !s || s === 'NON_COMPLIANT' || s === 'PARTIAL' || s === 'PENDING';
-    }).length;
-  })();
-
-  // Roadmap count = non-compliant + partial
-  const roadmapCount = (complianceQuery.data ?? []).filter(
-    (a) => a.status === 'NON_COMPLIANT' || a.status === 'PARTIAL',
-  ).length;
-
-  // Risk count
-  const riskCount = riskMatrixQuery.data?.summary.total ?? 0;
+  const gapCount = orgId ? reqs.length : 0;
+  const roadmapCount = orgId ? nonConformCount(reqs) : 0;
+  const riskCount = orgId ? risks.length : 0;
+  const supplierCount = orgId ? pendingEvaluationCount(suppliers) : 0;
+  const vulnCount = orgId ? criticalOpenCount(vulns) : 0;
 
   const handleLogout = () => {
     logout();
@@ -182,6 +158,7 @@ export function AppLayout() {
       <div className="flex-1 overflow-y-auto px-2 pb-3">
         <SectionHeader label="Pilotage" />
         <NavItem to="/dashboard" label="Tableau de bord" iconKey="dashboard" onClick={close} />
+        <NavItem to="/direction" label="Vue Direction" iconKey="direction" onClick={close} />
         <NavItem to="/compliance" label="Gouvernance & Gap" iconKey="governance" badge={gapCount} onClick={close} />
         <NavItem to="/roadmap" label="Feuille de route" iconKey="roadmap" badge={roadmapCount} onClick={close} />
         <NavItem to="/reports" label="Rapport de conformité" iconKey="report" onClick={close} />
@@ -195,7 +172,12 @@ export function AppLayout() {
         <SectionHeader label="Opérations" />
         <NavItem to="/response" label="Réponse à incident" iconKey="response" onClick={close} />
         <NavItem to="/audits" label="Audit NIS2" iconKey="audit" onClick={close} />
-        <NavItem to="/suppliers" label="Fournisseurs" iconKey="suppliers" onClick={close} />
+        <NavItem to="/vulnerabilities" label="Vulnérabilités" iconKey="vulns" badge={vulnCount} onClick={close} />
+        <NavItem to="/suppliers" label="Fournisseurs" iconKey="suppliers" badge={supplierCount} onClick={close} />
+
+        <SectionHeader label="Capital humain & docs" />
+        <NavItem to="/sensibilisation" label="Sensibilisation" iconKey="governance" onClick={close} />
+        <NavItem to="/documentation" label="Documentation" iconKey="report" badge={7} onClick={close} />
       </div>
 
       {/* User */}
