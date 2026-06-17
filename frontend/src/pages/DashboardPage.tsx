@@ -8,6 +8,14 @@ import {
   domainScores,
 } from '@/lib/gapAnalysis';
 import { useEbios, openRisksCount, criticalRisksCount } from '@/lib/ebios';
+import {
+  useRoadmap,
+  sortedActions,
+  overdueCount as roadmapOverdue,
+  openCount as roadmapOpen,
+  prioriteBadge,
+  statutBadge,
+} from '@/lib/roadmap';
 
 // Operational coverage KPIs (not captured in the gap table) — demo values.
 const MFA_COVERAGE = 62;
@@ -122,43 +130,12 @@ function DomainRow({ domain, score }: { domain: string; score: number }) {
   );
 }
 
-// ── Priority actions (demo data) ─────────────────────────────────────────────
-type ActionPriorite = 'HAUTE' | 'MOYENNE' | 'BASSE';
-type ActionStatut = 'EN COURS' | 'À FAIRE' | 'TERMINÉ';
-
-interface PriorityAction {
-  action: string;
-  responsable: string;
-  echeance: string;
-  priorite: ActionPriorite;
-  statut: ActionStatut;
-}
-
-const PRIORITY_ACTIONS: PriorityAction[] = [
-  { action: "Tester le circuit de notification d'incident", responsable: 'RSSI', echeance: '2026-07-31', priorite: 'HAUTE', statut: 'EN COURS' },
-  { action: 'Constituer le registre des fournisseurs critiques', responsable: 'Achats', echeance: '2026-08-15', priorite: 'HAUTE', statut: 'À FAIRE' },
-  { action: 'Généraliser le MFA aux comptes à privilèges', responsable: 'DSI', echeance: '2026-09-30', priorite: 'MOYENNE', statut: 'EN COURS' },
-  { action: 'Réaliser un exercice de gestion de crise (Table Top)', responsable: 'RSSI', echeance: '2026-10-15', priorite: 'MOYENNE', statut: 'À FAIRE' },
-  { action: "Mettre à jour l'analyse de risque EBIOS RM", responsable: 'RSSI', echeance: '2026-07-20', priorite: 'HAUTE', statut: 'EN COURS' },
-];
-
-const prioriteBadge: Record<ActionPriorite, string> = {
-  HAUTE: 'bg-red-50 text-red-600 border border-red-200',
-  MOYENNE: 'bg-amber-50 text-amber-700 border border-amber-200',
-  BASSE: 'bg-slate-50 text-slate-600 border border-slate-200',
-};
-
-const statutBadge: Record<ActionStatut, string> = {
-  'EN COURS': 'bg-teal-50 text-teal-700 border border-teal-200',
-  'À FAIRE': 'bg-slate-50 text-slate-500 border border-slate-200',
-  TERMINÉ: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-};
-
 // ── Page ─────────────────────────────────────────────────────────────────────
 export function DashboardPage() {
   const [orgId, setOrgId] = useSelectedOrg();
   const { reqs } = useGap(orgId);
   const { risks } = useEbios(orgId);
+  const { actions } = useRoadmap(orgId);
 
   // Maturity + conformity derived from the live gap-analysis data.
   const maturity = globalMaturity(reqs);
@@ -173,12 +150,10 @@ export function DashboardPage() {
   const edrScore = EDR_COVERAGE;
   const exercisesCount = EXERCISES_DONE;
 
-  // Priority actions overdue vs. open.
-  const today = new Date();
-  const overdueCount = PRIORITY_ACTIONS.filter(
-    (a) => a.statut !== 'TERMINÉ' && new Date(a.echeance) < today,
-  ).length;
-  const openActionsCount = PRIORITY_ACTIONS.filter((a) => a.statut !== 'TERMINÉ').length;
+  // Priority actions from the live roadmap (top 6, weakest/soonest first).
+  const priorityActions = sortedActions(actions).slice(0, 6);
+  const overdueCount = roadmapOverdue(actions);
+  const openActionsCount = roadmapOpen(actions);
 
   // Domains sorted weakest first.
   const domainEntries = domainScores(reqs)
@@ -343,18 +318,18 @@ export function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {PRIORITY_ACTIONS.map((a) => (
-                    <tr key={a.action} className="hover:bg-slate-50/50">
+                  {priorityActions.map((a) => (
+                    <tr key={a.id} className="hover:bg-slate-50/50">
                       <td className="px-6 py-3.5 font-medium text-slate-800">{a.action}</td>
                       <td className="px-6 py-3.5 text-slate-600">{a.responsable}</td>
                       <td className="px-6 py-3.5 text-slate-600 whitespace-nowrap">{a.echeance}</td>
                       <td className="px-6 py-3.5">
-                        <span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold tracking-wide ${prioriteBadge[a.priorite]}`}>
+                        <span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${prioriteBadge[a.priorite]}`}>
                           {a.priorite}
                         </span>
                       </td>
                       <td className="px-6 py-3.5">
-                        <span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold tracking-wide ${statutBadge[a.statut]}`}>
+                        <span className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${statutBadge[a.statut]}`}>
                           {a.statut}
                         </span>
                       </td>
