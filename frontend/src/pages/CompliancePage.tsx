@@ -1,169 +1,129 @@
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { complianceApi } from '@/api/compliance';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Card, StatCard } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { OrgSelector } from '@/components/OrgSelector';
-import { LoadingBlock } from '@/components/ui/Spinner';
-import { Table, THead, TBody, TR, TH, TD, EmptyRow } from '@/components/ui/Table';
 import { useSelectedOrg } from '@/hooks/useSelectedOrg';
 import {
-  complianceStatusLabels,
-  complianceStatusTone,
-} from '@/lib/labels';
-import type { ComplianceAssessment, ComplianceStatus } from '@/types';
-
-function barColor(score: number): string {
-  if (score >= 75) return 'bg-green-500';
-  if (score >= 40) return 'bg-orange-400';
-  return 'bg-red-500';
-}
+  useGap,
+  MATURITY_LEVELS,
+  statusFromMaturity,
+  gapStatusBadge,
+  gapSelectTint,
+  type GapRequirement,
+} from '@/lib/gapAnalysis';
 
 export function CompliancePage() {
   const [orgId, setOrgId] = useSelectedOrg();
+  const { reqs, setReqs } = useGap(orgId);
 
-  const scoreQuery = useQuery({
-    queryKey: ['compliance-score', orgId],
-    queryFn: () => complianceApi.getScore(orgId as string),
-    enabled: Boolean(orgId),
-  });
-
-  const assessmentsQuery = useQuery({
-    queryKey: ['compliance-assessments', orgId],
-    queryFn: () => complianceApi.getAssessments(orgId as string),
-    enabled: Boolean(orgId),
-  });
-
-  const controlsQuery = useQuery({
-    queryKey: ['compliance-controls'],
-    queryFn: () => complianceApi.getControls(),
-  });
-
-  // Merge controls with their assessment (if any) so every control is shown.
-  const rows = useMemo(() => {
-    const controls = controlsQuery.data ?? [];
-    const assessments = assessmentsQuery.data ?? [];
-    const byControl = new Map<string, ComplianceAssessment>();
-    assessments.forEach((a) => byControl.set(a.controlId, a));
-    return controls.map((control) => ({
-      control,
-      status: (byControl.get(control.id)?.status ?? 'PENDING') as ComplianceStatus,
-    }));
-  }, [controlsQuery.data, assessmentsQuery.data]);
-
-  const score = scoreQuery.data;
+  function updateField<K extends keyof GapRequirement>(
+    id: string,
+    field: K,
+    value: GapRequirement[K],
+  ) {
+    setReqs(reqs.map((r) => (r.id === id ? { ...r, [field]: value } : r)));
+  }
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <PageHeader
-        title="Gouvernance & Gap"
-        description="Évaluation des mesures de sécurité NIS2 Article 21"
-        actions={<OrgSelector value={orgId} onChange={setOrgId} />}
-      />
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <PageHeader
+          title="Gouvernance & Gap"
+          description="Analyse d'écart sur les mesures de l'article 21 et le ReCyF"
+        />
+        <OrgSelector value={orgId} onChange={setOrgId} />
+      </div>
 
       {!orgId ? (
-        <Card>
-          <p className="text-sm text-gray-500">Sélectionnez une organisation.</p>
-        </Card>
-      ) : scoreQuery.isLoading ? (
-        <LoadingBlock />
+        <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <p className="text-slate-500 text-sm">Sélectionnez une organisation.</p>
+        </div>
       ) : (
-        <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <StatCard
-              label="Score global"
-              value={`${score?.overallScore ?? 0}%`}
-              accent={barColor(score?.overallScore ?? 0).replace('bg-', 'text-')}
-            />
-            <StatCard label="Contrôles applicables" value={score?.applicableControls ?? 0} />
-            <StatCard label="Contrôles conformes" value={score?.compliantControls ?? 0} />
+        <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div className="flex items-start justify-between px-5 py-4 border-b border-slate-100">
+            <div>
+              <h2 className="text-sm font-bold text-slate-800">Analyse d'écart (Gap Analysis)</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Évaluez la maturité de chaque exigence — les statuts et KPI se mettent à jour
+                automatiquement.
+              </p>
+            </div>
+            <span className="shrink-0 rounded-full bg-teal-400 px-2.5 py-0.5 text-xs font-bold text-slate-900">
+              Niveaux 0-5
+            </span>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <Card title="Score par domaine">
-              {score && Object.keys(score.domainScores).length > 0 ? (
-                <ul className="space-y-3">
-                  {Object.entries(score.domainScores).map(([domain, d]) => (
-                    <li key={domain}>
-                      <div className="mb-1 flex items-center justify-between text-sm">
-                        <span className="text-gray-700">{domain}</span>
-                        <span className="font-medium text-gray-600">
-                          {d.score}% ({d.compliant}/{d.total})
-                        </span>
-                      </div>
-                      <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
-                        <div
-                          className={`h-full rounded-full ${barColor(d.score)}`}
-                          style={{ width: `${d.score}%` }}
-                        />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-gray-400">Aucune donnée de domaine.</p>
-              )}
-            </Card>
-
-            <Card title="Répartition des statuts">
-              {score ? (
-                <ul className="space-y-2 text-sm">
-                  {(Object.keys(score.statusBreakdown) as ComplianceStatus[]).map((status) => (
-                    <li key={status} className="flex items-center justify-between">
-                      <Badge tone={complianceStatusTone[status]}>
-                        {complianceStatusLabels[status]}
-                      </Badge>
-                      <span className="font-medium text-gray-700">
-                        {score.statusBreakdown[status]}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-gray-400">Aucune donnée.</p>
-              )}
-            </Card>
-          </div>
-
-          <div className="mt-6">
-            <h2 className="mb-3 text-sm font-semibold text-gray-600">Contrôles NIS2</h2>
-            {controlsQuery.isLoading || assessmentsQuery.isLoading ? (
-              <LoadingBlock />
-            ) : (
-              <Table>
-                <THead>
-                  <TR>
-                    <TH>Article</TH>
-                    <TH>Domaine</TH>
-                    <TH>Exigence</TH>
-                    <TH>Statut</TH>
-                  </TR>
-                </THead>
-                <TBody>
-                  {rows.length === 0 ? (
-                    <EmptyRow colSpan={4} message="Aucun contrôle disponible." />
-                  ) : (
-                    rows.map(({ control, status }) => (
-                      <TR key={control.id} className="hover:bg-gray-50">
-                        <TD className="whitespace-nowrap font-mono text-xs text-gray-500">
-                          {control.article}
-                        </TD>
-                        <TD className="font-medium text-gray-800">{control.domain}</TD>
-                        <TD className="max-w-md text-gray-600">{control.requirement}</TD>
-                        <TD>
-                          <Badge tone={complianceStatusTone[status]}>
-                            {complianceStatusLabels[status]}
-                          </Badge>
-                        </TD>
-                      </TR>
-                    ))
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  {['Domaine', 'Réf.', 'Exigence', 'Maturité', 'Statut', 'Responsable', 'Preuve'].map(
+                    (h) => (
+                      <th
+                        key={h}
+                        className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap"
+                      >
+                        {h}
+                      </th>
+                    ),
                   )}
-                </TBody>
-              </Table>
-            )}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {reqs.map((req) => {
+                  const status = statusFromMaturity(req.maturite);
+                  return (
+                    <tr key={req.id} className="hover:bg-slate-50/50">
+                      <td className="px-4 py-3 text-slate-500 whitespace-nowrap">{req.domaine}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-slate-400 whitespace-nowrap">
+                        {req.ref}
+                      </td>
+                      <td className="px-4 py-3 text-slate-800 min-w-[220px] max-w-sm">
+                        {req.exigence}
+                      </td>
+                      <td className="px-4 py-3">
+                        <select
+                          className={`rounded-lg border bg-white px-2.5 py-1.5 text-sm font-medium transition-colors duration-300 focus:outline-none focus:ring-1 focus:ring-teal-400 ${gapSelectTint[status]}`}
+                          value={req.maturite}
+                          onChange={(e) =>
+                            updateField(req.id, 'maturite', Number(e.target.value))
+                          }
+                        >
+                          {MATURITY_LEVELS.map((lvl) => (
+                            <option key={lvl.value} value={lvl.value}>
+                              {lvl.label}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center rounded px-2 py-1 text-[10px] font-bold tracking-wide transition-colors duration-300 ${gapStatusBadge[status]}`}
+                        >
+                          {status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <input
+                          className="w-32 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-700 focus:border-teal-400 focus:outline-none focus:ring-1 focus:ring-teal-400"
+                          value={req.responsable}
+                          onChange={(e) => updateField(req.id, 'responsable', e.target.value)}
+                          placeholder="—"
+                        />
+                      </td>
+                      <td className="px-4 py-3">
+                        <input
+                          className="w-32 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-700 focus:border-teal-400 focus:outline-none focus:ring-1 focus:ring-teal-400"
+                          value={req.preuve}
+                          onChange={(e) => updateField(req.id, 'preuve', e.target.value)}
+                          placeholder="—"
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

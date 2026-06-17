@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/auth/AuthContext';
 import { useSelectedOrg } from '@/hooks/useSelectedOrg';
 import { useOrganizations } from '@/hooks/useOrganizations';
 import { entityTypeLabels } from '@/lib/labels';
-import { complianceApi } from '@/api/compliance';
-import { risksApi } from '@/api/risks';
+import { useGap, nonConformCount } from '@/lib/gapAnalysis';
+import { useEbios } from '@/lib/ebios';
 
 // ── SVG icon helper ────────────────────────────────────────────────────────────
 function Icon({ d, size = 17 }: { d: string; size?: number }) {
@@ -110,44 +109,13 @@ export function AppLayout() {
   const orgs = orgsPage?.data;
   const selectedOrg = orgs?.find((o) => o.id === orgId);
 
-  // Badge counts fetched from cache (already loaded by pages)
-  const complianceQuery = useQuery({
-    queryKey: ['compliance-assessments', orgId],
-    queryFn: () => complianceApi.getAssessments(orgId as string),
-    enabled: Boolean(orgId),
-    staleTime: 30_000,
-  });
-  const controlsQuery = useQuery({
-    queryKey: ['compliance-controls'],
-    queryFn: () => complianceApi.getControls(),
-    staleTime: 60_000,
-  });
-  const riskMatrixQuery = useQuery({
-    queryKey: ['risk-matrix', orgId],
-    queryFn: () => risksApi.getMatrix(orgId as string),
-    enabled: Boolean(orgId),
-    staleTime: 30_000,
-  });
+  // Live badge counts derived from the local gap-analysis + EBIOS data.
+  const { reqs } = useGap(orgId);
+  const { risks } = useEbios(orgId);
 
-  // Governance gap count = controls not yet compliant
-  const gapCount = (() => {
-    if (!controlsQuery.data) return 0;
-    const byControl = new Map(
-      (complianceQuery.data ?? []).map((a) => [a.controlId, a.status]),
-    );
-    return controlsQuery.data.filter((c) => {
-      const s = byControl.get(c.id);
-      return !s || s === 'NON_COMPLIANT' || s === 'PARTIAL' || s === 'PENDING';
-    }).length;
-  })();
-
-  // Roadmap count = non-compliant + partial
-  const roadmapCount = (complianceQuery.data ?? []).filter(
-    (a) => a.status === 'NON_COMPLIANT' || a.status === 'PARTIAL',
-  ).length;
-
-  // Risk count
-  const riskCount = riskMatrixQuery.data?.summary.total ?? 0;
+  const gapCount = orgId ? reqs.length : 0; // total requirements assessed
+  const roadmapCount = orgId ? nonConformCount(reqs) : 0; // non-conform = priority actions
+  const riskCount = orgId ? risks.length : 0;
 
   const handleLogout = () => {
     logout();

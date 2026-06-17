@@ -1,12 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { organizationsApi } from '@/api/organizations';
-import { complianceApi } from '@/api/compliance';
-import { risksApi } from '@/api/risks';
-import { auditsApi } from '@/api/audits';
 import { OrgSelector } from '@/components/OrgSelector';
-import { LoadingBlock } from '@/components/ui/Spinner';
 import { useSelectedOrg } from '@/hooks/useSelectedOrg';
+import {
+  useGap,
+  globalMaturity,
+  conformityRate,
+  domainScores,
+} from '@/lib/gapAnalysis';
+import { useEbios, openRisksCount, criticalRisksCount } from '@/lib/ebios';
+
+// Operational coverage KPIs (not captured in the gap table) — demo values.
+const MFA_COVERAGE = 62;
+const EDR_COVERAGE = 48;
+const EXERCISES_DONE = 2;
 
 // ── Circular gauge (arc style like the screenshot) ───────────────────────────
 function MaturityGauge({ score }: { score: number }) {
@@ -151,67 +157,33 @@ const statutBadge: Record<ActionStatut, string> = {
 // ── Page ─────────────────────────────────────────────────────────────────────
 export function DashboardPage() {
   const [orgId, setOrgId] = useSelectedOrg();
+  const { reqs } = useGap(orgId);
+  const { risks } = useEbios(orgId);
 
-  const statsQuery = useQuery({
-    queryKey: ['org-stats', orgId],
-    queryFn: () => organizationsApi.getStats(orgId as string),
-    enabled: Boolean(orgId),
-  });
+  // Maturity + conformity derived from the live gap-analysis data.
+  const maturity = globalMaturity(reqs);
+  const conformity = conformityRate(reqs);
 
-  const scoreQuery = useQuery({
-    queryKey: ['compliance-score', orgId],
-    queryFn: () => complianceApi.getScore(orgId as string),
-    enabled: Boolean(orgId),
-  });
+  // Risk KPIs from the live EBIOS register.
+  const openRisks = openRisksCount(risks);
+  const criticalRisks = criticalRisksCount(risks);
 
-  const riskMatrixQuery = useQuery({
-    queryKey: ['risk-matrix', orgId],
-    queryFn: () => risksApi.getMatrix(orgId as string),
-    enabled: Boolean(orgId),
-  });
+  // Operational coverage (demo constants).
+  const mfaScore = MFA_COVERAGE;
+  const edrScore = EDR_COVERAGE;
+  const exercisesCount = EXERCISES_DONE;
 
-  const auditStatsQuery = useQuery({
-    queryKey: ['audit-stats', orgId],
-    queryFn: () => auditsApi.getStats(orgId as string),
-    enabled: Boolean(orgId),
-  });
-
-  const complianceQuery = useQuery({
-    queryKey: ['compliance-assessments', orgId],
-    queryFn: () => complianceApi.getAssessments(orgId as string),
-    enabled: Boolean(orgId),
-  });
-
-  const score = scoreQuery.data;
-  const riskSummary = riskMatrixQuery.data?.summary;
-  const maturity = score?.overallScore ?? 0;
-  const conformityRate = score?.overallScore ?? 0;
-
-  // MFA coverage = score of 'Multi-Factor Authentication' domain (or 0)
-  const mfaScore =
-    score?.domainScores?.['Multi-Factor Authentication']?.score ?? 0;
-
-  // EDR ≈ Network Security score
-  const edrScore =
-    score?.domainScores?.['Network Security']?.score ?? 0;
-
-  // Exercices = completed audits this year
-  const exercisesCount =
-    auditStatsQuery.data?.byStatus.find((s) => s.status === 'COMPLETED')?.count ?? 0;
-
-  // Actions en retard = non-compliant with past due date
-  const overdueCount = (complianceQuery.data ?? []).filter(
-    (a) =>
-      (a.status === 'NON_COMPLIANT' || a.status === 'PARTIAL') &&
-      a.dueDate &&
-      new Date(a.dueDate) < new Date(),
+  // Priority actions overdue vs. open.
+  const today = new Date();
+  const overdueCount = PRIORITY_ACTIONS.filter(
+    (a) => a.statut !== 'TERMINÉ' && new Date(a.echeance) < today,
   ).length;
+  const openActionsCount = PRIORITY_ACTIONS.filter((a) => a.statut !== 'TERMINÉ').length;
 
-  const domainEntries = Object.entries(score?.domainScores ?? {}).sort(
-    (a, b) => a[1].score - b[1].score,
-  );
-
-  const isLoading = statsQuery.isLoading || scoreQuery.isLoading;
+  // Domains sorted weakest first.
+  const domainEntries = domainScores(reqs)
+    .map((d) => [d.domaine, d.score] as [string, number])
+    .sort((a, b) => a[1] - b[1]);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -230,8 +202,6 @@ export function DashboardPage() {
             Sélectionnez une organisation pour afficher le tableau de bord.
           </p>
         </div>
-      ) : isLoading ? (
-        <LoadingBlock />
       ) : (
         <>
           {/* ── Top 4 stat cards ── */}
@@ -253,8 +223,8 @@ export function DashboardPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
                 Taux de conformité
               </p>
-              <p className={`text-4xl font-bold ${conformityRate === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
-                {conformityRate}%
+              <p className={`text-4xl font-bold ${conformity === 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+                {conformity}%
               </p>
               <p className="mt-1 text-xs text-slate-400">exigences conformes</p>
             </div>
@@ -265,17 +235,12 @@ export function DashboardPage() {
                 Risques ouverts
               </p>
               <p className="text-4xl font-bold text-slate-800">
-                {riskSummary?.total ?? 0}
-                {(riskSummary?.critical ?? 0) > 0 && (
-                  <span className="ml-2 text-base font-semibold text-red-500">
-                    · {riskSummary?.critical} critique{riskSummary!.critical > 1 ? 's' : ''}
-                  </span>
-                )}
-                {(riskSummary?.critical ?? 0) === 0 && riskSummary && (
-                  <span className="ml-2 text-base font-semibold text-red-400">
-                    · 0 critique
-                  </span>
-                )}
+                {openRisks}
+                <span
+                  className={`ml-2 text-base font-semibold ${criticalRisks > 0 ? 'text-red-500' : 'text-red-400'}`}
+                >
+                  · {criticalRisks} critique{criticalRisks > 1 ? 's' : ''}
+                </span>
               </p>
               <p className="mt-1 text-xs text-slate-400">registre EBIOS RM</p>
             </div>
@@ -285,15 +250,10 @@ export function DashboardPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
                 Actions en retard
               </p>
-              <p className={`text-4xl font-bold ${overdueCount > 0 ? 'text-red-500' : 'text-slate-800'}`}>
+              <p className={`text-4xl font-bold ${overdueCount > 0 ? 'text-red-500' : 'text-emerald-600'}`}>
                 {overdueCount}
               </p>
-              <p className="mt-1 text-xs text-slate-400">
-                {(complianceQuery.data ?? []).filter(
-                  (a) => a.status === 'NON_COMPLIANT' || a.status === 'PARTIAL',
-                ).length}{' '}
-                actions ouvertes
-              </p>
+              <p className="mt-1 text-xs text-slate-400">{openActionsCount} actions ouvertes</p>
             </div>
           </div>
 
@@ -349,8 +309,8 @@ export function DashboardPage() {
                 </p>
               ) : (
                 <div className="mt-4 space-y-3">
-                  {domainEntries.map(([domain, d]) => (
-                    <DomainRow key={domain} domain={domain} score={d.score} />
+                  {domainEntries.map(([domain, score]) => (
+                    <DomainRow key={domain} domain={domain} score={score} />
                   ))}
                 </div>
               )}

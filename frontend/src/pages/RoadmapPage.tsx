@@ -1,77 +1,49 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { complianceApi } from '@/api/compliance';
-import { OrgSelector } from '@/components/OrgSelector';
-import { LoadingBlock } from '@/components/ui/Spinner';
-import { Badge } from '@/components/ui/Badge';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { OrgSelector } from '@/components/OrgSelector';
 import { useSelectedOrg } from '@/hooks/useSelectedOrg';
-import { complianceStatusLabels, complianceStatusTone } from '@/lib/labels';
-import type { ComplianceAssessment, ComplianceStatus } from '@/types';
+import {
+  useGap,
+  statusFromMaturity,
+  gapStatusBadge,
+  type GapStatus,
+} from '@/lib/gapAnalysis';
 
-const PRIORITY_ORDER: ComplianceStatus[] = [
-  'NON_COMPLIANT',
-  'PARTIAL',
-  'PENDING',
-  'NOT_APPLICABLE',
-  'COMPLIANT',
-];
-
-function priorityLabel(status: ComplianceStatus): string {
-  if (status === 'NON_COMPLIANT') return 'Priorité haute';
-  if (status === 'PARTIAL') return 'Priorité moyenne';
-  if (status === 'PENDING') return 'À planifier';
+function priorityLabel(status: GapStatus): string {
+  if (status === 'NON CONFORME') return 'Priorité haute';
+  if (status === 'PARTIEL') return 'Priorité moyenne';
   return '';
 }
 
-function priorityColor(status: ComplianceStatus): string {
-  if (status === 'NON_COMPLIANT') return 'bg-red-50 border-red-200';
-  if (status === 'PARTIAL') return 'bg-amber-50 border-amber-200';
+function cardTint(status: GapStatus): string {
+  if (status === 'NON CONFORME') return 'bg-red-50 border-red-200';
+  if (status === 'PARTIEL') return 'bg-amber-50 border-amber-200';
   return 'bg-slate-50 border-slate-200';
 }
 
 export function RoadmapPage() {
   const [orgId, setOrgId] = useSelectedOrg();
+  const { reqs } = useGap(orgId);
 
-  const controlsQuery = useQuery({
-    queryKey: ['compliance-controls'],
-    queryFn: () => complianceApi.getControls(),
-  });
+  const actionItems = useMemo(
+    () =>
+      reqs
+        .map((r) => ({ ...r, status: statusFromMaturity(r.maturite) }))
+        .filter((r) => r.status !== 'CONFORME')
+        .sort((a, b) => a.maturite - b.maturite),
+    [reqs],
+  );
 
-  const assessmentsQuery = useQuery({
-    queryKey: ['compliance-assessments', orgId],
-    queryFn: () => complianceApi.getAssessments(orgId as string),
-    enabled: Boolean(orgId),
-  });
-
-  const actionItems = useMemo(() => {
-    if (!controlsQuery.data) return [];
-    const byControl = new Map<string, ComplianceAssessment>();
-    (assessmentsQuery.data ?? []).forEach((a) => byControl.set(a.controlId, a));
-
-    return controlsQuery.data
-      .map((control) => ({
-        control,
-        status: (byControl.get(control.id)?.status ?? 'PENDING') as ComplianceStatus,
-        notes: byControl.get(control.id)?.notes ?? null,
-        dueDate: byControl.get(control.id)?.dueDate ?? null,
-      }))
-      .filter((item) => item.status !== 'COMPLIANT' && item.status !== 'NOT_APPLICABLE')
-      .sort(
-        (a, b) =>
-          PRIORITY_ORDER.indexOf(a.status) - PRIORITY_ORDER.indexOf(b.status),
-      );
-  }, [controlsQuery.data, assessmentsQuery.data]);
+  const nonConform = actionItems.filter((i) => i.status === 'NON CONFORME').length;
+  const partial = actionItems.filter((i) => i.status === 'PARTIEL').length;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <PageHeader
-            title="Feuille de route"
-            description="Plan d'actions priorisé basé sur les écarts de conformité NIS2"
-          />
-        </div>
+        <PageHeader
+          title="Feuille de route"
+          description="Plan d'actions priorisé basé sur les écarts de conformité NIS2"
+        />
         <OrgSelector value={orgId} onChange={setOrgId} />
       </div>
 
@@ -81,15 +53,11 @@ export function RoadmapPage() {
             Sélectionnez une organisation pour afficher la feuille de route.
           </p>
         </div>
-      ) : controlsQuery.isLoading || assessmentsQuery.isLoading ? (
-        <LoadingBlock />
       ) : actionItems.length === 0 ? (
         <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-8 text-center shadow-sm">
-          <p className="text-emerald-700 font-medium">
-            Félicitations — aucun écart à corriger !
-          </p>
+          <p className="text-emerald-700 font-medium">Félicitations — aucun écart à corriger !</p>
           <p className="text-emerald-600 text-sm mt-1">
-            Tous les contrôles applicables sont conformes.
+            Toutes les exigences évaluées sont conformes.
           </p>
         </div>
       ) : (
@@ -97,29 +65,19 @@ export function RoadmapPage() {
           <div className="mb-4 flex gap-4 text-sm">
             <span className="flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
-              <span className="text-slate-600">
-                {actionItems.filter((i) => i.status === 'NON_COMPLIANT').length} non conformes
-              </span>
+              <span className="text-slate-600">{nonConform} non conformes</span>
             </span>
             <span className="flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-              <span className="text-slate-600">
-                {actionItems.filter((i) => i.status === 'PARTIAL').length} partiels
-              </span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-slate-400" />
-              <span className="text-slate-600">
-                {actionItems.filter((i) => i.status === 'PENDING').length} en attente
-              </span>
+              <span className="text-slate-600">{partial} partiels</span>
             </span>
           </div>
 
           <div className="space-y-3">
-            {actionItems.map(({ control, status, notes, dueDate }, idx) => (
+            {actionItems.map((item, idx) => (
               <div
-                key={control.id}
-                className={`rounded-xl border p-4 shadow-sm ${priorityColor(status)}`}
+                key={item.id}
+                className={`rounded-xl border p-4 shadow-sm transition-colors duration-300 ${cardTint(item.status)}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
@@ -128,31 +86,31 @@ export function RoadmapPage() {
                     </span>
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className="font-mono text-xs text-slate-400">{control.article}</span>
+                        <span className="font-mono text-xs text-slate-400">{item.ref}</span>
                         <span className="text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded px-1.5 py-0.5">
-                          {control.domain}
+                          {item.domaine}
                         </span>
                       </div>
-                      <p className="font-semibold text-slate-800 text-sm">{control.requirement}</p>
-                      {notes && (
-                        <p className="mt-1 text-xs text-slate-600 italic">{notes}</p>
+                      <p className="font-semibold text-slate-800 text-sm">{item.exigence}</p>
+                      {item.responsable && (
+                        <p className="mt-1 text-xs text-slate-500">
+                          Responsable : <span className="font-medium">{item.responsable}</span>
+                        </p>
                       )}
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <Badge tone={complianceStatusTone[status]}>
-                      {complianceStatusLabels[status]}
-                    </Badge>
-                    {priorityLabel(status) && (
+                    <span
+                      className={`inline-flex items-center rounded px-2 py-1 text-[10px] font-bold tracking-wide ${gapStatusBadge[item.status]}`}
+                    >
+                      {item.status}
+                    </span>
+                    {priorityLabel(item.status) && (
                       <span className="text-[10px] text-slate-500 font-medium">
-                        {priorityLabel(status)}
+                        {priorityLabel(item.status)}
                       </span>
                     )}
-                    {dueDate && (
-                      <span className="text-[10px] text-slate-400">
-                        Échéance : {new Date(dueDate).toLocaleDateString('fr-FR')}
-                      </span>
-                    )}
+                    <span className="text-[10px] text-slate-400">Maturité {item.maturite}/5</span>
                   </div>
                 </div>
               </div>
