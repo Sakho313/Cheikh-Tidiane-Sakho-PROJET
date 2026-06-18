@@ -1,180 +1,113 @@
-# NIS2 Compliance Management Backend
+# CLAUDE.md
 
-## Project Overview
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-A production-grade REST API backend for managing NIS2 (Network and Information Security Directive 2) compliance. This platform enables organizations to track their compliance posture, manage cybersecurity incidents, assess and mitigate risks, conduct audits, and generate executive reports — all aligned with the EU NIS2 Directive requirements.
+## What this is
 
-## Tech Stack
+A NIS2 (EU cybersecurity directive) compliance management platform. It is a **monorepo**:
 
-- **Runtime**: Node.js 18+
-- **Language**: TypeScript (strict mode)
-- **Framework**: Express.js
-- **ORM**: Prisma with PostgreSQL
-- **Authentication**: JWT (access + refresh tokens)
-- **Password Hashing**: bcryptjs (rounds: 12)
-- **Validation**: Zod
-- **Security**: Helmet, CORS, express-rate-limit
-- **Logging**: Morgan
+- **Backend** (repo root) — Express + TypeScript + Prisma/PostgreSQL REST API under `/api/v1`.
+- **Frontend** (`frontend/`) — Vite + React 18 + TanStack Query + Tailwind SPA that consumes the API. UI is entirely in French.
 
-## Folder Structure
+The two halves have separate `package.json` files and separate `node_modules`. The root `Makefile` orchestrates both and is the fastest way to get oriented (`make help`).
 
-```
-/
-├── prisma/
-│   ├── schema.prisma        # Database schema
-│   └── seed.ts              # Database seeding script
-├── src/
-│   ├── config/
-│   │   ├── env.ts           # Zod-validated environment variables
-│   │   └── database.ts      # Prisma singleton client
-│   ├── shared/
-│   │   ├── types/
-│   │   │   └── index.ts     # Shared TypeScript types
-│   │   ├── utils/
-│   │   │   ├── response.ts  # HTTP response helpers
-│   │   │   ├── jwt.ts       # JWT utilities
-│   │   │   └── pagination.ts# Pagination helpers
-│   │   └── middleware/
-│   │       ├── auth.middleware.ts    # JWT authentication & RBAC
-│   │       ├── error.middleware.ts   # Global error handler
-│   │       └── validate.middleware.ts# Zod request validation
-│   ├── modules/
-│   │   ├── auth/            # Authentication module
-│   │   ├── organizations/   # Organization management
-│   │   ├── compliance/      # NIS2 compliance tracking
-│   │   ├── incidents/       # Cybersecurity incident management
-│   │   ├── risks/           # Risk assessment & management
-│   │   ├── audits/          # Audit management
-│   │   └── reports/         # Report generation
-│   ├── app.ts               # Express app configuration
-│   └── server.ts            # Server entry point
-├── .env.example             # Environment variable template
-├── package.json
-└── tsconfig.json
-```
+## Commands
 
-## Key Scripts
+Run from the repo root unless noted. `make` targets wrap both halves; raw `npm` commands act on one.
 
 ```bash
-# Development (hot-reload)
-npm run dev
+make setup        # install backend+frontend deps, prisma db push, seed  (first-time bootstrap)
+make dev          # run API (:3000) AND frontend (:5173) together
+make build        # build both; make lint / make typecheck likewise cover both
 
-# Production build
-npm run build
+# Backend (root package.json)
+npm run dev               # API only, hot-reload, :3000
+npm run build             # tsc -> dist/
+npm run lint              # eslint, zero-warning gate (lint:fix to autofix)
+npm run type-check        # tsc --noEmit
+npm run format            # prettier --write (format:check in CI)
 
-# Start production server
-npm start
-
-# Database migrations
-npm run migrate
-
-# Generate Prisma client after schema changes
-npm run generate
-
-# Seed the database with initial data
-npm run seed
-
-# Lint the codebase
-npm run lint
+# Frontend (cd frontend first)
+npm run dev               # Vite dev server :5173, proxies /api -> :3000
+npm run build             # tsc && vite build
+npm run lint / type-check
 ```
 
-## Environment Setup
+### Database / Prisma
 
-1. Copy `.env.example` to `.env` and fill in all values:
+This project syncs the schema with **`prisma db push`**, not migrations. `npm run migrate` exists but the README, Makefile, Docker, and deploy paths all use `db push`. After any change to `prisma/schema.prisma`:
 
 ```bash
-cp .env.example .env
+npm run generate          # regenerate the Prisma client (do this after schema edits)
+npx prisma db push        # apply schema to the DB
+npm run seed              # idempotent: NIS2 controls + admin/demo data
 ```
 
-2. Required environment variables:
-   - `DATABASE_URL`: PostgreSQL connection string
-   - `JWT_SECRET`: Strong secret for access tokens (min 32 chars)
-   - `JWT_REFRESH_SECRET`: Strong secret for refresh tokens (min 32 chars)
+### Tests
 
-3. Initialize the database:
+Three tiers, each with its own runner:
 
 ```bash
-npm run migrate
-npm run generate
-npm run seed
+# Unit — mocks Prisma; covers services/utils/middleware; 70% coverage gate
+npm test
+npm run test:coverage
+npm test -- tests/unit/risk.service.test.ts        # single file
+npm test -- -t "calculates risk score"             # single test by name
+
+# Integration — real PostgreSQL, supertest against the Express app, serial
+npm run test:integration
+
+# E2E — Playwright (Chromium) against the full stack, from frontend/
+cd frontend && npx playwright install chromium      # first run only
+cd frontend && npm run test:e2e
 ```
 
-## Module Descriptions
+- **Unit** config: `jest.config.ts`. It ignores `tests/integration/`, so `npm test` never touches a DB.
+- **Integration** config: `jest.integration.config.ts`. `tests/integration/setup.ts` sets env vars (incl. a default `DATABASE_URL` of `postgresql://nis2:nis2@localhost:5433/nis2_test`) **before** any app module loads — required because `src/config/env.ts` validates env at import time and exits on failure. `tests/integration/helpers/db.ts#resetDatabase` truncates tables in FK order between tests.
+- **E2E** needs the backend on `:3000` already running and seeded; Playwright auto-starts the Vite server. See `frontend/playwright.config.ts`.
 
-### Auth (`/api/v1/auth`)
-Handles user registration, login, JWT refresh, and profile retrieval. Uses bcrypt(12) for password hashing. Issues short-lived access tokens and long-lived refresh tokens.
+## Backend architecture
 
-### Organizations (`/api/v1/organizations`)
-Manages NIS2-regulated entities. Each organization has a sector (Energy, Transport, Banking, etc.) and entity type (Essential/Important) per NIS2 classification. Provides aggregate statistics across all modules.
+Each domain lives in `src/modules/<name>/` as four files with strict layering: **`routes → controller → service → Prisma`**.
 
-### Compliance (`/api/v1/compliance`)
-Core NIS2 Article 21 compliance tracking. Controls are pre-seeded covering the 10 NIS2 security measures. Assessments track each organization's implementation status per control. Provides scoring by domain and overall.
+- **routes** — wire URLs to controllers and stack middleware. Convention: `router.use(authenticate)` to protect the whole module, then per-route `authorize(Role.X, ...)` for RBAC and `validate(Schema)` for input. `src/modules/risks/risk.routes.ts` is the canonical example.
+- **controller** — thin. Reads `req`, calls the service, formats the reply with the `response.ts` helpers, and forwards errors via `try/catch → next(err)`. No business logic here.
+- **service** — all logic, and the only layer that talks to Prisma (the singleton from `src/config/database.ts`). A default-exported instance is consumed by the controller; the class is exported for unit tests.
+- **schemas** — Zod schemas + inferred input types, shared by `validate()` and the controller's request generics.
 
-### Incidents (`/api/v1/incidents`)
-Cybersecurity incident lifecycle management aligned with NIS2 Article 23 reporting obligations. Tracks severity, affected systems, and regulatory reporting status (24-hour initial report, 72-hour report requirements).
+### Cross-cutting conventions (follow these when adding code)
 
-### Risks (`/api/v1/risks`)
-Risk identification, assessment, and mitigation tracking. Provides risk matrix (5x5 likelihood/impact grid) and heatmap data. Risks are categorized by type (Network, Supply Chain, Human, etc.).
+- **Response envelope** — every reply is `{ success, data, message }` (plus `errors[]` on failures). Always build it through `successResponse` / `errorResponse` / `paginatedResponse` in `src/shared/utils/response.ts`. The frontend's `unwrap()` in `frontend/src/api/client.ts` mirrors this shape exactly — keep them in sync.
+- **Error handling** — services signal HTTP errors by throwing a plain `Error` tagged with a status code: `Object.assign(error, { statusCode: 404 })`. The global handler `src/shared/middleware/error.middleware.ts` is the single place that maps errors to responses: Zod → 400 field errors, Prisma `P2002` → 409, `P2025` → 404, JWT errors → 401, `statusCode`-tagged errors → that code, everything else → 500. Don't `res.status().json()` errors from controllers — `next(err)` and let the handler normalize.
+- **Validation** — `validate(schema)` parses and **replaces** `req.body` with the typed output before the controller runs.
+- **Auth** — `authenticate` checks a `Bearer` access token and populates `req.user: AuthPayload`; `authorize(...roles)` gates by `Role`. JWT helpers live in `src/shared/utils/jwt.ts` (access + refresh secrets are separate).
+- **Config** — `src/config/env.ts` is the only place that reads `process.env`; it Zod-validates at import and `process.exit(1)`s on bad config. JWT secrets require **≥16 chars** (not 32). Import `env` from here rather than touching `process.env`.
+- **Routing/security** in `src/app.ts` — `/health` is registered **before** the rate limiter (so PaaS health checks aren't throttled); CORS builds its allow-list from comma-separated `CORS_ORIGIN` and additionally permits any `*.onrender.com` origin.
 
-### Audits (`/api/v1/audits`)
-Internal, external, regulatory, and supplier audit management. Supports audit findings with severity levels (Observation, Minor, Major, Critical) and remediation tracking.
+### Data model
 
-### Reports (`/api/v1/reports`)
-Automated report generation for compliance status, incidents, risks, audits, and executive summaries. Reports are stored as JSON records with time period support.
+`prisma/schema.prisma` defines 9 models — `Organization`, `User`, `ComplianceControl`, `ComplianceAssessment`, `Incident`, `Risk`, `Audit`, `AuditFinding`, `Report` — plus the enums that drive domain logic (sectors, severities, statuses). `Organization` is the tenant root; most records cascade-delete from it. `Risk.riskScore` is always derived as `likelihood × impact` in the service, never trusted from input.
 
-## User Roles
+## Frontend architecture
 
-- **ADMIN**: Full system access including organization management
-- **COMPLIANCE_OFFICER**: Manage compliance, incidents, risks, audits within their organization
-- **AUDITOR**: Read access + ability to create audit findings
-- **VIEWER**: Read-only access
+`frontend/src/` is organized by responsibility: `api/` (axios client + one module per domain), `auth/` (AuthContext + ProtectedRoute), `hooks/`, `lib/` (French labels, color mappings, NIS2/EBIOS domain helpers), `pages/`, `types/` (mirrors of backend types).
 
-## Default Credentials (Seed)
+The hub is `frontend/src/api/client.ts`: a request interceptor attaches the bearer token; a response interceptor catches `401`, calls `/auth/refresh` once, **queues** concurrent failed requests, replays them with the new token, and redirects to `/login` if refresh fails. Tokens live in `localStorage` under `nis2.accessToken` / `nis2.refreshToken`. `VITE_API_URL` selects the API origin (falls back to the relative `/api/v1` Vite proxy in dev).
 
-- Email: `admin@nis2.example.com`
-- Password: `Admin@1234`
+## API docs & roles
 
-## Testing Notes
+- Swagger UI at `http://localhost:3000/api/docs`; raw OpenAPI JSON at `/api/docs.json` (spec assembled in `src/config/swagger.ts`).
+- All `/api/v1` routes require a JWT except `POST /auth/register`, `POST /auth/login`, and `POST /auth/refresh`.
+- Roles: `ADMIN` (full + deletes), `COMPLIANCE_OFFICER` (manage within org), `AUDITOR` (read + audit findings), `VIEWER` (read-only).
+- Seed admin: `admin@nis2.example.com` / `Admin@1234` (dev only; prod uses `ADMIN_PASSWORD`).
 
-- All endpoints require authentication except `POST /api/v1/auth/register` and `POST /api/v1/auth/login`
-- Use the `/health` endpoint for uptime checks
-- Rate limiting is applied globally (configurable via env vars)
-- Prisma errors are normalized to consistent API responses
-- Zod validation errors return field-level details in the `errors` field
+## Deployment
 
-## API Response Format
+- **Docker** — `docker-compose.yml` for dev (Postgres + API), `docker-compose.prod.yml` for the full prod stack (Postgres + API + nginx-served frontend that also reverse-proxies `/api`).
+- **Render** — `render.yaml` blueprint provisions DB + API + static frontend; on each deploy the API runs `prisma db push` then the idempotent seed. Secrets marked `sync: false` (`JWT_SECRET`, `JWT_REFRESH_SECRET`, `ADMIN_PASSWORD`) are entered in the Render dashboard.
+- **CI** — `.github/workflows/ci.yml`: code quality (type-check/lint/format:check) → unit tests → integration tests (against a Postgres service) → frontend build → Playwright E2E → Docker image builds.
 
-All responses follow this structure:
+## Notes
 
-```json
-{
-  "success": true,
-  "data": {},
-  "message": "Optional message"
-}
-```
-
-Error responses:
-
-```json
-{
-  "success": false,
-  "message": "Error description",
-  "errors": [
-    { "field": "email", "message": "Invalid email" }
-  ]
-}
-```
-
-## NIS2 Article 21 Security Measures Covered
-
-1. Risk analysis and information system security policies
-2. Incident handling
-3. Business continuity and crisis management
-4. Supply chain security
-5. Security in network and information systems acquisition
-6. Policies for assessing the effectiveness of cybersecurity risk-management measures
-7. Basic cyber hygiene practices and cybersecurity training
-8. Policies and procedures regarding the use of cryptography and encryption
-9. Human resources security and access control policies
-10. Use of multi-factor authentication and continuous authentication solutions
+- `.claude/settings.json` registers the Playwright MCP server, available for browser-driven inspection of the running frontend.
+- When changing an API contract, update three places together: the Zod schema (`*.schemas.ts`), the Swagger annotations, and the frontend's `types/` + `api/` module.
