@@ -123,14 +123,36 @@ async function seedControls(): Promise<string[]> {
 async function seedOrganization(): Promise<string> {
   console.log('Seeding demo organisation...');
 
-  const existing = await prisma.organization.findFirst({
+  // Already migrated → nothing to do.
+  const already = await prisma.organization.findFirst({
     where: { contactEmail: 'contact@nexia-infra.fr' },
   });
-  if (existing) {
-    console.log(`  Organisation "${existing.name}" already exists — skipping`);
-    return existing.id;
+  if (already) {
+    console.log(`  Organisation "${already.name}" already exists — skipping`);
+    return already.id;
   }
 
+  // Old generic org from a previous seed run → rename it in place so all
+  // linked users and data stay valid.
+  const old = await prisma.organization.findFirst({
+    where: { contactEmail: 'contact@nis2-example.eu' },
+  });
+  if (old) {
+    const updated = await prisma.organization.update({
+      where: { id: old.id },
+      data: {
+        name: 'Nexia Infrastructure France',
+        contactEmail: 'contact@nexia-infra.fr',
+        contactPhone: '+33 1 44 00 12 34',
+        address: "14 Avenue de l'Opéra, 75001 Paris, France",
+        website: 'https://nexia-infra.fr',
+      },
+    });
+    console.log(`  Renamed organisation → "${updated.name}" (${updated.id})`);
+    return updated.id;
+  }
+
+  // Fresh install → create from scratch.
   const org = await prisma.organization.create({
     data: {
       name: 'Nexia Infrastructure France',
@@ -139,7 +161,7 @@ async function seedOrganization(): Promise<string> {
       country: 'France',
       contactEmail: 'contact@nexia-infra.fr',
       contactPhone: '+33 1 44 00 12 34',
-      address: '14 Avenue de l'Opéra, 75001 Paris, France',
+      address: "14 Avenue de l'Opéra, 75001 Paris, France",
       website: 'https://nexia-infra.fr',
     },
   });
