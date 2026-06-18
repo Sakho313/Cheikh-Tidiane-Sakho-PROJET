@@ -31,6 +31,20 @@ app.use(
   }),
 );
 
+// ─── Health check (before rate limiter — Render pings this every ~30 s) ───────
+
+app.get('/health', (_req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    data: {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: env.NODE_ENV,
+      version: process.env['npm_package_version'] ?? '1.0.0',
+    },
+  });
+});
+
 // ─── Rate limiting ────────────────────────────────────────────────────────────
 
 const limiter = rateLimit({
@@ -66,20 +80,6 @@ app.use(
   }),
 );
 app.get('/api/docs.json', (_req: Request, res: Response) => res.json(swaggerSpec));
-
-// ─── Health check ─────────────────────────────────────────────────────────────
-
-app.get('/health', (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    data: {
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      environment: env.NODE_ENV,
-      version: process.env['npm_package_version'] ?? '1.0.0',
-    },
-  });
-});
 
 // ─── API routes ───────────────────────────────────────────────────────────────
 
