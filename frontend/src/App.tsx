@@ -16,6 +16,8 @@ import { SuppliersPage } from '@/pages/SuppliersPage';
 import { ResponsePage } from '@/pages/ResponsePage';
 import { SensibilisationPage } from '@/pages/SensibilisationPage';
 import { DocumentationPage } from '@/pages/DocumentationPage';
+import { DirectionPage } from '@/pages/DirectionPage';
+import { VulnerabilitiesPage } from '@/pages/VulnerabilitiesPage';
 
 export function App() {
   return (
@@ -43,6 +45,8 @@ export function App() {
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/sensibilisation" element={<SensibilisationPage />} />
         <Route path="/documentation" element={<DocumentationPage />} />
+        <Route path="/direction" element={<DirectionPage />} />
+        <Route path="/vulnerabilities" element={<VulnerabilitiesPage />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />

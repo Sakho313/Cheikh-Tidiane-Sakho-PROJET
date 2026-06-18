@@ -60,6 +60,20 @@ app.use(
   }),
 );
 
+// ─── Health check (before rate limiter — Render pings this every ~30 s) ───────
+
+app.get('/health', (_req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    data: {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: env.NODE_ENV,
+      version: process.env['npm_package_version'] ?? '1.0.0',
+    },
+  });
+});
+
 // ─── Rate limiting ────────────────────────────────────────────────────────────
 
 const limiter = rateLimit({
@@ -96,9 +110,8 @@ app.use(
 );
 app.get('/api/docs.json', (_req: Request, res: Response) => res.json(swaggerSpec));
 
-// ─── Health check ─────────────────────────────────────────────────────────────
-
-const healthHandler = (_req: Request, res: Response): void => {
+// Also reachable via the proxied path used by clients.
+app.get('/api/health', (_req: Request, res: Response) => {
   res.status(200).json({
     success: true,
     data: {
@@ -108,12 +121,8 @@ const healthHandler = (_req: Request, res: Response): void => {
       version: process.env['npm_package_version'] ?? '1.0.0',
     },
   });
-};
+});
 
-// Exposed at /health (Render health check) and /api/health (reachable via the
-// API path used by clients).
-app.get('/health', healthHandler);
-app.get('/api/health', healthHandler);
 
 // ─── API routes ───────────────────────────────────────────────────────────────
 

@@ -209,6 +209,39 @@ async function seedComplianceOfficer(organizationId: string): Promise<void> {
   );
 }
 
+async function seedDemoUser(organizationId: string): Promise<void> {
+  console.log('Seeding shared demo user...');
+
+  const email = process.env.DEMO_EMAIL || 'demo@sao-nis2.com';
+
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) {
+    console.log(`  Demo user "${existing.email}" already exists — skipping`);
+    return;
+  }
+
+  // Public, read-only showcase account (role VIEWER → blocked from every
+  // mutation by RBAC). The password is intentionally shareable; override with
+  // DEMO_PASSWORD if you want a different one (keep it in sync with the
+  // frontend's VITE_DEMO_PASSWORD).
+  const password = process.env.DEMO_PASSWORD || 'Demo2024NIS2!';
+  const passwordHash = await bcrypt.hash(password, 12);
+
+  const demo = await prisma.user.create({
+    data: {
+      email,
+      passwordHash,
+      firstName: 'Accès',
+      lastName: 'Démonstration',
+      role: Role.VIEWER,
+      organizationId,
+      isActive: true,
+    },
+  });
+
+  console.log(`  Created demo (read-only) user: ${demo.email}`);
+}
+
 async function main(): Promise<void> {
   console.log('');
   console.log('═══════════════════════════════════════════════');
@@ -229,6 +262,9 @@ async function main(): Promise<void> {
     await seedComplianceOfficer(organizationId);
     console.log('');
 
+    await seedDemoUser(organizationId);
+    console.log('');
+
     console.log('═══════════════════════════════════════════════');
     console.log('  Seeding complete!');
     console.log('═══════════════════════════════════════════════');
@@ -247,6 +283,14 @@ async function main(): Promise<void> {
       process.env.OFFICER_PASSWORD
         ? '    Password: (defined via OFFICER_PASSWORD)'
         : '    Password: Officer@1234',
+    );
+    console.log('');
+    console.log('  Demo (read-only) credentials — share these with prospects:');
+    console.log(`    Email   : ${process.env.DEMO_EMAIL || 'demo@sao-nis2.com'}`);
+    console.log(
+      process.env.DEMO_PASSWORD
+        ? '    Password: (defined via DEMO_PASSWORD)'
+        : '    Password: Demo2024NIS2!',
     );
     console.log('');
   } catch (error) {
