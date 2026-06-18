@@ -61,9 +61,9 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://nis2user:nis2pass@localhost:5432/nis2_test
-      JWT_SECRET: test-jwt-secret
+      JWT_SECRET: test-jwt-secret-key-for-ci-xxxx
       JWT_EXPIRES_IN: 1h
-      JWT_REFRESH_SECRET: test-refresh-secret
+      JWT_REFRESH_SECRET: test-refresh-secret-key-for-ci-xx
       JWT_REFRESH_EXPIRES_IN: 7d
       NODE_ENV: test
       PORT: 3001
