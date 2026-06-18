@@ -1,113 +1,113 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Ce fichier fournit des directives à Claude Code (claude.ai/code) lorsqu'il travaille sur le code de ce dépôt.
 
-## What this is
+## Présentation
 
-A NIS2 (EU cybersecurity directive) compliance management platform. It is a **monorepo**:
+Une plateforme de gestion de la conformité NIS2 (directive européenne sur la cybersécurité). C'est un **monorepo** :
 
-- **Backend** (repo root) — Express + TypeScript + Prisma/PostgreSQL REST API under `/api/v1`.
-- **Frontend** (`frontend/`) — Vite + React 18 + TanStack Query + Tailwind SPA that consumes the API. UI is entirely in French.
+- **Backend** (racine du dépôt) — API REST Express + TypeScript + Prisma/PostgreSQL exposée sous `/api/v1`.
+- **Frontend** (`frontend/`) — SPA Vite + React 18 + TanStack Query + Tailwind qui consomme l'API. L'interface est entièrement en français.
 
-The two halves have separate `package.json` files and separate `node_modules`. The root `Makefile` orchestrates both and is the fastest way to get oriented (`make help`).
+Les deux moitiés ont des `package.json` distincts et des `node_modules` distincts. Le `Makefile` à la racine orchestre les deux et constitue le moyen le plus rapide de s'orienter (`make help`).
 
-## Commands
+## Commandes
 
-Run from the repo root unless noted. `make` targets wrap both halves; raw `npm` commands act on one.
+À lancer depuis la racine du dépôt sauf indication contraire. Les cibles `make` enveloppent les deux moitiés ; les commandes `npm` brutes n'agissent que sur une seule.
 
 ```bash
-make setup        # install backend+frontend deps, prisma db push, seed  (first-time bootstrap)
-make dev          # run API (:3000) AND frontend (:5173) together
-make build        # build both; make lint / make typecheck likewise cover both
+make setup        # installe les deps backend+frontend, prisma db push, seed  (bootstrap initial)
+make dev          # lance l'API (:3000) ET le frontend (:5173) ensemble
+make build        # build les deux ; make lint / make typecheck couvrent de même les deux
 
-# Backend (root package.json)
-npm run dev               # API only, hot-reload, :3000
+# Backend (package.json racine)
+npm run dev               # API seule, hot-reload, :3000
 npm run build             # tsc -> dist/
-npm run lint              # eslint, zero-warning gate (lint:fix to autofix)
+npm run lint              # eslint, seuil zéro avertissement (lint:fix pour corriger)
 npm run type-check        # tsc --noEmit
-npm run format            # prettier --write (format:check in CI)
+npm run format            # prettier --write (format:check en CI)
 
-# Frontend (cd frontend first)
-npm run dev               # Vite dev server :5173, proxies /api -> :3000
+# Frontend (faire cd frontend d'abord)
+npm run dev               # serveur de dev Vite :5173, proxifie /api -> :3000
 npm run build             # tsc && vite build
 npm run lint / type-check
 ```
 
-### Database / Prisma
+### Base de données / Prisma
 
-This project syncs the schema with **`prisma db push`**, not migrations. `npm run migrate` exists but the README, Makefile, Docker, and deploy paths all use `db push`. After any change to `prisma/schema.prisma`:
+Ce projet synchronise le schéma avec **`prisma db push`**, et non avec des migrations. `npm run migrate` existe mais le README, le Makefile, Docker et les chemins de déploiement utilisent tous `db push`. Après toute modification de `prisma/schema.prisma` :
 
 ```bash
-npm run generate          # regenerate the Prisma client (do this after schema edits)
-npx prisma db push        # apply schema to the DB
-npm run seed              # idempotent: NIS2 controls + admin/demo data
+npm run generate          # régénère le client Prisma (à faire après une édition du schéma)
+npx prisma db push        # applique le schéma à la base
+npm run seed              # idempotent : contrôles NIS2 + données admin/démo
 ```
 
 ### Tests
 
-Three tiers, each with its own runner:
+Trois niveaux, chacun avec son propre exécuteur :
 
 ```bash
-# Unit — mocks Prisma; covers services/utils/middleware; 70% coverage gate
+# Unitaires — mocke Prisma ; couvre services/utils/middleware ; seuil de couverture 70 %
 npm test
 npm run test:coverage
-npm test -- tests/unit/risk.service.test.ts        # single file
-npm test -- -t "calculates risk score"             # single test by name
+npm test -- tests/unit/risk.service.test.ts        # un seul fichier
+npm test -- -t "calculates risk score"             # un seul test par son nom
 
-# Integration — real PostgreSQL, supertest against the Express app, serial
+# Intégration — vrai PostgreSQL, supertest contre l'app Express, en série
 npm run test:integration
 
-# E2E — Playwright (Chromium) against the full stack, from frontend/
-cd frontend && npx playwright install chromium      # first run only
+# E2E — Playwright (Chromium) contre la pile complète, depuis frontend/
+cd frontend && npx playwright install chromium      # première exécution uniquement
 cd frontend && npm run test:e2e
 ```
 
-- **Unit** config: `jest.config.ts`. It ignores `tests/integration/`, so `npm test` never touches a DB.
-- **Integration** config: `jest.integration.config.ts`. `tests/integration/setup.ts` sets env vars (incl. a default `DATABASE_URL` of `postgresql://nis2:nis2@localhost:5433/nis2_test`) **before** any app module loads — required because `src/config/env.ts` validates env at import time and exits on failure. `tests/integration/helpers/db.ts#resetDatabase` truncates tables in FK order between tests.
-- **E2E** needs the backend on `:3000` already running and seeded; Playwright auto-starts the Vite server. See `frontend/playwright.config.ts`.
+- **Unitaires** — config `jest.config.ts`. Elle ignore `tests/integration/`, donc `npm test` ne touche jamais à une base.
+- **Intégration** — config `jest.integration.config.ts`. `tests/integration/setup.ts` définit les variables d'environnement (dont une valeur par défaut de `DATABASE_URL` à `postgresql://nis2:nis2@localhost:5433/nis2_test`) **avant** le chargement de tout module applicatif — nécessaire car `src/config/env.ts` valide l'environnement à l'import et quitte le processus en cas d'échec. `tests/integration/helpers/db.ts#resetDatabase` vide les tables dans l'ordre des clés étrangères entre les tests.
+- **E2E** — requiert que le backend soit déjà lancé et seedé sur `:3000` ; Playwright démarre automatiquement le serveur Vite. Voir `frontend/playwright.config.ts`.
 
-## Backend architecture
+## Architecture backend
 
-Each domain lives in `src/modules/<name>/` as four files with strict layering: **`routes → controller → service → Prisma`**.
+Chaque domaine vit dans `src/modules/<nom>/` sous forme de quatre fichiers, avec un découpage en couches strict : **`routes → controller → service → Prisma`**.
 
-- **routes** — wire URLs to controllers and stack middleware. Convention: `router.use(authenticate)` to protect the whole module, then per-route `authorize(Role.X, ...)` for RBAC and `validate(Schema)` for input. `src/modules/risks/risk.routes.ts` is the canonical example.
-- **controller** — thin. Reads `req`, calls the service, formats the reply with the `response.ts` helpers, and forwards errors via `try/catch → next(err)`. No business logic here.
-- **service** — all logic, and the only layer that talks to Prisma (the singleton from `src/config/database.ts`). A default-exported instance is consumed by the controller; the class is exported for unit tests.
-- **schemas** — Zod schemas + inferred input types, shared by `validate()` and the controller's request generics.
+- **routes** — câblent les URLs aux contrôleurs et empilent les middlewares. Convention : `router.use(authenticate)` pour protéger tout le module, puis par route `authorize(Role.X, ...)` pour le RBAC et `validate(Schema)` pour les entrées. `src/modules/risks/risk.routes.ts` est l'exemple canonique.
+- **controller** — fin. Lit `req`, appelle le service, formate la réponse avec les helpers de `response.ts`, et transmet les erreurs via `try/catch → next(err)`. Aucune logique métier ici.
+- **service** — toute la logique, et la seule couche qui parle à Prisma (le singleton de `src/config/database.ts`). Une instance exportée par défaut est consommée par le contrôleur ; la classe est exportée pour les tests unitaires.
+- **schemas** — schémas Zod + types d'entrée inférés, partagés par `validate()` et les génériques de requête du contrôleur.
 
-### Cross-cutting conventions (follow these when adding code)
+### Conventions transverses (à suivre lors de l'ajout de code)
 
-- **Response envelope** — every reply is `{ success, data, message }` (plus `errors[]` on failures). Always build it through `successResponse` / `errorResponse` / `paginatedResponse` in `src/shared/utils/response.ts`. The frontend's `unwrap()` in `frontend/src/api/client.ts` mirrors this shape exactly — keep them in sync.
-- **Error handling** — services signal HTTP errors by throwing a plain `Error` tagged with a status code: `Object.assign(error, { statusCode: 404 })`. The global handler `src/shared/middleware/error.middleware.ts` is the single place that maps errors to responses: Zod → 400 field errors, Prisma `P2002` → 409, `P2025` → 404, JWT errors → 401, `statusCode`-tagged errors → that code, everything else → 500. Don't `res.status().json()` errors from controllers — `next(err)` and let the handler normalize.
-- **Validation** — `validate(schema)` parses and **replaces** `req.body` with the typed output before the controller runs.
-- **Auth** — `authenticate` checks a `Bearer` access token and populates `req.user: AuthPayload`; `authorize(...roles)` gates by `Role`. JWT helpers live in `src/shared/utils/jwt.ts` (access + refresh secrets are separate).
-- **Config** — `src/config/env.ts` is the only place that reads `process.env`; it Zod-validates at import and `process.exit(1)`s on bad config. JWT secrets require **≥16 chars** (not 32). Import `env` from here rather than touching `process.env`.
-- **Routing/security** in `src/app.ts` — `/health` is registered **before** the rate limiter (so PaaS health checks aren't throttled); CORS builds its allow-list from comma-separated `CORS_ORIGIN` and additionally permits any `*.onrender.com` origin.
+- **Enveloppe de réponse** — chaque réponse est `{ success, data, message }` (plus `errors[]` en cas d'échec). Toujours la construire via `successResponse` / `errorResponse` / `paginatedResponse` dans `src/shared/utils/response.ts`. La fonction `unwrap()` du frontend dans `frontend/src/api/client.ts` reflète exactement cette forme — gardez-les synchronisées.
+- **Gestion des erreurs** — les services signalent une erreur HTTP en levant une `Error` simple marquée d'un code de statut : `Object.assign(error, { statusCode: 404 })`. Le gestionnaire global `src/shared/middleware/error.middleware.ts` est le seul endroit qui mappe les erreurs aux réponses : Zod → 400 avec erreurs par champ, Prisma `P2002` → 409, `P2025` → 404, erreurs JWT → 401, erreurs marquées d'un `statusCode` → ce code, tout le reste → 500. Ne faites pas `res.status().json()` pour les erreurs depuis les contrôleurs — faites `next(err)` et laissez le gestionnaire normaliser.
+- **Validation** — `validate(schema)` parse et **remplace** `req.body` par la sortie typée avant l'exécution du contrôleur.
+- **Auth** — `authenticate` vérifie un token d'accès `Bearer` et peuple `req.user: AuthPayload` ; `authorize(...roles)` filtre par `Role`. Les helpers JWT vivent dans `src/shared/utils/jwt.ts` (les secrets d'accès et de refresh sont séparés).
+- **Configuration** — `src/config/env.ts` est le seul endroit qui lit `process.env` ; il valide via Zod à l'import et fait `process.exit(1)` en cas de config invalide. Les secrets JWT requièrent **≥ 16 caractères** (et non 32). Importez `env` depuis ce fichier plutôt que de toucher à `process.env`.
+- **Routage/sécurité** dans `src/app.ts` — `/health` est enregistré **avant** le rate limiter (pour que les health checks des PaaS ne soient pas limités) ; CORS construit sa liste d'autorisation à partir de `CORS_ORIGIN` (séparée par des virgules) et autorise en plus toute origine `*.onrender.com`.
 
-### Data model
+### Modèle de données
 
-`prisma/schema.prisma` defines 9 models — `Organization`, `User`, `ComplianceControl`, `ComplianceAssessment`, `Incident`, `Risk`, `Audit`, `AuditFinding`, `Report` — plus the enums that drive domain logic (sectors, severities, statuses). `Organization` is the tenant root; most records cascade-delete from it. `Risk.riskScore` is always derived as `likelihood × impact` in the service, never trusted from input.
+`prisma/schema.prisma` définit 9 modèles — `Organization`, `User`, `ComplianceControl`, `ComplianceAssessment`, `Incident`, `Risk`, `Audit`, `AuditFinding`, `Report` — ainsi que les enums qui pilotent la logique métier (secteurs, sévérités, statuts). `Organization` est la racine du locataire (tenant) ; la plupart des enregistrements sont supprimés en cascade depuis elle. `Risk.riskScore` est toujours dérivé comme `likelihood × impact` dans le service, jamais accordé de confiance depuis l'entrée.
 
-## Frontend architecture
+## Architecture frontend
 
-`frontend/src/` is organized by responsibility: `api/` (axios client + one module per domain), `auth/` (AuthContext + ProtectedRoute), `hooks/`, `lib/` (French labels, color mappings, NIS2/EBIOS domain helpers), `pages/`, `types/` (mirrors of backend types).
+`frontend/src/` est organisé par responsabilité : `api/` (client axios + un module par domaine), `auth/` (AuthContext + ProtectedRoute), `hooks/`, `lib/` (libellés français, mappings de couleurs, helpers de domaine NIS2/EBIOS), `pages/`, `types/` (miroirs des types du backend).
 
-The hub is `frontend/src/api/client.ts`: a request interceptor attaches the bearer token; a response interceptor catches `401`, calls `/auth/refresh` once, **queues** concurrent failed requests, replays them with the new token, and redirects to `/login` if refresh fails. Tokens live in `localStorage` under `nis2.accessToken` / `nis2.refreshToken`. `VITE_API_URL` selects the API origin (falls back to the relative `/api/v1` Vite proxy in dev).
+Le cœur est `frontend/src/api/client.ts` : un intercepteur de requête attache le token bearer ; un intercepteur de réponse capture le `401`, appelle `/auth/refresh` une seule fois, **met en file d'attente** les requêtes échouées concurrentes, les rejoue avec le nouveau token, et redirige vers `/login` si le refresh échoue. Les tokens vivent dans `localStorage` sous `nis2.accessToken` / `nis2.refreshToken`. `VITE_API_URL` sélectionne l'origine de l'API (retombe sur le proxy Vite relatif `/api/v1` en dev).
 
-## API docs & roles
+## Documentation de l'API & rôles
 
-- Swagger UI at `http://localhost:3000/api/docs`; raw OpenAPI JSON at `/api/docs.json` (spec assembled in `src/config/swagger.ts`).
-- All `/api/v1` routes require a JWT except `POST /auth/register`, `POST /auth/login`, and `POST /auth/refresh`.
-- Roles: `ADMIN` (full + deletes), `COMPLIANCE_OFFICER` (manage within org), `AUDITOR` (read + audit findings), `VIEWER` (read-only).
-- Seed admin: `admin@nis2.example.com` / `Admin@1234` (dev only; prod uses `ADMIN_PASSWORD`).
+- Swagger UI sur `http://localhost:3000/api/docs` ; JSON OpenAPI brut sur `/api/docs.json` (spec assemblée dans `src/config/swagger.ts`).
+- Toutes les routes `/api/v1` requièrent un JWT sauf `POST /auth/register`, `POST /auth/login` et `POST /auth/refresh`.
+- Rôles : `ADMIN` (tout + suppressions), `COMPLIANCE_OFFICER` (gestion au sein de l'org), `AUDITOR` (lecture + constats d'audit), `VIEWER` (lecture seule).
+- Admin du seed : `admin@nis2.example.com` / `Admin@1234` (dev uniquement ; la prod utilise `ADMIN_PASSWORD`).
 
-## Deployment
+## Déploiement
 
-- **Docker** — `docker-compose.yml` for dev (Postgres + API), `docker-compose.prod.yml` for the full prod stack (Postgres + API + nginx-served frontend that also reverse-proxies `/api`).
-- **Render** — `render.yaml` blueprint provisions DB + API + static frontend; on each deploy the API runs `prisma db push` then the idempotent seed. Secrets marked `sync: false` (`JWT_SECRET`, `JWT_REFRESH_SECRET`, `ADMIN_PASSWORD`) are entered in the Render dashboard.
-- **CI** — `.github/workflows/ci.yml`: code quality (type-check/lint/format:check) → unit tests → integration tests (against a Postgres service) → frontend build → Playwright E2E → Docker image builds.
+- **Docker** — `docker-compose.yml` pour le dev (Postgres + API), `docker-compose.prod.yml` pour la pile de prod complète (Postgres + API + frontend servi par nginx qui fait aussi office de reverse-proxy `/api`).
+- **Render** — le blueprint `render.yaml` provisionne la base + l'API + le frontend statique ; à chaque déploiement, l'API exécute `prisma db push` puis le seed idempotent. Les secrets marqués `sync: false` (`JWT_SECRET`, `JWT_REFRESH_SECRET`, `ADMIN_PASSWORD`) se renseignent dans le tableau de bord Render.
+- **CI** — `.github/workflows/ci.yml` : qualité du code (type-check/lint/format:check) → tests unitaires → tests d'intégration (contre un service Postgres) → build du frontend → E2E Playwright → builds d'images Docker.
 
 ## Notes
 
-- `.claude/settings.json` registers the Playwright MCP server, available for browser-driven inspection of the running frontend.
-- When changing an API contract, update three places together: the Zod schema (`*.schemas.ts`), the Swagger annotations, and the frontend's `types/` + `api/` module.
+- `.claude/settings.json` enregistre le serveur MCP Playwright, disponible pour l'inspection du frontend en cours d'exécution pilotée par navigateur.
+- Lors d'un changement de contrat d'API, mettez à jour trois endroits ensemble : le schéma Zod (`*.schemas.ts`), les annotations Swagger, et les `types/` + le module `api/` du frontend.
