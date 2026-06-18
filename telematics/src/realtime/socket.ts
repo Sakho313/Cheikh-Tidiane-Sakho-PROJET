@@ -2,6 +2,12 @@ import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { env } from '../config/env';
 import { verifyAccessToken } from '../shared/utils/jwt';
+import { AuthPayload } from '../shared/types';
+
+/** Données typées attachées à chaque socket (renseignées à l'authentification). */
+interface SocketData {
+  user?: AuthPayload;
+}
 
 /**
  * Serveur temps réel (Socket.IO) pour le suivi live de la flotte.
@@ -28,13 +34,13 @@ export function initSocket(httpServer: HttpServer): SocketIOServer {
 
   io.use((socket: Socket, nextFn: (err?: Error) => void) => {
     try {
-      const token = socket.handshake.auth?.token as string | undefined;
-      if (!token) {
+      const auth = socket.handshake.auth as { token?: string };
+      if (!auth.token) {
         nextFn(new Error('Authentication token required'));
         return;
       }
-      const payload = verifyAccessToken(token);
-      socket.data.user = payload;
+      const payload = verifyAccessToken(auth.token);
+      (socket.data as SocketData).user = payload;
       nextFn();
     } catch {
       nextFn(new Error('Invalid or expired token'));
@@ -42,7 +48,7 @@ export function initSocket(httpServer: HttpServer): SocketIOServer {
   });
 
   io.on('connection', (socket: Socket) => {
-    const orgId = socket.data.user?.organizationId as string | null;
+    const orgId = (socket.data as SocketData).user?.organizationId ?? null;
     if (orgId) {
       void socket.join(roomFor(orgId));
     }
