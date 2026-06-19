@@ -11,6 +11,12 @@ Une plateforme de gestion de la conformité NIS2 (directive européenne sur la c
 
 Les deux moitiés ont des `package.json` distincts et des `node_modules` distincts. Le `Makefile` à la racine orchestre les deux et constitue le moyen le plus rapide de s'orienter (`make help`).
 
+> **Sous-projet séparé `telematics/`** — une plateforme télématique de flotte
+> indépendante (géolocalisation, comportement de conduite, carburant, rapports)
+> réutilise la même stack mais vit dans `telematics/` avec son propre
+> `package.json`, son schéma Prisma et son `telematics/CLAUDE.md`. Backend sur
+> `:4000`, frontend sur `:5174`. Voir `telematics/CLAUDE.md` pour les détails.
+
 ## Commandes
 
 À lancer depuis la racine du dépôt sauf indication contraire. Les cibles `make` enveloppent les deux moitiés ; les commandes `npm` brutes n'agissent que sur une seule.
