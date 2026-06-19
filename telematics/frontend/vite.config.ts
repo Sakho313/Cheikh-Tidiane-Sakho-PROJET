@@ -20,4 +20,21 @@ export default defineConfig({
       },
     },
   },
+  // Sert le build de production (`vite preview`) comme le ferait nginx en prod :
+  // reverse-proxy de /api et de /socket.io (WebSocket) vers le backend, en
+  // même origine — la bundle utilise alors le chemin relatif /api/v1.
+  preview: {
+    port: 4173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+      '/socket.io': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        ws: true,
+      },
+    },
+  },
 });
