@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: telematics
+      POSTGRES_PASSWORD: telematics
+      POSTGRES_DB: telematics_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - telematics_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U telematics']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://telematics:telematics@db:5432/telematics_db
+      JWT_SECRET: change-me-super-secret-jwt-key
+      JWT_REFRESH_SECRET: change-me-super-secret-refresh-key
+      NODE_ENV: production
+      PORT: '4000'
+      CORS_ORIGIN: http://localhost:5174
+      INGEST_API_KEY: change-me-device-ingest-key
+    ports:
+      - '4000:4000'
+
+volumes:
+  telematics_db:

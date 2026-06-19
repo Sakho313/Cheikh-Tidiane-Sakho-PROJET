@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+*.log
+.env
+.env.*
+!.env.example
+!.env.production
+.DS_Store
+frontend/node_modules
+frontend/dist
+frontend/playwright-report
+frontend/test-results
+uploads

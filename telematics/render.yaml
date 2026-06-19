@@ -1,0 +1,84 @@
+## Blueprint de déploiement Render.com — projet TÉLÉMATIQUE
+## Docs : https://render.com/docs/blueprint-spec
+##
+## ⚠️ Placement : Render lit le `render.yaml` à la RACINE du dépôt. Ce dépôt en
+## contient déjà un pour la plateforme NIS2. Pour déployer la télématique :
+##   - soit copier/déplacer ce fichier à la racine du dépôt,
+##   - soit déployer depuis un dépôt où `telematics/` est la racine.
+## Les `rootDir` ci-dessous sont relatifs à la racine du dépôt.
+##
+## Crée trois ressources :
+##   - Base PostgreSQL (telematics-db)
+##   - API backend + Socket.IO (telematics-api, runtime Node natif)
+##   - Frontend statique (telematics-frontend)
+##
+## À l'Apply, renseigner les variables `sync: false` sur telematics-api :
+## JWT_SECRET, JWT_REFRESH_SECRET, INGEST_API_KEY, ADMIN_PASSWORD.
+## À chaque déploiement, l'API exécute `prisma db push` + le seed idempotent.
+
+databases:
+  - name: telematics-db
+    databaseName: telematics_db
+    user: telematics
+    plan: free
+    region: frankfurt
+
+services:
+  # ── API backend (Node natif) ─────────────────────────────────────────────────
+  - type: web
+    name: telematics-api
+    runtime: node
+    plan: starter
+    region: frankfurt
+    rootDir: telematics
+    healthCheckPath: /health
+    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
+    startCommand: npx prisma db push --skip-generate && npm run seed && npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telematics-db
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false                 # ⟵ valeur aléatoire forte
+      - key: JWT_REFRESH_SECRET
+        sync: false                 # ⟵ autre valeur aléatoire forte
+      - key: INGEST_API_KEY
+        sync: false                 # ⟵ clé partagée des boîtiers GPS
+      - key: ADMIN_PASSWORD
+        sync: false                 # ⟵ mot de passe admin@telematics.example.com
+      - key: JWT_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: NODE_ENV
+        value: production
+      - key: DEFAULT_SPEED_LIMIT_KMH
+        value: '90'
+      # Doit inclure l'origine exacte du frontend (utilisée aussi par la CORS Socket.IO).
+      - key: CORS_ORIGIN
+        value: https://telematics-frontend.onrender.com
+      - key: RATE_LIMIT_WINDOW_MS
+        value: '900000'
+      - key: RATE_LIMIT_MAX
+        value: '300'
+
+  # ── Frontend (site statique) ──────────────────────────────────────────────────
+  - type: web
+    name: telematics-frontend
+    runtime: static
+    rootDir: telematics/frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      # Render statique ne relaie pas les WebSockets : on cible l'API en
+      # cross-origin (REST + Socket.IO). L'API autorise *.onrender.com (REST) et
+      # le frontend doit figurer dans CORS_ORIGIN (Socket.IO) — voir ci-dessus.
+      - key: VITE_API_URL
+        value: https://telematics-api.onrender.com
+      - key: VITE_MAP_PROVIDER
+        value: leaflet
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

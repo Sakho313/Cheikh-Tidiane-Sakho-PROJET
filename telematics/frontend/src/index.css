@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+}
+
+@layer components {
+  .form-label {
+    @apply mb-1 block text-sm font-medium text-slate-700;
+  }
+
+  .form-input {
+    @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm
+      placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500
+      disabled:cursor-not-allowed disabled:bg-slate-100;
+  }
+}
+
+/* Leaflet expects its container to have an explicit height; the marker pane and
+   controls sit above the Tailwind layout, so keep z-index sane. */
+.leaflet-container {
+  font-family: inherit;
+}
+
+@keyframes telematics-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-live-dot {
+  animation: telematics-pulse 1.6s ease-in-out infinite;
+}

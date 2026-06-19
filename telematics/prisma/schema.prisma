@@ -1,0 +1,542 @@
+// Schéma de la plateforme télématique de flotte.
+// Synchronisé via `prisma db push` (voir CLAUDE.md). Régénérez le client après
+// toute modification : `npm run generate`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  FLEET_MANAGER
+  DISPATCHER
+  ANALYST
+  DRIVER
+  VIEWER
+}
+
+enum FuelType {
+  DIESEL
+  GASOLINE
+  ELECTRIC
+  HYBRID
+  LPG
+  CNG
+}
+
+enum VehicleStatus {
+  ACTIVE
+  MAINTENANCE
+  INACTIVE
+  RETIRED
+}
+
+enum DeviceStatus {
+  ACTIVE
+  INACTIVE
+  FAULTY
+}
+
+enum DriverStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum TripStatus {
+  ONGOING
+  COMPLETED
+  INVALID
+}
+
+enum EventType {
+  HARSH_BRAKING
+  HARSH_ACCELERATION
+  HARSH_CORNERING
+  SPEEDING
+  EXCESSIVE_IDLING
+  FATIGUE_DRIVING
+  PHONE_USE
+  NO_SEATBELT
+}
+
+enum EventSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum FuelRecordType {
+  REFUEL
+  CONSUMPTION
+  THEFT_SUSPECTED
+  ADJUSTMENT
+}
+
+enum GeofenceType {
+  CIRCLE
+  POLYGON
+}
+
+enum GeofenceCategory {
+  DEPOT
+  CUSTOMER
+  RESTRICTED
+  SERVICE_AREA
+  OTHER
+}
+
+enum GeofenceEventType {
+  ENTER
+  EXIT
+}
+
+enum AlertType {
+  SPEEDING
+  GEOFENCE_VIOLATION
+  HARSH_DRIVING
+  FUEL_THEFT
+  FUEL_DROP
+  MAINTENANCE_DUE
+  DEVICE_OFFLINE
+  IDLE
+  SOS
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+enum MaintenanceType {
+  OIL_CHANGE
+  TIRE
+  BRAKES
+  INSPECTION
+  REPAIR
+  OTHER
+}
+
+enum MaintenanceStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+  CANCELLED
+}
+
+enum ReportType {
+  DRIVER_BEHAVIOR
+  FUEL
+  FLEET_UTILIZATION
+  TRIP
+  SAFETY
+  MAINTENANCE
+  EXECUTIVE
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model Organization {
+  id           String   @id @default(uuid())
+  name         String
+  contactEmail String
+  contactPhone String?
+  country      String   @default("Sénégal")
+  timezone     String   @default("Africa/Dakar")
+  address      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  users          User[]
+  vehicles       Vehicle[]
+  devices        Device[]
+  drivers        Driver[]
+  trips          Trip[]
+  positions      GpsPosition[]
+  events         DrivingEvent[]
+  fuelRecords    FuelRecord[]
+  geofences      Geofence[]
+  geofenceEvents GeofenceEvent[]
+  alerts         Alert[]
+  maintenances   Maintenance[]
+  reports        Report[]
+  driverScores   DriverScore[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  passwordHash   String
+  firstName      String
+  lastName       String
+  role           Role      @default(VIEWER)
+  organizationId String?
+  isActive       Boolean   @default(true)
+  lastLoginAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization     Organization? @relation(fields: [organizationId], references: [id])
+  driverProfile    Driver?       @relation("UserDriver")
+  generatedReports Report[]      @relation("GeneratedReports")
+
+  @@map("users")
+}
+
+model Vehicle {
+  id                String        @id @default(uuid())
+  organizationId    String
+  plate             String
+  make              String
+  model             String
+  year              Int?
+  vin               String?
+  color             String?
+  fuelType          FuelType      @default(DIESEL)
+  tankCapacityL     Float?
+  avgConsumptionL100 Float?       // consommation de référence en L/100km
+  odometerKm        Float         @default(0)
+  maxSpeedKmh       Int?          // limite de vitesse propre au véhicule (sinon défaut env)
+  status            VehicleStatus @default(ACTIVE)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  device         Device?
+  trips          Trip[]
+  positions      GpsPosition[]
+  events         DrivingEvent[]
+  fuelRecords    FuelRecord[]
+  alerts         Alert[]
+  maintenances   Maintenance[]
+  geofenceEvents GeofenceEvent[]
+
+  @@unique([organizationId, plate])
+  @@map("vehicles")
+}
+
+model Device {
+  id              String       @id @default(uuid())
+  organizationId  String
+  serialNumber    String       @unique
+  model           String?
+  simNumber       String?
+  firmwareVersion String?
+  vehicleId       String?      @unique
+  status          DeviceStatus @default(ACTIVE)
+  lastSeenAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicle      Vehicle?     @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  @@map("devices")
+}
+
+model Driver {
+  id              String       @id @default(uuid())
+  organizationId  String
+  firstName       String
+  lastName        String
+  licenseNumber   String       @unique
+  licenseCategory String?
+  licenseExpiry   DateTime?
+  phone           String?
+  email           String?
+  dateOfBirth     DateTime?
+  hireDate        DateTime?
+  userId          String?      @unique
+  status          DriverStatus @default(ACTIVE)
+  behaviorScore   Float        @default(100) // score courant 0-100 (mis en cache)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?          @relation("UserDriver", fields: [userId], references: [id], onDelete: SetNull)
+  trips        Trip[]
+  events       DrivingEvent[]
+  fuelRecords  FuelRecord[]
+  alerts       Alert[]
+  scores       DriverScore[]
+
+  @@map("drivers")
+}
+
+model Trip {
+  id             String     @id @default(uuid())
+  organizationId String
+  vehicleId      String
+  driverId       String?
+  startTime      DateTime
+  endTime        DateTime?
+  startLat       Float?
+  startLng       Float?
+  endLat         Float?
+  endLng         Float?
+  startAddress   String?
+  endAddress     String?
+  distanceKm     Float      @default(0)
+  durationS      Int        @default(0)
+  maxSpeedKmh    Float      @default(0)
+  avgSpeedKmh    Float      @default(0)
+  idleTimeS      Int        @default(0)
+  fuelConsumedL  Float?
+  harshEvents    Int        @default(0)
+  status         TripStatus @default(ONGOING)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicle      Vehicle        @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  driver       Driver?        @relation(fields: [driverId], references: [id], onDelete: SetNull)
+  positions    GpsPosition[]
+  events       DrivingEvent[]
+
+  @@index([vehicleId, startTime])
+  @@index([driverId])
+  @@map("trips")
+}
+
+model GpsPosition {
+  id             String   @id @default(uuid())
+  organizationId String
+  vehicleId      String
+  tripId         String?
+  deviceId       String?
+  timestamp      DateTime
+  latitude       Float
+  longitude      Float
+  speedKmh       Float    @default(0)
+  heading        Float?
+  altitude       Float?
+  accuracy       Float?
+  ignition       Boolean?
+  fuelLevelL     Float?
+  odometerKm     Float?
+  satellites     Int?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicle      Vehicle      @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  trip         Trip?        @relation(fields: [tripId], references: [id], onDelete: SetNull)
+
+  @@index([vehicleId, timestamp])
+  @@index([tripId])
+  @@map("gps_positions")
+}
+
+model DrivingEvent {
+  id             String        @id @default(uuid())
+  organizationId String
+  vehicleId      String
+  driverId       String?
+  tripId         String?
+  type           EventType
+  severity       EventSeverity @default(MEDIUM)
+  timestamp      DateTime
+  latitude       Float?
+  longitude      Float?
+  speedKmh       Float?
+  speedLimitKmh  Float?
+  value          Float?        // ex. force g, dépassement de vitesse, durée d'arrêt
+  penaltyPoints  Int           @default(0)
+  metadata       Json?
+  createdAt      DateTime      @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicle      Vehicle      @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  driver       Driver?      @relation(fields: [driverId], references: [id], onDelete: SetNull)
+  trip         Trip?        @relation(fields: [tripId], references: [id], onDelete: SetNull)
+
+  @@index([vehicleId, timestamp])
+  @@index([driverId, timestamp])
+  @@map("driving_events")
+}
+
+model FuelRecord {
+  id               String         @id @default(uuid())
+  organizationId   String
+  vehicleId        String
+  driverId         String?
+  type             FuelRecordType @default(REFUEL)
+  timestamp        DateTime
+  liters           Float
+  pricePerLiter    Float?
+  totalCost        Float?
+  currency         String         @default("XOF")
+  odometerKm       Float?
+  fuelLevelBeforeL Float?
+  fuelLevelAfterL  Float?
+  location         String?
+  latitude         Float?
+  longitude        Float?
+  stationName      String?
+  isFullTank       Boolean        @default(true)
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicle      Vehicle      @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  driver       Driver?      @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  @@index([vehicleId, timestamp])
+  @@map("fuel_records")
+}
+
+model Geofence {
+  id             String           @id @default(uuid())
+  organizationId String
+  name           String
+  description    String?
+  type           GeofenceType     @default(CIRCLE)
+  category       GeofenceCategory @default(OTHER)
+  centerLat      Float?
+  centerLng      Float?
+  radiusM        Float?
+  polygon        Json? // tableau de [lng, lat] pour les zones polygonales
+  color          String           @default("#2563eb")
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  events       GeofenceEvent[]
+
+  @@map("geofences")
+}
+
+model GeofenceEvent {
+  id             String            @id @default(uuid())
+  organizationId String
+  geofenceId     String
+  vehicleId      String
+  type           GeofenceEventType
+  timestamp      DateTime
+  latitude       Float
+  longitude      Float
+  createdAt      DateTime          @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  geofence     Geofence     @relation(fields: [geofenceId], references: [id], onDelete: Cascade)
+  vehicle      Vehicle      @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId, timestamp])
+  @@index([geofenceId])
+  @@map("geofence_events")
+}
+
+model Alert {
+  id               String        @id @default(uuid())
+  organizationId   String
+  vehicleId        String?
+  driverId         String?
+  type             AlertType
+  severity         AlertSeverity @default(MEDIUM)
+  status           AlertStatus   @default(OPEN)
+  title            String
+  message          String?
+  latitude         Float?
+  longitude        Float?
+  timestamp        DateTime      @default(now())
+  acknowledgedAt   DateTime?
+  acknowledgedById String?
+  resolvedAt       DateTime?
+  metadata         Json?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicle      Vehicle?     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  driver       Driver?      @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, status])
+  @@index([vehicleId])
+  @@map("alerts")
+}
+
+model Maintenance {
+  id             String            @id @default(uuid())
+  organizationId String
+  vehicleId      String
+  type           MaintenanceType
+  status         MaintenanceStatus @default(SCHEDULED)
+  description    String?
+  scheduledDate  DateTime?
+  completedDate  DateTime?
+  dueOdometerKm  Float?
+  cost           Float?
+  currency       String            @default("XOF")
+  vendor         String?
+  notes          String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicle      Vehicle      @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@map("maintenances")
+}
+
+model Report {
+  id             String     @id @default(uuid())
+  organizationId String
+  type           ReportType
+  title          String
+  periodStart    DateTime?
+  periodEnd      DateTime?
+  generatedById  String?
+  data           Json
+  createdAt      DateTime   @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  generatedBy  User?        @relation("GeneratedReports", fields: [generatedById], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, type])
+  @@map("reports")
+}
+
+model DriverScore {
+  id                 String   @id @default(uuid())
+  organizationId     String
+  driverId           String
+  periodStart        DateTime
+  periodEnd          DateTime
+  score              Float    @default(100)
+  distanceKm         Float    @default(0)
+  tripCount          Int      @default(0)
+  harshBraking       Int      @default(0)
+  harshAcceleration  Int      @default(0)
+  harshCornering     Int      @default(0)
+  speedingCount      Int      @default(0)
+  idlingCount        Int      @default(0)
+  createdAt          DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  driver       Driver       @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@unique([driverId, periodStart, periodEnd])
+  @@index([organizationId])
+  @@map("driver_scores")
+}
