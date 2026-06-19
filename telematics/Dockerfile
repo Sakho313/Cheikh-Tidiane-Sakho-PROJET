@@ -15,7 +15,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
 COPY prisma ./prisma
-RUN npm ci --omit=dev && npx prisma generate && npm cache clean --force
+# Dépendances de production uniquement. Le client Prisma est COPIÉ depuis le
+# stage build (la CLI `prisma` est une devDep, absente ici) plutôt que régénéré.
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/dist ./dist
 
 # Utilisateur non-root
