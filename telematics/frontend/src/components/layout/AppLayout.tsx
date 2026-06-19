@@ -1,10 +1,10 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, Link } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
 import { roleLabels } from '@/lib/labels';
 import { Button } from '@/components/ui';
 
 const NAV: Array<{ to: string; label: string; icon: string }> = [
-  { to: '/', label: 'Tableau de bord', icon: '📊' },
+  { to: '/dashboard', label: 'Tableau de bord', icon: '📊' },
   { to: '/live', label: 'Carte live', icon: '🛰️' },
   { to: '/vehicles', label: 'Véhicules', icon: '🚚' },
   { to: '/drivers', label: 'Chauffeurs', icon: '🧑‍✈️' },
@@ -20,16 +20,16 @@ export default function AppLayout(): JSX.Element {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <aside className="flex w-60 shrink-0 flex-col border-r border-slate-200 bg-white">
-        <div className="flex items-center gap-2 px-6 py-5">
+        <Link to="/" className="flex items-center gap-2 px-6 py-5">
           <span className="text-2xl">🛰️</span>
           <span className="text-lg font-bold text-slate-900">SAO Telematics</span>
-        </div>
+        </Link>
         <nav className="flex-1 space-y-1 px-3">
           {NAV.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
+              end={item.to === '/dashboard'}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
                   isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100'

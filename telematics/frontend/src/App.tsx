@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '@/auth/ProtectedRoute';
 import AppLayout from '@/components/layout/AppLayout';
+import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
 import LiveMapPage from '@/pages/LiveMapPage';
@@ -15,7 +16,10 @@ import ReportsPage from '@/pages/ReportsPage';
 export default function App(): JSX.Element {
   return (
     <Routes>
+      {/* Page vitrine publique */}
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
+      {/* Application (protégée) sous /dashboard */}
       <Route
         element={
           <ProtectedRoute>
@@ -23,7 +27,7 @@ export default function App(): JSX.Element {
           </ProtectedRoute>
         }
       >
-        <Route path="/" element={<DashboardPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/live" element={<LiveMapPage />} />
         <Route path="/vehicles" element={<VehiclesPage />} />
         <Route path="/drivers" element={<DriversPage />} />

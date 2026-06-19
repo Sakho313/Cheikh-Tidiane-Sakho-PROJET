@@ -18,7 +18,7 @@ export default function LoginPage(): JSX.Element {
     setError('');
     try {
       await login({ email, password });
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setError(extractErrorMessage(err));
     } finally {

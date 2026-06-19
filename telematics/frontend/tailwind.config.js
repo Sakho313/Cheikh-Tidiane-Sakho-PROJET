@@ -16,6 +16,16 @@ export default {
           800: '#1e40af',
           900: '#1e3a8a',
         },
+        // Palette de la landing « SAO Télématique » (reprise de la maquette).
+        sao: {
+          bg: '#080C12',
+          surface: '#0E1620',
+          surface2: '#13202E',
+          border: '#1F2D3D',
+          blue: '#29A3E0',
+          gold: '#F5C518',
+          muted: '#8A9AAD',
+        },
       },
       fontFamily: {
         sans: [
