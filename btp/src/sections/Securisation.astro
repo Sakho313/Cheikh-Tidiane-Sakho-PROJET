@@ -1,0 +1,85 @@
+---
+import SectionHead from '../components/SectionHead.astro';
+import phases from '../content/securisation.json';
+---
+<section class="sec" id="securisation">
+  <div class="wrap">
+    <SectionHead
+      num="08"
+      label="Service spécial"
+      titre="Recherche foncière & sécurisation des terrains."
+      intro="Avant d’acheter, nous vérifions. Trois contrôles pour sécuriser chaque acquisition."
+    />
+
+    <div class="cycle reveal">
+      <div class="steps" id="steps" role="tablist" aria-label="Étapes de la sécurisation foncière">
+        {phases.map((ph, i) => (
+          <button
+            class:list={['stepbtn', { active: i === 0 }]}
+            data-i={i}
+            role="tab"
+            id={`tab-${ph.id}`}
+            aria-controls="phPanel"
+            aria-selected={i === 0 ? 'true' : 'false'}
+            type="button"
+          >
+            <span class="n">{ph.num}</span><b>{ph.titre}</b>
+          </button>
+        ))}
+      </div>
+
+      <div class="panel tick screen" id="phPanel" role="tabpanel" aria-live="polite">
+        <div class="bar">
+          <span>SAO · Sécurisation foncière</span>
+          <span class="ph" id="phLabel">Contrôle 01 / 03</span>
+        </div>
+        <h3 id="phTitle"></h3>
+        <p id="phDesc"></p>
+        <ul class="deliv" id="phDeliv"></ul>
+        <div class="progress">
+          <div class="track"><div class="fill" id="phFill"></div></div>
+          <div class="pl"><span>Vérification</span><span>Terrain sécurisé</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import phases from '../content/securisation.json';
+
+  const steps = document.querySelectorAll<HTMLButtonElement>('.stepbtn');
+  const elTitle = document.getElementById('phTitle');
+  const elDesc = document.getElementById('phDesc');
+  const elLabel = document.getElementById('phLabel');
+  const elDeliv = document.getElementById('phDeliv');
+  const elFill = document.getElementById('phFill');
+
+  function renderPhase(i: number) {
+    const p = phases[i];
+    if (!p || !elTitle || !elDesc || !elLabel || !elDeliv || !elFill) return;
+    elTitle.textContent = p.titre;
+    elDesc.textContent = p.description;
+    elLabel.textContent = `Contrôle ${p.num} / 0${phases.length}`;
+
+    elDeliv.replaceChildren(
+      ...p.livrables.map((l) => {
+        const li = document.createElement('li');
+        li.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
+        li.append(document.createTextNode(l));
+        return li;
+      }),
+    );
+
+    elFill.style.width = ((i + 1) / phases.length) * 100 + '%';
+    steps.forEach((s) => {
+      const on = Number(s.dataset.i) === i;
+      s.classList.toggle('active', on);
+      s.setAttribute('aria-selected', String(on));
+    });
+  }
+
+  steps.forEach((s) => s.addEventListener('click', () => renderPhase(Number(s.dataset.i))));
+  renderPhase(0);
+</script>

@@ -1,0 +1,73 @@
+/* ============================================================================
+   SAO BTP — Design tokens (SPEC §3 / CLAUDE.md §3)
+   Source de vérité des couleurs, typographies et rythmes.
+   Ne jamais écrire une valeur hex ailleurs : toujours passer par un token.
+   ========================================================================== */
+
+:root {
+  /* Palette */
+  --deep: #03393B;
+  --deep2: #04282A;
+  --obsidian: #071311;
+  --ink: #0a1614;
+  --panel: #0b2224;
+  --aqua: #0782AD;
+  --aqua2: #28b6e6;
+  --blue: #0984E3;
+  --gold: #E9C735;
+  --steel: #c9d6d5;
+  --mist: #EAF3F3;
+  --muted: #9FB6B5;
+  --gray: #7e9695;
+
+  /* Dérivés */
+  --line: rgb(255 255 255 / 0.09);
+  --line2: rgb(255 255 255 / 0.05);
+  --bp: rgb(40 182 230 / 0.55);      /* tracés blueprint */
+  --gold-hi: #f3d65a;
+  --ok: #4ade80;
+  --err: #ff6b6b;
+
+  /* Typographies */
+  --display: 'Montserrat', system-ui, sans-serif;
+  --body: 'Inter', system-ui, sans-serif;
+  --mono: 'Space Mono', ui-monospace, monospace;
+
+  /* Rythme */
+  --maxw: 1240px;
+  --gut: 24px;
+}
+
+/* ─── Base ──────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--obsidian);
+  color: var(--mist);
+  font-family: var(--body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.06; letter-spacing: -0.02em; }
+
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 3px; }
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gut); }
+.mono { font-family: var(--mono); }
+.aqua { color: var(--aqua2); }
+.gold { color: var(--gold); }
+.lead { color: var(--muted); font-size: 18px; max-width: 60ch; }
+
+/* Lien d'évitement (accessibilité) */
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 100;
+  background: var(--gold); color: #171400; padding: 10px 16px;
+  font-family: var(--display); font-weight: 700;
+}
+.skip:focus { left: 12px; top: 12px; }

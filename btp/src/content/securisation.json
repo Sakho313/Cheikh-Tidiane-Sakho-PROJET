@@ -1,0 +1,36 @@
+[
+  {
+    "id": "vendeur",
+    "num": "01",
+    "titre": "Documents du vendeur",
+    "description": "Nous rassemblons et contrôlons l'ensemble des pièces du vendeur : identité, capacité à vendre, titre de propriété, historique des transactions et absence de mandat concurrent.",
+    "livrables": [
+      "Copie certifiée du titre de propriété",
+      "Pièces d'identité et état civil du vendeur",
+      "Attestation de capacité à vendre",
+      "Historique des mutations"
+    ]
+  },
+  {
+    "id": "dscos",
+    "num": "02",
+    "titre": "Recherche DSCOS",
+    "description": "Vérification auprès de la Direction de la Surveillance et du Contrôle de l'Occupation du Sol : conformité de l'occupation, absence de litige déclaré et respect de l'affectation du sol.",
+    "livrables": [
+      "Attestation de situation DSCOS",
+      "Contrôle de l'affectation du sol",
+      "Relevé des litiges éventuels"
+    ]
+  },
+  {
+    "id": "domaines",
+    "num": "03",
+    "titre": "Service des Domaines",
+    "description": "Contrôle final d'authenticité du Titre Foncier ou du Bail auprès du Service des Domaines : existence réelle, propriétaire inscrit, inscriptions et charges grevant le bien.",
+    "livrables": [
+      "Authentification du TF ou du Bail",
+      "État des inscriptions et charges",
+      "Rapport de sécurisation foncière"
+    ]
+  }
+]

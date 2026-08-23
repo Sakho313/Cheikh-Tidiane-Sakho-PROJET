@@ -1,0 +1,23 @@
+---
+import SectionHead from '../components/SectionHead.astro';
+import p from '../content/prestations.json';
+---
+<section class="sec band" id="topographie">
+  <div class="wrap">
+    <SectionHead
+      num="03"
+      label="Topographie"
+      titre="Topographie & études foncières de haute précision."
+      intro="Des données fiables grâce aux technologies modernes, dont le levé par drone."
+    />
+    <div class="grid4">
+      {p.topographie.map((c) => (
+        <div class="panel tick card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={c.icone} /></svg></div>
+          <h3>{c.titre}</h3>
+          <p>{c.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,52 @@
+{
+  "nom": "SAO BTP · Immobilier · Topographie",
+  "nomCourt": "SAO BTP",
+  "groupe": "SAO Consulting Group",
+  "baseline": "Du terrain sécurisé à l'ouvrage livré.",
+  "signature": "Votre sérénité, notre expertise.",
+  "sloganGroupe": "Sécuriser aujourd'hui, protéger demain.",
+  "engagement": "Zéro litige · transparence totale",
+  "domaine": "https://btp.saoconsultingroup.com",
+  "email": "contact@saoconsultingroup.com",
+  "telSN": "+221 77 776 26 93",
+  "telSNraw": "221777762693",
+  "telFR": "+33 6 05 77 52 87",
+  "telFRraw": "33605775287",
+  "adresse": "Keur Massar, Dakar",
+  "instagram": "https://www.instagram.com/sao.consultingroup",
+  "siteGroupe": "https://www.saoconsultingroup.com/",
+  "nav": [
+    { "href": "#immobilier", "label": "Immobilier" },
+    { "href": "#gestion", "label": "Gestion locative" },
+    { "href": "#topographie", "label": "Topographie" },
+    { "href": "#foncier", "label": "Foncier" },
+    { "href": "#travaux", "label": "Travaux" },
+    { "href": "#villa", "label": "Villa" },
+    { "href": "#surveillance", "label": "Surveillance" },
+    { "href": "#securisation", "label": "Sécurisation" }
+  ],
+  "services": [
+    { "nom": "Vente et location-vente immobilière", "desc": "Terrains sécurisés et maisons en location-vente, avec vérification foncière complète.", "ancre": "#immobilier" },
+    { "nom": "Gestion locative pour la diaspora", "desc": "Gestion complète du bien à distance : locataire, loyers, entretien et reporting.", "ancre": "#gestion" },
+    { "nom": "Topographie et études foncières", "desc": "Levé par drone, implantation, délimitation et plans exploitables.", "ancre": "#topographie" },
+    { "nom": "Bornage et lotissement", "desc": "Bornage officiel par géomètre agréé, lotissement conforme et viabilisation.", "ancre": "#foncier" },
+    { "nom": "Travaux publics et génie civil", "desc": "Terrassement, démolition, dégagement de parcelles et location d'engins lourds.", "ancre": "#travaux" },
+    { "nom": "Construction de villa clé en main", "desc": "De l'étude et des plans jusqu'à la remise des clés, en sept étapes.", "ancre": "#villa" },
+    { "nom": "Surveillance de chantier à distance", "desc": "Vidéosurveillance en direct, géolocalisation des engins et suivi d'avancement.", "ancre": "#surveillance" },
+    { "nom": "Sécurisation foncière", "desc": "Trois contrôles : documents du vendeur, recherche DSCOS et Service des Domaines.", "ancre": "#securisation" }
+  ],
+  "besoins": [
+    "Achat de terrain",
+    "Location-vente maison",
+    "Gestion locative",
+    "Topographie / levé drone",
+    "Bornage / lotissement",
+    "Sécurisation foncière",
+    "Villa clé en main",
+    "Surveillance de chantier",
+    "Terrassement",
+    "Démolition",
+    "Location d'engins",
+    "Autre"
+  ]
+}
