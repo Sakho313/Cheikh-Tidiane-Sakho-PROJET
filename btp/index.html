@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BTP &amp; Construction | SAO Consulting Group</title>
+<meta name="description" content="SAO BTP : construction, génie civil, second œuvre, rénovation, maîtrise d'œuvre et suivi de chantier au Sénégal et à l'international.">
+<meta name="keywords" content="BTP Sénégal, construction Dakar, génie civil, second œuvre, rénovation, maîtrise d'œuvre, SAO Consulting Group">
+<meta name="theme-color" content="#03393B">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<meta property="og:title" content="SAO BTP — Bâtir solide. Livrer dans les délais.">
+<meta property="og:description" content="De la conception à la livraison, SAO BTP conduit vos chantiers avec rigueur et transparence.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://btp.saoconsultingroup.com/">
+<meta property="og:image" content="https://btp.saoconsultingroup.com/assets/mecque.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://btp.saoconsultingroup.com/">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- ============================================================= -->
+<!--  IMAGES — REMPLACEZ ICI PAR VOS PROPRES PHOTOS (licenciées)   -->
+<!--  Collez une URL entre les guillemets. Laissez vide ("") pour  -->
+<!--  garder le motif décoratif par défaut. Utilisez uniquement    -->
+<!--  des photos dont vous détenez les droits (ou Unsplash/Pexels).-->
+<!--  RÈGLE : une photo doit correspondre au chantier qu'elle illustre.     -->
+<!-- ============================================================= -->
+<script>
+window.IMAGES = {
+  /* Photos du site BTP — déposer les fichiers dans assets/ puis renseigner le chemin.
+     Tant qu'un chemin est vide, l'illustration décorative par défaut s'affiche. */
+  chantier: ""      // visuel principal (hero)
+};
+</script>
+
+<style>
+:root{
+  /* Identité SAO (reprise du site Télématique) */
+  --deep:#03393B;--deep2:#04282A;--obsidian:#060f0e;--ink:#0a1614;--panel:#0a2123;
+  --aqua:#0782AD;--aqua2:#19a7d6;--gold:#E9C735;--gold2:#f3d65a;--gray:#7e9897;
+  --mist:#EAF3F3;--muted:#9FB6B5;
+  /* Réchauffe patrimoine / voyage */
+  --sand:#efe6d3;--sand2:#f6efe0;--sand-ink:#2b2416;--sand-muted:#6f6449;
+  --line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.045);--ok:#4ade80;
+  --maxw:1200px;
+  --display:'Montserrat',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;--mono:'Space Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--obsidian);color:var(--mist);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.06;letter-spacing:-.02em}
+p{margin:0 0 14px}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin:0 0 16px;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);opacity:.7}
+section{padding:96px 0;position:relative}
+.section-head{max-width:720px;margin:0 0 46px}
+.section-head h2{font-size:clamp(28px,4vw,44px);font-weight:800}
+.section-head p{color:var(--muted);font-size:16.5px;margin-top:16px}
+
+/* Placeholder média + motif géométrique par défaut */
+.media{position:relative;background:linear-gradient(135deg,var(--deep2),var(--ink));
+  background-size:cover;background-position:center;overflow:hidden;border-radius:4px}
+.media::before{content:"";position:absolute;inset:0;opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90'><g fill='none' stroke='%23E9C735' stroke-width='1' opacity='0.5'><path d='M45 5 55 25 45 45 35 25z'/><path d='M45 45 55 65 45 85 35 65z'/><path d='M5 45 25 55 45 45 25 35z'/><path d='M45 45 65 55 85 45 65 35z'/><circle cx='45' cy='45' r='9'/></g></svg>");
+  background-size:90px 90px}
+.media::after{content:attr(data-label);position:absolute;left:0;right:0;bottom:0;padding:12px 14px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  background:linear-gradient(transparent,rgba(0,0,0,.55))}
+.media.has-photo::before,.media.has-photo::after{display:none}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:15px;
+  padding:14px 26px;border-radius:3px;cursor:pointer;border:1px solid transparent;transition:.25s;background:none;color:inherit}
+.btn-gold{background:var(--gold);color:#141200;border-color:var(--gold)}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px)}
+.btn-ghost{border-color:var(--line);color:var(--mist)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm{padding:10px 18px;font-size:13.5px}
+
+/* Header */
+header{position:sticky;top:0;z-index:60;background:rgba(6,15,14,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line2)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:70px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .glyph{width:auto;height:42px;display:block;flex:none}
+.brand b{font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:.03em;display:block;line-height:1}
+.brand span{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase}
+.menu{display:flex;align-items:center;gap:26px}
+.menu a{font-size:14px;color:var(--muted);transition:.2s}
+.menu a:hover{color:var(--gold)}
+.burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
+.burger span{width:24px;height:2px;background:var(--mist);display:block}
+
+/* Hero */
+.hero{min-height:88vh;display:flex;align-items:flex-end;padding-bottom:56px;position:relative;isolation:isolate}
+.hero .media{position:absolute;inset:0;border-radius:0;z-index:-2}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(180deg,rgba(6,15,14,.45),rgba(3,57,59,.55) 55%,rgba(6,15,14,.94))}
+.hero-inner{max-width:840px}
+.hero h1{font-size:clamp(38px,7vw,78px);font-weight:900;letter-spacing:-.03em}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero .sub{font-size:clamp(16px,2.2vw,20px);color:var(--mist);max-width:620px;margin:22px 0 30px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.pills{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:38px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted)}
+.pills span{display:inline-flex;align-items:center;gap:8px}
+.pills span::before{content:"";width:5px;height:5px;background:var(--gold);border-radius:50%}
+
+/* Frise d'étapes (réutilisable : phases de chantier) */
+.flag{background:linear-gradient(180deg,var(--ink),var(--deep2))}
+.circuit{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.route{list-style:none;margin:0;padding:0;position:relative}
+.route::before{content:"";position:absolute;left:19px;top:14px;bottom:14px;width:2px;
+  background:linear-gradient(var(--gold),var(--aqua))}
+.route li{position:relative;padding:0 0 26px 60px}
+.route li:last-child{padding-bottom:0}
+.route .dot{position:absolute;left:6px;top:2px;width:28px;height:28px;border-radius:50%;
+  background:var(--obsidian);border:2px solid var(--gold);display:grid;place-items:center;font-size:14px;z-index:1}
+.route h4{font-family:var(--display);font-weight:800;font-size:16px;margin:2px 0 4px;color:var(--mist)}
+.route p{color:var(--muted);font-size:14px;margin:0}
+.offer{background:var(--sand);color:var(--sand-ink);border-radius:6px;padding:30px 30px 26px}
+.offer .eyebrow{color:#9a7b12}.offer .eyebrow::before{background:#9a7b12;opacity:.6}
+.offer h3{color:var(--sand-ink);font-size:23px;font-weight:800;margin-bottom:8px}
+.offer .lead{color:var(--sand-muted);font-size:14.5px;margin-bottom:18px}
+.offer ul{list-style:none;margin:0 0 20px;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}
+.offer li{font-size:13.5px;color:var(--sand-ink);display:flex;gap:8px}
+.offer li b{color:#9a7b12}
+
+/* Grilles de cartes */
+.grid{display:grid;gap:22px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden;transition:.25s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);border-color:rgba(233,199,53,.4)}
+.card .media{height:172px;border-radius:0}
+.card .body{padding:22px;flex:1;display:flex;flex-direction:column}
+.card h3{font-size:18px;font-weight:800;margin-bottom:6px}
+.card .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.card p{color:var(--muted);font-size:14px}
+.card ul{list-style:none;margin:0 0 16px;padding:0}
+.card ul li{font-size:13.5px;color:var(--mist);padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:9px}
+.card ul li::before{content:"✦";color:var(--gold);font-size:11px}
+.card .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between}
+.price{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+/* Sections sable */
+.sand-sec{background:var(--sand2);color:var(--sand-ink)}
+.sand-sec .eyebrow{color:#9a7b12}.sand-sec .eyebrow::before{background:#9a7b12}
+.sand-sec .section-head h2{color:var(--sand-ink)}
+.sand-sec .section-head p{color:var(--sand-muted)}
+.sand-sec .card{background:#fff;border-color:rgba(43,36,22,.1)}
+.sand-sec .card h3{color:var(--sand-ink)}
+.sand-sec .card p{color:var(--sand-muted)}
+.sand-sec .card ul li{color:var(--sand-ink);border-color:rgba(43,36,22,.08)}
+.sand-sec .price{color:var(--sand-muted)}
+.sand-sec .btn-ghost{border-color:rgba(43,36,22,.25);color:var(--sand-ink)}
+.sand-sec .btn-ghost:hover{border-color:#9a7b12;color:#9a7b12}
+
+/* Formulaire vols (démo) */
+.search{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:26px}
+.search .row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select{background:var(--ink);border:1px solid var(--line);border-radius:4px;color:var(--mist);
+  padding:12px 12px;font-family:var(--body);font-size:14px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold)}
+.demo-note{font-family:var(--mono);font-size:11px;color:var(--gray);margin-top:14px}
+
+/* Assistant IA */
+.chat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:24px;max-width:760px}
+.bubble{border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:14.5px;max-width:82%}
+.bubble.user{background:var(--deep);border:1px solid rgba(255,255,255,.08);margin-left:auto}
+.bubble.ai{background:var(--ink);border:1px solid var(--line)}
+.bubble .who{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.ai-out{display:none;margin-top:6px}
+.ai-out.on{display:block}
+.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.plan div{background:var(--deep2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-size:12.5px;color:var(--mist)}
+.plan b{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--gold);margin-bottom:3px;text-transform:uppercase}
+
+/* Étapes */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.step .num{font-family:var(--mono);font-size:13px;color:var(--gold);letter-spacing:.1em}
+.step h3{font-size:18px;font-weight:800;margin:8px 0 6px}
+.step p{color:var(--muted);font-size:14px}
+.step{border-top:2px solid var(--gold);padding-top:16px}
+
+/* Galerie */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.gallery .media{height:215px;cursor:pointer}
+.gallery .cap{position:absolute;inset:0;display:flex;align-items:flex-end;padding:14px;z-index:2;
+  font-family:var(--display);font-weight:800;font-size:16px;color:#fff;
+  background:linear-gradient(transparent 55%,rgba(0,0,0,.6));opacity:0;transition:.3s}
+.gallery .media:hover .cap{opacity:1}
+.gallery .media:hover{transform:scale(1.015)}
+
+/* Espace client */
+.account{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:40px}
+.account ul{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.account ul li{font-size:13.5px;color:var(--muted);display:flex;gap:8px}
+.account ul li::before{content:"→";color:var(--gold)}
+.soon{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold);border:1px solid rgba(233,199,53,.35);border-radius:40px;padding:6px 14px}
+
+/* Footer */
+footer{background:var(--ink);border-top:1px solid var(--line2);padding:60px 0 34px}
+.fcols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:34px;margin-bottom:40px}
+.fcols h4{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+.fcols a{display:block;color:var(--muted);font-size:14px;padding:5px 0}
+.fcols a:hover{color:var(--mist)}
+.fbar{border-top:1px solid var(--line2);padding-top:22px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-size:12.5px;color:var(--gray)}
+
+/* Responsive */
+@media(max-width:960px){
+  .g4{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:repeat(2,1fr)}
+  .gallery{grid-template-columns:repeat(2,1fr)}.circuit{grid-template-columns:1fr;gap:34px}
+  .account{grid-template-columns:1fr}.fcols{grid-template-columns:1fr 1fr}.search .row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  section{padding:70px 0}
+  .g3,.g2,.g4{grid-template-columns:1fr}.plan{grid-template-columns:1fr}.offer ul{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr 1fr}.fcols{grid-template-columns:1fr}.search .row{grid-template-columns:1fr}
+  .menu{position:fixed;inset:70px 0 auto 0;flex-direction:column;background:var(--ink);
+    border-bottom:1px solid var(--line);padding:18px 26px;gap:4px;display:none}
+  .menu.open{display:flex}.menu a{padding:10px 0;font-size:15px}
+  .burger{display:flex}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+
+/* --- Enrichissements --- */
+.acc details{border-bottom:1px solid var(--line)}
+.acc summary{cursor:pointer;list-style:none;padding:18px 2px;font-family:var(--display);font-weight:700;color:var(--mist);display:flex;justify-content:space-between;align-items:center;gap:16px}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary::after{content:"+";color:var(--gold);font-size:22px;line-height:1}
+.acc details[open] summary::after{content:"–"}
+.acc p{color:var(--muted);font-size:14.5px;margin:0;padding:0 2px 18px}
+.sand-sec .acc summary{color:var(--sand-ink)}
+.sand-sec .acc p{color:var(--sand-muted)}
+.sand-sec .acc details{border-color:rgba(43,36,22,.14)}
+.fab{position:fixed;right:18px;z-index:70;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;border:0;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:transform .2s,opacity .2s;text-decoration:none}
+.fab:hover{transform:translateY(-3px)}
+/* Formulaire de devis */
+.devis-form{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:28px;text-align:left;margin-top:30px}
+.devis-form .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.devis-form .field{margin-bottom:16px}
+.devis-form textarea{background:var(--ink);border:1px solid var(--line);border-radius:4px;color:var(--mist);
+  padding:12px;font-family:var(--body);font-size:14px;width:100%;resize:vertical;min-height:120px}
+.devis-form textarea:focus,.devis-form input:focus,.devis-form select:focus{outline:none;border-color:var(--gold)}
+.devis-form .req{color:var(--gold)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.form-msg{margin-top:16px;padding:14px 16px;border-radius:6px;font-size:14.5px;display:none}
+.form-msg.on{display:block}
+.form-msg.ok{background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.4);color:#9ff0bd}
+.form-msg.err{background:rgba(233,199,53,.1);border:1px solid rgba(233,199,53,.4);color:var(--gold2)}
+@media(max-width:640px){.devis-form .row2{grid-template-columns:1fr}.devis-form{padding:20px}}
+.fab-wa{bottom:20px;background:#25D366}
+.fab-ig{bottom:84px;background:linear-gradient(45deg,#F58529,#DD2A7B,#8134AF)}
+.fab-top{bottom:148px;background:var(--panel);border:1px solid var(--line);color:var(--gold);font-size:22px;opacity:0;pointer-events:none}
+.fab-top.on{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="SAO BTP, accueil">
+      <img class="glyph" src="assets/logo.png" alt="Logo SAO" width="345" height="420">
+      <span><b>SAO BTP</b><span>Consulting Group · Bâtiment &amp; Génie civil</span></span>
+    </a>
+    <nav class="menu" id="menu">
+      <a href="#metiers">Métiers</a>
+      <a href="#realisations">Réalisations</a>
+      <a href="#methode">Méthode</a>
+      <a href="#references">Références</a>
+      <a class="btn btn-gold btn-sm" href="#devis">Demander un devis</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<a id="top"></a>
+<section class="hero">
+  <div class="media" data-img="chantier" data-label="Photo à intégrer — chantier SAO BTP"
+       role="img" aria-label="Chantier de construction SAO BTP"></div>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Construction · Génie civil · Second œuvre · Rénovation</p>
+    <h1>Bâtir solide. <em>Livrer dans les délais.</em></h1>
+    <p class="sub">De la conception à la réception des travaux, SAO BTP conduit vos chantiers avec rigueur, transparence et un interlocuteur unique.</p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="#devis">Demander un devis</a>
+      <a class="btn btn-ghost" href="#realisations">Voir nos réalisations</a>
+    </div>
+    <div class="pills">
+      <span>Gros œuvre</span><span>Second œuvre</span><span>Génie civil</span><span>Rénovation</span><span>Maîtrise d'œuvre</span>
+    </div>
+  </div>
+</section>
+
+<!-- BANDEAU DE RÉASSURANCE -->
+
+<!-- CIRCUIT PHARE : DAKAR → RABAT → FÈS (tourisme religieux dominant) -->
+
+<!-- OMRA -->
+
+<!-- FÈS -->
+
+<!-- DESTINATIONS -->
+
+<!-- BILLETTERIE (démo, prêt pour intégration API) -->
+
+<!-- HÔTELS -->
+
+<!-- PACKAGES -->
+
+<!-- BUSINESS TRAVEL -->
+
+<!-- TRANSPORT & MOBILITÉ -->
+
+<!-- ASSISTANT IA (démo UI) -->
+
+<!-- PARCOURS CLIENT -->
+
+<!-- GALERIE -->
+
+<!-- ESPACE CLIENT -->
+
+<!-- FAQ -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTIONS BTP — à remplir depuis le brief (.md)
+     Modèles disponibles dans voyage/index.html : grilles de cartes (.grid.g3/.g4),
+     bandeau sable (.sand-sec), accordéon (.acc), étapes (.steps), galerie (.gallery),
+     bannière photo (.media[data-img]), console interactive.
+     ═══════════════════════════════════════════════════════════════════ -->
+
+
+<!-- CTA / DEVIS -->
+<section id="devis" style="text-align:center;background:linear-gradient(180deg,var(--deep2),var(--obsidian))">
+  <div class="wrap" style="max-width:760px">
+    <p class="eyebrow" style="justify-content:center">Demander un devis</p>
+    <h2 style="font-size:clamp(28px,4.5vw,46px);font-weight:900">Parlons de votre chantier&nbsp;?</h2>
+    <p style="color:var(--muted);font-size:17px;margin:16px 0 28px">Parlez-nous de votre projet — construction, génie civil, rénovation ou maîtrise d’œuvre — et nous préparons un chiffrage détaillé.</p>
+    <form class="devis-form" id="devisForm" novalidate>
+      <div class="row2">
+        <div class="field"><label class="form-label" for="f-nom">Nom complet <span class="req">*</span></label>
+          <input id="f-nom" name="nom" type="text" autocomplete="name" required placeholder="Votre nom"></div>
+        <div class="field"><label class="form-label" for="f-email">Email <span class="req">*</span></label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required placeholder="vous@exemple.com"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label class="form-label" for="f-tel">Téléphone / WhatsApp</label>
+          <input id="f-tel" name="tel" type="tel" autocomplete="tel" placeholder="+221 ..."></div>
+        <div class="field"><label class="form-label" for="f-service">Nature des travaux</label>
+          <select id="f-service" name="service">
+            <option>Construction neuve</option><option>Gros œuvre</option><option>Second œuvre</option>
+            <option>Génie civil / VRD</option><option>Rénovation / réhabilitation</option><option>Maîtrise d'œuvre</option>
+            <option>Suivi de chantier</option><option>Autre</option>
+          </select></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label class="form-label" for="f-dest">Localisation du chantier</label>
+          <input id="f-dest" name="localisation" type="text" placeholder="Dakar, Diamniadio, Saly..."></div>
+        <div class="field"><label class="form-label" for="f-dates">Échéance souhaitée</label>
+          <input id="f-dates" name="dates" type="text" placeholder="ex. démarrage mars 2026"></div>
+      </div>
+      <div class="field"><label class="form-label" for="f-pax">Surface / volume</label>
+        <input id="f-pax" name="volume" type="text" placeholder="ex. 450 m², R+2"></div>
+      <div class="field"><label class="form-label" for="f-msg">Votre projet <span class="req">*</span></label>
+        <textarea id="f-msg" name="message" required placeholder="Décrivez votre projet : nature des travaux, budget indicatif, contraintes de site..."></textarea></div>
+      <div class="hp" aria-hidden="true"><label>Société<input name="societe" tabindex="-1" autocomplete="off"></label></div>
+      <button class="btn btn-gold" type="submit" id="devisSubmit">Envoyer ma demande</button>
+      <div class="form-msg" id="devisMsg" role="status" aria-live="polite"></div>
+    </form>
+
+    <p style="margin-top:26px;color:var(--muted);font-size:14.5px">Ou contactez-nous directement :</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-ghost" id="waBtn" href="#">WhatsApp</a>
+      <a class="btn btn-ghost" id="mailBtn" href="#">Email</a>
+    </div>
+    <p style="margin-top:22px;font-size:15px;color:var(--muted)">
+      <a href="https://wa.me/33605775287" target="_blank" rel="noopener" style="color:var(--gold)">+33 6 05 77 52 87</a>
+      &nbsp;·&nbsp;
+      <a href="mailto:contact@saoconsultingroup.com" style="color:var(--gold)">contact@saoconsultingroup.com</a>
+      &nbsp;·&nbsp;
+      <a href="https://www.instagram.com/sao.consultingroup" target="_blank" rel="noopener" style="color:var(--gold)">@sao.consultingroup</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fcols">
+      <div>
+        <a class="brand" href="#top" style="margin-bottom:14px">
+          <img class="glyph" src="assets/logo.png" alt="Logo SAO" width="345" height="420">
+          <span><b>SAO BTP</b><span>Bâtiment &amp; Génie civil</span></span>
+        </a>
+        <p style="color:var(--muted);font-size:14px;max-width:280px">Construction, génie civil &amp; second œuvre — une division de SAO Consulting Group.</p>
+      </div>
+      <div><h4>SAO Travel</h4>
+        <a href="#metiers">Métiers</a><a href="#realisations">Réalisations</a><a href="#methode">Méthode</a><a href="#references">Références</a></div>
+      <div><h4>Services</h4>
+        <a href="#devis">Demander un devis</a><a href="#metiers">Nos métiers</a><a href="#methode">Notre méthode</a></div>
+      <div><h4>Contact</h4>
+        <a href="https://wa.me/33605775287" target="_blank" rel="noopener">WhatsApp · +33 6 05 77 52 87</a>
+        <a href="mailto:contact@saoconsultingroup.com">contact@saoconsultingroup.com</a>
+        <a href="https://www.instagram.com/sao.consultingroup" target="_blank" rel="noopener">Instagram · @sao.consultingroup</a>
+        <a href="https://www.saoconsultingroup.com/" target="_blank" rel="noopener">saoconsultingroup.com</a></div>
+    </div>
+    <div class="fbar">
+      <span>© <span id="yr"></span> SAO Consulting Group — Tous droits réservés.</span>
+      <span class="mono">SAO BTP · Bâtiment &amp; Génie civil</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Images : charge chaque photo en arrière-plan et ne l'applique QUE si le
+   fichier existe réellement (sinon l'illustration décorative reste en place). */
+document.querySelectorAll('.media[data-img]').forEach(function(el){
+  var url = (window.IMAGES||{})[el.getAttribute('data-img')];
+  if(!url) return;
+  var im = new Image();
+  im.onload = function(){ el.style.backgroundImage='url("'+url+'")'; el.classList.add('has-photo'); };
+  im.src = url;
+});
+
+/* Menu mobile */
+var burger=document.getElementById('burger'), menu=document.getElementById('menu');
+burger.addEventListener('click',function(){
+  var open=menu.classList.toggle('open');
+  burger.setAttribute('aria-expanded',open);
+});
+menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){menu.classList.remove('open');});});
+
+
+
+/* Coordonnées de contact SAO BTP */
+var CONTACT_EMAIL = "contact@saoconsultingroup.com";
+var CONTACT_WHATSAPP = "33605775287";   // +33 6 05 77 52 87 (format wa.me : indicatif + numéro, sans + ni espaces)
+document.getElementById('mailBtn').href =
+  "mailto:"+CONTACT_EMAIL+"?subject=Demande%20de%20devis%20-%20SAO%20Voyage";
+document.getElementById('waBtn').href =
+  "https://wa.me/"+CONTACT_WHATSAPP+"?text=Bonjour%20SAO%20Voyage%2C%20je%20souhaite%20un%20devis.";
+var _wf=document.getElementById('waFab');
+if(_wf) _wf.href="https://wa.me/"+CONTACT_WHATSAPP+"?text="+encodeURIComponent("Bonjour SAO BTP, je souhaite des informations.");
+
+/* Formulaire de devis → /api/contact (Mailtrap). Si l'envoi est indisponible,
+   la demande n'est pas perdue : on propose le même message via WhatsApp/email. */
+(function(){
+  var form=document.getElementById('devisForm'); if(!form) return;
+  var btn=document.getElementById('devisSubmit'), out=document.getElementById('devisMsg');
+  function show(cls,html){ out.className='form-msg on '+cls; out.innerHTML=html; }
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var d={}; new FormData(form).forEach(function(v,k){ d[k]=String(v).trim(); });
+    if(!d.nom||!d.email||!d.message){ show('err','Merci de renseigner votre nom, votre email et votre projet.'); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)){ show('err','Cette adresse email ne semble pas valide.'); return; }
+
+    var recap='Bonjour SAO BTP,\n'+d.nom+'\n'
+      +(d.tel?'Tél : '+d.tel+'\n':'')
+      +'Travaux : '+(d.service||'-')+'\n'
+      +(d.localisation?'Localisation : '+d.localisation+'\n':'')
+      +(d.dates?'Échéance : '+d.dates+'\n':'')
+      +(d.volume?'Surface/volume : '+d.volume+'\n':'')
+      +'\n'+d.message;
+    var secours='<a style="color:var(--gold);text-decoration:underline" target="_blank" rel="noopener" href="https://wa.me/'
+      +CONTACT_WHATSAPP+'?text='+encodeURIComponent(recap)+'">l’envoyer via WhatsApp</a> ou <a style="color:var(--gold);text-decoration:underline" href="mailto:'
+      +CONTACT_EMAIL+'?subject='+encodeURIComponent('Demande de devis — SAO BTP')+'&body='+encodeURIComponent(recap)+'">par email</a>';
+
+    btn.disabled=true; var t=btn.textContent; btn.textContent='Envoi en cours…';
+    show('','Envoi de votre demande…');
+    fetch('/api/contact',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(d)})
+      .then(function(r){ return r.json().catch(function(){return {};}).then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(res){
+        if(!res.ok||!res.j.ok) throw new Error(res.j.error||'x');
+        form.reset();
+        show('ok','<strong>Merci '+d.nom.replace(/[<>&]/g,'')+' !</strong> Votre demande est bien arrivée chez nous. Un conseiller SAO vous répond sous 24 h ouvrées.');
+      })
+      .catch(function(){
+        show('err','L’envoi automatique est momentanément indisponible. Votre message est prêt : vous pouvez '+secours+'.');
+      })
+      .finally(function(){ btn.disabled=false; btn.textContent=t; });
+  });
+})();
+
+document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+
+<!-- ============================================================= -->
+<!--  DÉCOR AUTONOME — illustration vectorielle par lieu (fallback) -->
+<!--  S'affiche tant qu'aucune photo n'est fournie dans window.IMAGES; -->
+<!--  dès qu'une URL photo est renseignée, elle remplace l'illustration. -->
+<!-- ============================================================= -->
+<script>
+(function(){
+  var s=document.createElement('style');
+  s.textContent=".media.has-scene::before{display:none}.media.has-scene::after{background:linear-gradient(transparent 45%,rgba(0,0,0,.62))}";
+  document.head.appendChild(s);
+  var G="#E9C735", S="#0782AD";
+  function u(inner){return 'url("data:image/svg+xml,'+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='xMidYMid slice'>"+inner+"</svg>")+'")';}
+  function sky(a,b){return "<defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='"+a+"'/><stop offset='1' stop-color='"+b+"'/></linearGradient></defs><rect width='400' height='300' fill='url(#s)'/>";}
+  function stars(n){var o='';for(var i=0;i<n;i++){o+="<circle cx='"+((i*67+23)%390+5)+"' cy='"+((i*41+11)%130+8)+"' r='"+(((i%3)*0.35+0.6).toFixed(2))+"' fill='#fff' opacity='"+((0.4+(i%4)*0.14).toFixed(2))+"'/>";}return o;}
+  var moon="<g transform='translate(332,50)'><circle r='15' fill='"+G+"'/><circle r='12' cx='6' cy='-3' fill='#08201f'/></g>";
+  var SC={};
+  SC.kaaba=function(n){return u(sky(n?"#04121d":"#0b4a4d",n?"#08201f":"#0a2123")+(n?stars(26)+moon:"")+"<g fill='#04100f'><rect x='60' y='118' width='12' height='142'/><rect x='328' y='118' width='12' height='142'/></g><path d='M58 118 66 100 74 118Z M326 118 334 100 342 118Z' fill='#04100f'/><circle cx='66' cy='98' r='3' fill='"+G+"'/><circle cx='334' cy='98' r='3' fill='"+G+"'/><ellipse cx='200' cy='278' rx='176' ry='24' fill='#06302f' opacity='.7'/><rect x='168' y='150' width='64' height='112' fill='#04100f' stroke='#12160f'/><rect x='168' y='171' width='64' height='9' fill='"+G+"'/><line x1='200' y1='150' x2='200' y2='262' stroke='#0a1a17'/>");};
+  SC.mosque=u(sky("#0b4a4d","#0a2123")+"<g fill='#06201d'><rect x='52' y='118' width='12' height='142'/><rect x='336' y='118' width='12' height='142'/></g><path d='M52 118 58 102 64 118Z M336 118 342 102 348 118Z' fill='#0f5c3a'/><rect x='120' y='178' width='160' height='82' fill='#06201d'/><path d='M120 178a80 44 0 0 1 160 0Z' fill='#0f5c3a'/><circle cx='200' cy='116' r='5' fill='"+G+"'/><rect x='198' y='120' width='4' height='16' fill='"+G+"'/><g fill='#0a2f27'><rect x='150' y='214' width='16' height='46'/><rect x='192' y='214' width='16' height='46'/><rect x='234' y='214' width='16' height='46'/></g>");
+  SC.gate=u(sky("#b5763a","#5c2f14")+"<rect x='88' y='58' width='224' height='202' rx='6' fill='#7a3f1a'/><rect x='82' y='52' width='236' height='10' fill='#5c2f14'/><path d='M140 260 V150 a60 60 0 0 1 120 0 V260Z' fill='#2a1608'/><path d='M140 150 a60 60 0 0 1 120 0' fill='none' stroke='"+G+"' stroke-width='4'/><g fill='"+G+"' opacity='.85'><circle cx='118' cy='92' r='4'/><circle cx='282' cy='92' r='4'/></g>");
+  SC.medina=u(sky("#6b4a2a","#241206")+"<g fill='#1c1108'><rect x='16' y='176' width='58' height='84'/><rect x='84' y='150' width='72' height='110'/><rect x='166' y='190' width='52' height='70'/><rect x='228' y='162' width='70' height='98'/><rect x='306' y='182' width='78' height='78'/></g><rect x='120' y='120' width='20' height='140' fill='#241206'/><path d='M120 120 130 106 140 120Z' fill='#0f5c3a'/><circle cx='130' cy='104' r='3' fill='"+G+"'/>");
+  SC.tower=u(sky("#0e5559","#0a2123")+"<rect x='168' y='70' width='64' height='190' fill='#06181a'/><rect x='160' y='62' width='80' height='10' fill='"+G+"' opacity='.5'/><g fill='#0a2f31'><rect x='182' y='96' width='16' height='26' rx='8'/><rect x='202' y='96' width='16' height='26' rx='8'/><rect x='182' y='138' width='16' height='26' rx='8'/><rect x='202' y='138' width='16' height='26' rx='8'/></g><g fill='#06181a'><rect x='64' y='238' width='14' height='22'/><rect x='96' y='238' width='14' height='22'/><rect x='128' y='238' width='14' height='22'/><rect x='258' y='238' width='14' height='22'/><rect x='290' y='238' width='14' height='22'/><rect x='322' y='238' width='14' height='22'/></g>");
+  SC.marrakech=u(sky("#c07a2f","#3a1e0c")+"<rect x='150' y='84' width='54' height='176' fill='#241206'/><rect x='150' y='84' width='54' height='16' fill='"+G+"' opacity='.5'/><rect x='166' y='60' width='22' height='26' fill='#241206'/><circle cx='177' cy='56' r='6' fill='"+G+"'/><path d='M312 260 q-8 -64 6 -104' fill='none' stroke='#241206' stroke-width='8'/><g fill='#183a12'><path d='M318 150q-44 -14 -68 10 36 -6 68 -10Z'/><path d='M318 150q44 -14 68 10 -36 -6 -68 -10Z'/><path d='M318 150q-16 -44 4 -66 6 34 -4 66Z'/></g>");
+  SC.seaside=u(sky("#12545a","#0a2123")+"<rect x='0' y='210' width='400' height='90' fill='"+S+"' opacity='.5'/><rect x='250' y='40' width='40' height='172' fill='#06181a'/><rect x='250' y='40' width='40' height='14' fill='"+G+"' opacity='.6'/><rect x='262' y='20' width='16' height='22' fill='#06181a'/><circle cx='270' cy='16' r='5' fill='"+G+"'/><g fill='#0a2f31'><rect x='260' y='72' width='8' height='20' rx='4'/><rect x='272' y='72' width='8' height='20' rx='4'/><rect x='260' y='106' width='8' height='20' rx='4'/><rect x='272' y='106' width='8' height='20' rx='4'/></g><g stroke='#bfe6f0' stroke-width='1' opacity='.3' fill='none'><path d='M0 234 q25 -6 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0'/><path d='M0 256 q25 -6 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0'/></g>");
+  SC.coast=u(sky("#0e5559","#0a2123")+"<rect x='0' y='214' width='400' height='86' fill='"+S+"' opacity='.5'/><path d='M0 214 h150 l26 -12 H0Z' fill='#0a2a26'/><g transform='translate(96,108)' fill='#06181a'><rect x='-6' y='0' width='12' height='106'/><path d='M-6 0 q6 -30 6 -40 q0 10 6 40Z'/></g><rect x='84' y='214' width='24' height='8' fill='#06181a'/><g stroke='#bfe6f0' stroke-width='1' opacity='.28' fill='none'><path d='M0 248 q25 -6 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0'/></g>");
+  SC.island=u(sky("#1b6a72","#0a2123")+"<rect x='0' y='222' width='400' height='78' fill='"+S+"' opacity='.55'/><rect x='120' y='120' width='170' height='102' fill='#b3532a'/><rect x='114' y='110' width='182' height='14' fill='#7a3418'/><g fill='#2a1206'><rect x='140' y='140' width='22' height='34' rx='11'/><rect x='190' y='140' width='22' height='34' rx='11'/><rect x='240' y='140' width='22' height='34' rx='11'/><rect x='198' y='182' width='30' height='40'/></g><path d='M300 250 h46 l-8 -12 h-30Z' fill='#06181a'/><rect x='321' y='228' width='2' height='16' fill='#06181a'/>");
+  SC.skyline=u(sky("#3a2b57","#0a1826")+stars(18)+"<g fill='#0a1420'><rect x='40' y='150' width='90' height='110'/><path d='M40 150a45 34 0 0 1 90 0Z'/><rect x='150' y='128' width='110' height='132'/><path d='M150 128a55 42 0 0 1 110 0Z'/><rect x='280' y='158' width='80' height='102'/><path d='M280 158a40 30 0 0 1 80 0Z'/></g><g fill='#0a1420'><rect x='134' y='94' width='9' height='166'/><rect x='262' y='94' width='9' height='166'/><rect x='58' y='120' width='7' height='140'/><rect x='340' y='120' width='7' height='140'/></g><g fill='"+G+"'><circle cx='138.5' cy='90' r='3'/><circle cx='266.5' cy='90' r='3'/><circle cx='205' cy='84' r='3'/></g>");
+  SC.suv=u(sky("#0e5559","#0a2123")+"<rect x='0' y='232' width='400' height='68' fill='#0a2123'/><line x1='0' y1='250' x2='400' y2='250' stroke='"+G+"' stroke-dasharray='18 16' stroke-width='2' opacity='.45'/><path d='M90 234 v-30 l26 -4 16 -28 h104 l20 28 26 4 v30Z' fill='#06181a'/><path d='M132 176 h56 v24 h-74Z' fill='#0e3b3d'/><path d='M196 176 h34 l20 24 h-54Z' fill='#0e3b3d'/><g fill='#04100f'><circle cx='150' cy='234' r='22'/><circle cx='286' cy='234' r='22'/></g><g fill='#0e3b3d'><circle cx='150' cy='234' r='9'/><circle cx='286' cy='234' r='9'/></g>");
+  SC.bus=u(sky("#0e5559","#0a2123")+"<rect x='0' y='236' width='400' height='64' fill='#0a2123'/><line x1='0' y1='254' x2='400' y2='254' stroke='"+G+"' stroke-dasharray='18 16' stroke-width='2' opacity='.45'/><rect x='70' y='150' width='260' height='90' rx='16' fill='#06181a'/><rect x='84' y='166' width='232' height='34' rx='6' fill='#0e3b3d'/><g fill='#0a2123'><rect x='128' y='166' width='4' height='34'/><rect x='186' y='166' width='4' height='34'/><rect x='244' y='166' width='4' height='34'/></g><rect x='296' y='206' width='22' height='24' fill='"+G+"' opacity='.5'/><g fill='#04100f'><circle cx='128' cy='240' r='20'/><circle cx='272' cy='240' r='20'/></g><g fill='#0e3b3d'><circle cx='128' cy='240' r='8'/><circle cx='272' cy='240' r='8'/></g>");
+  SC.hotel=function(a,b){var w='';for(var r=0;r<5;r++){for(var c=0;c<6;c++){var lit=((r*6+c)%3!==0);w+="<rect x='"+(132+c*22)+"' y='"+(112+r*26)+"' width='12' height='16' fill='"+(lit?"#f0d873":"#0e3b3d")+"' opacity='"+(lit?"0.9":"0.55")+"'/>";}}var st='';for(var i=0;i<4;i++){st+="<path d='M"+(142+i*30)+" 60 l3 6 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1Z' fill='"+G+"'/>";}return u(sky(a,b)+"<rect x='118' y='84' width='164' height='176' fill='#06181a'/><rect x='118' y='84' width='164' height='12' fill='"+G+"' opacity='.5'/>"+w+st);};
+  var MAP={chantier:SC.tower};
+  document.querySelectorAll('.media[data-img]').forEach(function(el){
+    var k=el.getAttribute('data-img');
+    // L'illustration sert de fond immédiat ; si la photo existe, le chargeur
+    // ci-dessus la superpose dès qu'elle est prête (classe has-photo).
+    if(MAP[k] && !el.classList.contains('has-photo')){ el.style.backgroundImage=MAP[k]; el.classList.add('has-scene'); }
+  });
+})();
+</script>
+
+<!-- Boutons flottants : WhatsApp + retour en haut -->
+<a class="fab fab-wa" id="waFab" href="#" target="_blank" rel="noopener" aria-label="Contact WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1z"/></svg></a>
+<a class="fab fab-ig" href="https://www.instagram.com/sao.consultingroup" target="_blank" rel="noopener" aria-label="Instagram SAO BTP"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="#fff" stroke="none"/></svg></a>
+<button class="fab fab-top" id="topFab" type="button" aria-label="Revenir en haut">↑</button>
+<script>
+(function(){var t=document.getElementById('topFab');if(!t)return;
+  window.addEventListener('scroll',function(){t.classList.toggle('on',(window.scrollY||document.documentElement.scrollTop)>500);},{passive:true});
+  t.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});})();
+</script>
+</body>
+</html>
