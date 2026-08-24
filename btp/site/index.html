@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAO BTP &amp; Ingénierie — Construire avec rigueur | SAO Consulting Group</title>
+<meta name="description" content="SAO BTP & Ingénierie, filiale de SAO Consulting Group : construction, génie civil, études techniques et maîtrise d'œuvre. Des ouvrages livrés dans les délais et les normes, au Sénégal et en France.">
+<meta name="keywords" content="BTP Sénégal, génie civil Dakar, construction, maîtrise d'œuvre, études techniques, entreprise BTP">
+<meta name="theme-color" content="#03393B">
+<link rel="icon" type="image/png" href="./assets/favicon.png">
+<meta property="og:title" content="SAO BTP & Ingénierie — Construire avec rigueur">
+<meta property="og:description" content="Construction, génie civil, études techniques et maîtrise d'œuvre — dans les délais et les normes.">
+<meta property="og:image" content="./assets/logo.png">
+<link rel="canonical" href="https://www.saoconsultingroup.com/btp/">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"GeneralContractor","name":"SAO BTP & Ingénierie",
+"parentOrganization":{"@type":"Organization","name":"SAO Consulting Group","url":"https://www.saoconsultingroup.com"},
+"areaServed":["SN","FR"],"telephone":"+221777762693","email":"contact@saoconsultingroup.com",
+"description":"Construction, génie civil, études techniques et maîtrise d'œuvre."}
+</script>
+<style>
+:root{
+  --deep:#03393B;--deep2:#04282A;--obsidian:#071311;--ink:#0a1614;--panel:#0b2224;
+  --aqua:#0782AD;--aqua2:#28b6e6;--blue:#0984E3;--gold:#E9C735;--steel:#c9d6d5;
+  --mist:#EAF3F3;--muted:#9FB6B5;--gray:#7e9695;
+  --line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.05);--bp:rgba(40,182,230,.55);--maxw:1240px;
+  --display:'Montserrat',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;--mono:'Space Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--obsidian);color:var(--mist);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.06;letter-spacing:-.02em}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--aqua2);margin:0 0 16px;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--gold)}
+.aqua{color:var(--aqua2)}.gold{color:var(--gold)}.lead{color:var(--muted);font-size:18px;max-width:60ch}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:15px;padding:14px 26px;border-radius:3px;cursor:pointer;border:1px solid transparent;transition:.25s}
+.btn svg{width:16px;height:16px}
+.btn-gold{background:linear-gradient(120deg,#f3d65a,var(--gold));color:#171400;box-shadow:0 8px 30px rgba(233,199,53,.22)}
+.btn-gold:hover{transform:translateY(-2px)}
+.btn-primary{background:linear-gradient(120deg,var(--aqua),var(--blue));color:#fff;box-shadow:0 8px 30px rgba(9,132,227,.25)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(9,132,227,.4)}
+.btn-ghost{border-color:var(--line);color:var(--mist);background:rgba(255,255,255,.02)}
+.btn-ghost:hover{border-color:var(--aqua2);color:#fff}
+
+/* blueprint panel */
+.panel{position:relative;background:linear-gradient(165deg,var(--panel),var(--ink));border:1px solid var(--line);border-radius:6px}
+.tick{position:relative}
+.tick::before,.tick::after{content:"";position:absolute;width:9px;height:9px;border:1.5px solid var(--gold);opacity:.65}
+.tick::before{top:8px;left:8px;border-right:0;border-bottom:0}
+.tick::after{bottom:8px;right:8px;border-left:0;border-top:0}
+
+/* header */
+header{position:fixed;inset:0 0 auto 0;z-index:50;transition:.3s;border-bottom:1px solid transparent}
+header.scrolled{background:rgba(7,19,17,.86);backdrop-filter:blur(14px);border-color:var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:74px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:40px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.brand b{font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:.03em;display:block;line-height:1}
+.brand span{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gray)}
+.menu{display:flex;gap:26px;align-items:center}
+.menu a{white-space:nowrap;font-size:14px;font-weight:500;color:var(--mist);opacity:.85;transition:.2s}
+.menu a:hover{color:var(--aqua2);opacity:1}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:8px}
+.burger span{display:block;width:24px;height:2px;background:var(--mist);margin:5px 0}
+
+/* blueprint grid bg */
+.bpgrid{position:absolute;inset:0;z-index:-1;opacity:.5;background-image:
+  linear-gradient(var(--line2) 1px,transparent 1px),linear-gradient(90deg,var(--line2) 1px,transparent 1px),
+  linear-gradient(rgba(40,182,230,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(40,182,230,.06) 1px,transparent 1px);
+  background-size:120px 120px,120px 120px,24px 24px,24px 24px;mask-image:radial-gradient(78% 72% at 60% 32%,#000,transparent)}
+
+/* hero */
+.hero{position:relative;padding:130px 0 80px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;z-index:-2;background:
+  radial-gradient(820px 540px at 82% 24%,rgba(7,130,173,.18),transparent 60%),
+  radial-gradient(560px 420px at 4% 88%,rgba(233,199,53,.05),transparent 60%),
+  linear-gradient(180deg,var(--ink),var(--obsidian))}
+.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center;position:relative}
+.tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 13px;margin-bottom:22px}
+.tag i{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.hero h1{font-size:clamp(38px,5.6vw,68px);font-weight:900;letter-spacing:-.03em}
+.hero h1 .g{display:block;color:var(--gold)}
+.hero .lead{margin:24px 0 32px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.hero-foot{margin-top:30px;display:flex;gap:24px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--gray)}
+.hero-foot b{color:var(--gold)}
+.hero-guardian{position:absolute;top:-70px;right:-14px;height:150px;z-index:6;pointer-events:none;filter:drop-shadow(0 16px 24px rgba(9,132,227,.35));animation:floaty 5s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-9px)}}
+.crumb{font-family:var(--mono);font-size:12px;color:var(--gray);margin-bottom:16px}
+.crumb a:hover{color:var(--aqua2)}.crumb span{color:var(--mist)}
+
+/* blueprint drawing */
+.blueprint{padding:22px}
+.blueprint .cap{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--aqua2);border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:8px}
+.blueprint .cap b{color:var(--gold);font-weight:700}
+.bpsvg{width:100%;height:auto;display:block}
+.bp{fill:none;stroke:var(--bp);stroke-width:1.4;stroke-linecap:square;stroke-linejoin:round;stroke-dasharray:2600;stroke-dashoffset:2600;animation:draw 2.6s ease forwards}
+.bp.g{stroke:var(--gold)}
+.bp.dim{stroke:rgba(255,255,255,.28);stroke-width:1}
+.win{fill:rgba(40,182,230,.14);opacity:0;animation:fadein .5s ease forwards}
+.lbl{fill:var(--muted);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.05em}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadein{to{opacity:1}}
+
+/* sections */
+.sec{padding:92px 0}
+.band{background:linear-gradient(180deg,var(--obsidian),var(--ink));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sec-head{max-width:720px;margin-bottom:46px}
+.sec-head.c{margin:0 auto 46px;text-align:center}
+.sec-head h2{font-size:clamp(28px,4vw,44px);font-weight:800;margin-top:6px}
+.sec-head p{color:var(--muted);font-size:17px;margin-top:16px}
+
+/* expertises */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{padding:26px;transition:.3s}
+.card:hover{transform:translateY(-4px);border-color:rgba(40,182,230,.5)}
+.card .no{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:.08em}
+.card .ic{width:48px;height:48px;border-radius:8px;display:grid;place-items:center;background:rgba(7,130,173,.14);border:1px solid var(--line);margin:12px 0 16px}
+.card .ic svg{width:26px;height:26px;stroke:var(--aqua2);fill:none;stroke-width:1.6}
+.card h3{font-size:19px;font-weight:700}
+.card p{color:var(--muted);font-size:14.5px;margin:10px 0 0}
+
+/* cycle stepper */
+.cycle{display:grid;grid-template-columns:.85fr 1.15fr;gap:20px;align-items:stretch}
+.steps{display:flex;flex-direction:column;gap:10px}
+.stepbtn{display:flex;gap:14px;align-items:center;text-align:left;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:6px;padding:16px 18px;transition:.2s;color:var(--mist);font-family:var(--body)}
+.stepbtn .n{width:34px;height:34px;flex:none;border-radius:7px;display:grid;place-items:center;font-family:var(--mono);font-size:13px;color:var(--gold);background:rgba(233,199,53,.1);border:1px solid var(--line)}
+.stepbtn b{font-family:var(--display);font-size:15.5px}
+.stepbtn:hover{border-color:rgba(40,182,230,.5)}
+.stepbtn.active{border-color:var(--aqua2);background:rgba(7,130,173,.1);box-shadow:0 0 0 1px var(--aqua2) inset}
+.stepbtn.active .n{color:#071311;background:var(--gold)}
+.screen{padding:28px;display:flex;flex-direction:column;min-height:320px}
+.screen .bar{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:18px}
+.screen .bar .ph{margin-left:auto;color:var(--aqua2)}
+.screen h3{font-size:24px;font-weight:800;margin:0 0 10px}
+.screen>p{color:var(--muted);font-size:15px;margin:0 0 18px}
+.deliv{list-style:none;padding:0;margin:0 0 auto;display:grid;gap:10px}
+.deliv li{display:flex;gap:11px;align-items:flex-start;font-size:14.5px}
+.deliv li svg{width:19px;height:19px;stroke:var(--gold);fill:none;stroke-width:2;flex:none;margin-top:2px}
+.progress{margin-top:22px}
+.progress .track{height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+.progress .fill{height:100%;background:linear-gradient(90deg,var(--aqua),var(--gold));transition:width .4s ease;border-radius:999px}
+.progress .pl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--gray);margin-top:8px;text-transform:uppercase;letter-spacing:.08em}
+
+/* ouvrages */
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.ouv{padding:26px 20px;text-align:center;transition:.3s}
+.ouv:hover{transform:translateY(-4px);border-color:rgba(40,182,230,.5)}
+.ouv .ic{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;background:rgba(7,130,173,.14);border:1px solid var(--line);margin:0 auto 14px}
+.ouv .ic svg{width:28px;height:28px;stroke:var(--aqua2);fill:none;stroke-width:1.5}
+.ouv b{font-family:var(--display);font-size:16px;display:block;margin-bottom:5px}
+.ouv span{color:var(--muted);font-size:12.5px}
+
+/* engagements band */
+.eng{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.eng .e{background:var(--ink);padding:30px 22px;text-align:center}
+.eng .e svg{width:30px;height:30px;stroke:var(--gold);fill:none;stroke-width:1.6;margin-bottom:12px}
+.eng .e b{font-family:var(--display);font-size:16px;display:block}
+.eng .e span{color:var(--muted);font-size:13px;display:block;margin-top:6px}
+
+/* réalisations */
+.projs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.proj{overflow:hidden;transition:.3s}
+.proj:hover{transform:translateY(-4px);border-color:rgba(40,182,230,.5)}
+.proj .thumb{height:150px;background:radial-gradient(circle at 70% 20%,#0d3238,#071b1d);border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.proj .thumb svg{position:absolute;inset:0;width:100%;height:100%;opacity:.8}
+.proj .body{padding:20px}
+.proj .tagm{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua2)}
+.proj h3{font-size:17px;font-weight:700;margin:8px 0 6px}
+.proj p{color:var(--muted);font-size:13.5px;margin:0}
+
+/* saoty */
+.saoty{display:grid;grid-template-columns:.8fr 1.2fr;gap:40px;align-items:center}
+.saoty-art{position:relative;display:flex;justify-content:center}
+.saoty-art img{height:340px;filter:drop-shadow(0 22px 32px rgba(9,132,227,.3));animation:floaty 6s ease-in-out infinite}
+.saoty-art .halo{position:absolute;top:44%;left:50%;width:330px;height:330px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(9,132,227,.3),transparent 66%);z-index:-1}
+
+/* form */
+.formwrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+form{padding:30px}
+.field{margin-bottom:15px}
+.field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gray);font-family:var(--mono);margin-bottom:7px}
+.field input,.field select,.field textarea{width:100%;background:var(--obsidian);border:1px solid var(--line);border-radius:4px;color:var(--mist);padding:12px 14px;font-family:var(--body);font-size:15px;transition:.2s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--aqua2);box-shadow:0 0 0 3px rgba(7,130,173,.18)}
+.field textarea{min-height:96px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hp{position:absolute;left:-9999px}
+.cline{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)}
+.cline svg{width:20px;height:20px;stroke:var(--aqua2);fill:none;stroke-width:1.6;flex:none}
+.cline b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--gray);font-family:var(--mono)}
+.fmsg{display:none;margin-top:14px;padding:12px 15px;border-radius:6px;font-family:var(--mono);font-size:13px}
+.fmsg.ok{display:block;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.4);color:#9ff0bd}
+.fmsg.err{display:block;background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#ffb3b3}
+
+/* cta + footer */
+.cta-final{padding:90px 0;text-align:center;background:radial-gradient(700px 300px at 50% 0%,rgba(233,199,53,.12),transparent 60%),linear-gradient(180deg,var(--deep),var(--obsidian))}
+.cta-final h2{font-size:clamp(28px,4vw,44px);font-weight:800}
+.cta-final p{color:var(--muted);margin:14px 0 28px}
+.cta-final .btn{margin:0 7px 10px}
+footer{background:#050e0d;border-top:1px solid var(--line);padding:56px 0 28px}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:32px}
+.fbrand img{height:38px;margin-bottom:13px}.fbrand p{color:var(--muted);font-size:14px;max-width:40ch}
+.fcol h4{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);margin:0 0 15px}
+.fcol a{display:block;color:var(--muted);font-size:14px;padding:5px 0}.fcol a:hover{color:var(--aqua2)}
+.fbar{margin-top:42px;padding-top:22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--gray);font-size:13px;font-family:var(--mono)}
+
+.reveal{opacity:0;transform:translateY(22px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:1024px){.grid3,.grid4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:960px){
+  .menu{display:none;position:absolute;top:74px;left:0;right:0;flex-direction:column;align-items:flex-start;background:rgba(7,19,17,.98);backdrop-filter:blur(14px);padding:18px 24px;gap:6px;border-bottom:1px solid var(--line)}
+  .menu.open{display:flex}.menu a{padding:9px 0;width:100%}.burger{display:block}
+  .hero-grid,.cycle,.saoty,.formwrap{grid-template-columns:1fr;gap:28px}
+  .hero-guardian{display:none}.eng{grid-template-columns:1fr 1fr}.projs{grid-template-columns:1fr}
+}
+@media(max-width:560px){.grid3,.grid4,.eng{grid-template-columns:1fr}.row2{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}.reveal{opacity:1;transform:none}.bp{stroke-dashoffset:0}.win{opacity:1}}
+
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+.checklist{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:12px}
+.checklist li{display:flex;gap:12px;font-size:15.5px;align-items:flex-start;border-bottom:1px solid var(--line2);padding-bottom:12px}
+.checklist li:last-child{border-bottom:0;padding-bottom:0}
+.checklist svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:2;flex:none;margin-top:2px}
+.badge-hl{display:inline-flex;align-items:center;gap:10px;margin-top:22px;border:1px solid rgba(233,199,53,.4);background:rgba(233,199,53,.08);border-radius:8px;padding:12px 18px;font-family:var(--display);font-weight:700;font-size:14.5px}
+.badge-hl svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:2;flex:none}
+.mini{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:7px}
+.mini li{position:relative;padding-left:16px;font-size:13px;color:var(--muted)}
+.mini li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;background:var(--gold);border-radius:1px}
+.partners{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.partner{padding:28px;text-align:center}
+.partner .ic{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;background:rgba(233,199,53,.1);border:1px solid var(--line);margin:0 auto 14px}
+.partner .ic svg{width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.6}
+.partner b{font-family:var(--display);font-size:17px;display:block}
+.partner .role{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--aqua2);margin:6px 0 8px}
+.partner p{color:var(--muted);font-size:13.5px;margin:0}
+@media(max-width:960px){.split2{grid-template-columns:1fr;gap:28px}.partners{grid-template-columns:1fr}}
+
+/* ===== polish premium ===== */
+.panel{box-shadow:inset 0 1px 0 rgba(255,255,255,.045)}
+.btn-gold{position:relative;overflow:hidden}
+.btn-gold::after{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg)}
+.btn-gold:hover::after{animation:shine .9s ease}
+@keyframes shine{to{left:140%}}
+.aurora{position:absolute;z-index:-1;border-radius:50%;filter:blur(75px);opacity:.55;pointer-events:none}
+.aurora.a1{width:440px;height:440px;top:-90px;right:5%;background:radial-gradient(circle,rgba(9,132,227,.5),transparent 65%);animation:drift 16s ease-in-out infinite}
+.aurora.a2{width:380px;height:380px;bottom:-140px;left:-5%;background:radial-gradient(circle,rgba(233,199,53,.22),transparent 65%);animation:drift 20s ease-in-out infinite reverse}
+@keyframes drift{50%{transform:translate(-26px,22px) scale(1.12)}}
+.hero h1 .g{text-shadow:0 0 44px rgba(233,199,53,.28)}
+.card,.ouv,.partner,.proj,.acard{transition:transform .3s,border-color .3s,box-shadow .3s}
+.card:hover,.ouv:hover,.partner:hover,.proj:hover,.acard:hover{box-shadow:0 22px 54px rgba(0,0,0,.42),0 0 0 1px rgba(40,182,230,.35),0 0 34px rgba(7,130,173,.16)}
+.eng .e{transition:background .3s}.eng .e:hover{background:#0c1f21}
+.tag{background:rgba(233,199,53,.05)}
+/* ===== villa clé en main ===== */
+.villa{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+.villa-visual{padding:22px}
+.vtimeline{display:grid;gap:0}
+.vstep{display:flex;gap:16px;padding:0 0 22px;position:relative}
+.vstep:last-child{padding-bottom:0}
+.vstep::before{content:"";position:absolute;left:16px;top:38px;bottom:-4px;width:2px;background:linear-gradient(var(--gold),rgba(233,199,53,.05))}
+.vstep:last-child::before{display:none}
+.vdot{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:12px;color:#0a1200;background:linear-gradient(135deg,#f3d65a,var(--gold));box-shadow:0 0 0 4px rgba(233,199,53,.1)}
+.vstep b{font-family:var(--display);font-size:15.5px;display:block}
+.vstep span{color:var(--muted);font-size:13.5px}
+.advice{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:46px}
+.acard{padding:24px;text-align:center}
+.acard .ic{width:48px;height:48px;border-radius:11px;display:grid;place-items:center;background:rgba(7,130,173,.14);border:1px solid var(--line);margin:0 auto 12px}
+.acard .ic svg{width:25px;height:25px;stroke:var(--aqua2);fill:none;stroke-width:1.6}
+.acard b{font-family:var(--display);font-size:15px;display:block;margin-bottom:6px}
+.acard span{color:var(--muted);font-size:13px}
+@media(max-width:960px){.villa{grid-template-columns:1fr;gap:30px}.advice{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.advice{grid-template-columns:1fr}}
+
+/* ===== GESTION IMMOBILIÈRE PREMIUM ===== */
+.gim-intro{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;margin-bottom:56px}
+.promise{list-style:none;padding:0;margin:0;display:grid;gap:13px}
+.promise li{display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.promise li svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:2;flex:none;margin-top:2px}
+.promise li b{color:var(--mist);font-weight:600}
+.gim-quote{margin-top:24px;padding:18px 22px;border-left:2px solid var(--gold);background:rgba(233,199,53,.05);border-radius:0 8px 8px 0;font-family:var(--display);font-weight:600;font-size:16px;line-height:1.4}
+
+/* formules / packs */
+.formules{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.formule{padding:28px 24px;display:flex;flex-direction:column;position:relative;transition:transform .3s,border-color .3s,box-shadow .3s}
+.formule:hover{transform:translateY(-4px);border-color:rgba(40,182,230,.5);box-shadow:0 22px 54px rgba(0,0,0,.42),0 0 0 1px rgba(40,182,230,.35),0 0 34px rgba(7,130,173,.16)}
+.formule.feat{border-color:rgba(233,199,53,.55);box-shadow:0 0 0 1px rgba(233,199,53,.4),0 22px 60px rgba(0,0,0,.5)}
+.formule.feat:hover{box-shadow:0 0 0 1px rgba(233,199,53,.6),0 26px 66px rgba(0,0,0,.55),0 0 40px rgba(233,199,53,.14)}
+.feat-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#171400;background:linear-gradient(120deg,#f3d65a,var(--gold));padding:5px 14px;border-radius:999px;font-weight:700;box-shadow:0 6px 18px rgba(233,199,53,.35)}
+.formule .fname{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--aqua2)}
+.formule h3{font-size:21px;font-weight:800;margin:8px 0 4px}
+.formule .ftag{color:var(--muted);font-size:13.5px;min-height:38px;margin-bottom:14px}
+.formule .price{font-family:var(--display);font-weight:900;font-size:15px;color:var(--gold);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:16px;display:flex;align-items:baseline;gap:8px}
+.formule .price b{font-size:30px;line-height:1}
+.formule .price span{font-family:var(--body);font-weight:500;font-size:12.5px;color:var(--muted)}
+.formule .flist{list-style:none;padding:0;margin:0 0 18px;display:grid;gap:10px}
+.formule .flist li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--steel)}
+.formule .flist li svg{width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:2;flex:none;margin-top:3px}
+.formule .ideal{margin-top:auto;font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:14px}
+.formule .ideal b{color:var(--aqua2);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:5px}
+.formule .btn{margin-top:16px;width:100%;justify-content:center}
+.formules-sur{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.formule.wide h3{font-size:19px}
+.formule.wide .price{color:var(--aqua2);font-size:14px}
+
+/* tableau comparatif */
+.cmp-wrap{overflow-x:auto;border-radius:8px}
+.cmp{width:100%;border-collapse:collapse;min-width:560px;font-size:14px}
+.cmp thead th{font-family:var(--display);font-weight:800;font-size:14px;text-align:center;padding:16px 12px;border-bottom:1px solid var(--line);color:var(--mist)}
+.cmp thead th:first-child{text-align:left;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:400}
+.cmp thead th.hl{color:var(--gold)}
+.cmp tbody td{padding:13px 12px;border-bottom:1px solid var(--line2);text-align:center}
+.cmp tbody td:first-child{text-align:left;color:var(--steel);font-size:14px}
+.cmp tbody tr:hover{background:rgba(255,255,255,.02)}
+.cmp .yes{color:var(--gold);font-weight:800}
+.cmp .no{color:var(--gray)}
+.cmp .part{color:var(--aqua2);font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+.cmp-note{color:var(--muted);font-size:12.5px;margin:14px 0 0;font-style:italic}
+
+/* services à la carte */
+.carte{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.carte-cat{padding:24px}
+.carte-cat .ic{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;background:rgba(7,130,173,.14);border:1px solid var(--line);margin-bottom:14px}
+.carte-cat .ic svg{width:24px;height:24px;stroke:var(--aqua2);fill:none;stroke-width:1.6}
+.carte-cat h4{font-family:var(--display);font-size:16.5px;font-weight:700;margin:0 0 12px}
+.carte-cat .opts{display:flex;flex-wrap:wrap;gap:8px}
+.carte-cat .opts span{font-size:12.5px;color:var(--steel);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+
+@media(max-width:960px){.gim-intro{grid-template-columns:1fr;gap:28px}.formules{grid-template-columns:1fr}.formules-sur,.carte{grid-template-columns:1fr}}
+
+/* ===== photos réelles ===== */
+.blueprint .shot-hero,.villa-visual .shot-villa{width:100%;border-radius:5px;display:block;object-fit:cover;aspect-ratio:4/5;border:1px solid var(--line)}
+.shot{width:100%;border-radius:6px;border:1px solid var(--line);display:block;object-fit:cover;box-shadow:0 14px 34px rgba(0,0,0,.4)}
+.shotband{position:relative;width:100%;height:330px;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin:0 0 30px;box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.shotband img{width:100%;height:100%;object-fit:cover;display:block}
+.shotband .cap-tag{position:absolute;left:14px;bottom:12px;z-index:2;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:rgba(7,19,17,.62);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:5px;padding:6px 12px}
+.shotband::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(3,20,18,.6));pointer-events:none}
+.shotduo{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 30px}
+.shotduo .shotband{margin:0;height:300px}
+@media(max-width:760px){.shotband{height:220px}.shotduo{grid-template-columns:1fr}}
+
+/* ============================================================
+   COUCHE PREMIUM — direction "studio d'architecture"
+   ============================================================ */
+::selection{background:var(--gold);color:#0a1200}
+:focus-visible{outline:2px solid var(--aqua2);outline-offset:3px;border-radius:3px}
+html{scrollbar-color:rgba(7,130,173,.6) transparent}
+::-webkit-scrollbar{width:10px}::-webkit-scrollbar-thumb{background:rgba(7,130,173,.5);border-radius:8px}
+
+/* grain fin pour la matière */
+body::after{content:"";position:fixed;inset:0;z-index:900;pointer-events:none;opacity:.04;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ÉCHELLE TYPO — plus grande, plus serrée, plus assumée */
+.hero h1{font-size:clamp(46px,6.6vw,80px);letter-spacing:-.038em;line-height:.96}
+.hero .lead{font-size:clamp(17px,1.9vw,20px);color:#c6d6d5;max-width:54ch}
+.eyebrow{letter-spacing:.3em;font-size:11px}
+.eyebrow::before{width:26px}
+.sec-head h2{font-size:clamp(30px,4.4vw,52px);letter-spacing:-.028em;line-height:1.02}
+.sec-head p{font-size:18px;color:#a9bebd}
+.sec{padding:104px 0}
+
+/* MATIÈRE — panneaux vitrés, ombres profondes, filet de lumière */
+.panel{background:linear-gradient(165deg,rgba(15,40,42,.92),rgba(8,20,20,.94));backdrop-filter:blur(7px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 22px 54px rgba(0,0,0,.34)}
+.card,.ouv,.partner,.acard{border-radius:9px}
+header.scrolled{background:rgba(6,16,15,.72);box-shadow:0 1px 0 rgba(255,255,255,.06),0 12px 44px rgba(0,0,0,.42)}
+
+/* BOUTONS — plus de présence */
+.btn{border-radius:4px}
+.btn-gold{box-shadow:0 12px 36px rgba(233,199,53,.3),inset 0 1px 0 rgba(255,255,255,.55)}
+.btn-primary{box-shadow:0 12px 36px rgba(9,132,227,.32),inset 0 1px 0 rgba(255,255,255,.18)}
+
+/* PHOTOS — étalonnage pour l'unité chromatique */
+.shot,.shot-hero,.shot-villa,.shotband img{filter:contrast(1.07) saturate(1.04) brightness(.97)}
+.hero .blueprint{box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 34px 80px rgba(0,0,0,.55),0 0 0 1px rgba(40,182,230,.14)}
+.shot-hero{aspect-ratio:4/5}
+
+/* HERO — vignette cinématographique + halo doré discret */
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(120% 80% at 50% 0%,transparent 60%,rgba(3,15,14,.6) 100%)}
+
+/* ORCHESTRATION AU CHARGEMENT */
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.hero .tag{animation:rise .7s .05s both}
+.hero h1{animation:rise .85s .15s both}
+.hero .lead{animation:rise .85s .32s both}
+.hero-cta{animation:rise .85s .48s both}
+.hero-foot{animation:rise .85s .62s both}
+.hero .blueprint.reveal.in{animation:rise .95s .4s both}
+.hero-guardian{animation:rise .9s .8s both,floaty 5s 1.7s ease-in-out infinite}
+
+/* HERO-FOOT — bande "specs" plus affirmée */
+.hero-foot{margin-top:34px;padding-top:20px;border-top:1px solid var(--line);gap:30px}
+.hero-foot span{font-size:12.5px;letter-spacing:.04em}
+
+/* SIGNATURE — bandeau défilant des métiers */
+.marquee{position:relative;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(7,130,173,.07),rgba(233,199,53,.05));overflow:hidden;padding:15px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marquee .track{display:flex;width:max-content;white-space:nowrap;animation:scroll 38s linear infinite;
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+.marquee .track i{padding:0 30px;font-style:normal;display:inline-flex;align-items:center}
+.marquee .track i::before{content:"◆";color:var(--gold);font-size:8px;margin-right:30px;opacity:.8}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* micro-détail : sur-titres de section en capitales fines déjà via .eyebrow */
+@media(prefers-reduced-motion:reduce){
+  .hero .tag,.hero h1,.hero .lead,.hero-cta,.hero-foot,.hero .blueprint,.hero-guardian{animation:none}
+  .marquee .track{animation:none;justify-content:center}
+}
+@media(max-width:600px){.sec{padding:74px 0}}
+
+/* ============ HERO CINÉMATOGRAPHIQUE ============ */
+.hero.cine{position:relative;min-height:100svh;display:flex;align-items:center;padding:120px 0 96px;overflow:hidden;isolation:isolate}
+.hero.cine::before{display:none}
+.hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hero-bgimg{position:absolute;inset:0;width:100%;height:118%;object-fit:cover;object-position:70% 40%;transform:translateY(0) scale(1.06);will-change:transform;filter:saturate(1.06) contrast(1.02)}
+.hero-scrim{position:absolute;inset:0;z-index:1;background:
+  linear-gradient(95deg,rgba(3,20,18,.97) 0%,rgba(3,20,18,.86) 38%,rgba(4,27,28,.55) 66%,rgba(7,130,173,.22) 100%),
+  linear-gradient(0deg,rgba(3,15,14,.96) 2%,transparent 46%)}
+.hero.cine .bpgrid{z-index:1;opacity:.3}
+.hero.cine .aurora{z-index:1}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.18fr .82fr;gap:44px;align-items:center;width:100%}
+.hero-copy h1{font-size:clamp(48px,7.2vw,88px);letter-spacing:-.04em;line-height:.94;text-shadow:0 8px 40px rgba(0,0,0,.4)}
+.hero-copy .lead{margin:26px 0 34px;text-shadow:0 2px 20px rgba(0,0,0,.4)}
+.hero-trust{display:flex;flex-wrap:wrap;gap:12px 26px;margin-top:30px}
+.hero-trust span{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12.5px;letter-spacing:.02em;color:#d3e2e1}
+.hero-trust svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:2.4;flex:none}
+.hero-card{margin:0;position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 34px 80px rgba(0,0,0,.6);justify-self:end;max-width:370px;width:100%;transform:translateY(0)}
+.hero-card::before{content:"";position:absolute;inset:0;z-index:2;border-radius:14px;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(233,199,53,.16)}
+.hero-card img{width:100%;height:440px;object-fit:cover;display:block}
+.hero-card figcaption{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:34px 20px 16px;
+  background:linear-gradient(0deg,rgba(3,15,14,.94),transparent)}
+.hero-card b{font-family:var(--display);font-size:16px;display:block}
+.hero-card span{color:var(--muted);font-size:12px;font-family:var(--mono)}
+.hero.cine .hero-guardian{top:auto;bottom:20px;left:24px;right:auto;height:118px;filter:drop-shadow(0 14px 22px rgba(9,132,227,.4))}
+.scrollcue{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:4;width:26px;height:42px;
+  border:2px solid rgba(255,255,255,.35);border-radius:14px;display:grid;justify-items:center;padding-top:7px}
+.scrollcue span{width:4px;height:8px;border-radius:2px;background:var(--gold)}
+@keyframes scrollcue{0%{opacity:0;transform:translateY(-3px)}30%{opacity:1}70%{opacity:1;transform:translateY(9px)}100%{opacity:0}}
+.scrollcue span{animation:scrollcue 1.7s ease infinite}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr}.hero-card,.hero.cine .hero-guardian{display:none}}
+
+/* ============ FINITIONS PREMIUM GLOBALES ============ */
+::selection{background:rgba(233,199,53,.28);color:#fff}
+html{scrollbar-color:var(--aqua) transparent}
+*::-webkit-scrollbar{width:11px;height:11px}
+*::-webkit-scrollbar-thumb{background:linear-gradient(var(--aqua),var(--deep));border-radius:8px;border:3px solid var(--obsidian)}
+*::-webkit-scrollbar-track{background:var(--obsidian)}
+.scroll-progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:100;
+  background:linear-gradient(90deg,var(--aqua),var(--aqua2),var(--gold));box-shadow:0 0 12px rgba(40,182,230,.5);transition:width .1s linear}
+.menu a{position:relative}
+.menu a.active{color:var(--gold)}
+.menu a.active::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;border-radius:2px;background:var(--gold)}
+/* titres de section : accent doré animé */
+.sec-head h2{position:relative;display:inline-block;padding-bottom:14px}
+.sec-head h2::after{content:"";position:absolute;left:0;bottom:0;width:56px;height:3px;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold),transparent);transform-origin:left;transform:scaleX(.4);opacity:.6;transition:.6s}
+.sec-head.in h2::after,.reveal.in .sec-head h2::after{transform:scaleX(1);opacity:1}
+.sec-head.c h2::after{left:50%;transform:translateX(-50%) scaleX(.4)}
+.sec-head.c.in h2::after{transform:translateX(-50%) scaleX(1)}
+/* cartes : anneau dégradé + zoom au survol */
+.card,.ouv,.partner,.acard{position:relative}
+.card::after,.ouv::after,.partner::after,.acard::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+  background:linear-gradient(135deg,rgba(40,182,230,.5),transparent 40%,transparent 60%,rgba(233,199,53,.4));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  opacity:0;transition:.35s}
+.card:hover::after,.ouv:hover::after,.partner:hover::after,.acard:hover::after{opacity:1}
+/* photos : anneau + léger zoom */
+.shot,.shotband{position:relative;overflow:hidden}
+.shotband img,.shot{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.shotband:hover img,.shot:hover{transform:scale(1.045)}
+.shotband::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(233,199,53,.14);border-radius:inherit}
+/* boutons ghost : remplissage au survol */
+.btn-ghost{position:relative;overflow:hidden;z-index:0}
+.btn-ghost::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(120deg,var(--aqua),var(--blue));
+  transform:translateY(101%);transition:.3s cubic-bezier(.2,.7,.2,1)}
+.btn-ghost:hover{border-color:transparent;color:#fff}
+.btn-ghost:hover::before{transform:translateY(0)}
+/* séparateurs fins entre sections */
+.sec+.sec,.sec+.sec.band{border-top:1px solid var(--line2)}
+/* reveal : montée + léger flou */
+.reveal{filter:blur(6px)}.reveal.in{filter:blur(0)}
+@media(prefers-reduced-motion:reduce){.reveal{filter:none}.scrollcue span,.hero-bgimg{animation:none!important}}
+</style>
+</head>
+<body id="top">
+<div class="scroll-progress" id="sprog"></div>
+
+<header id="hdr"><div class="wrap nav">
+  <a class="brand" href="#top"><img src="./assets/logo.png" alt="SAO BTP"><span><b>SAO BTP</b><span>Immobilier · Topographie</span></span></a>
+  <nav class="menu" id="menu">
+    <a href="#immobilier">Immobilier</a>
+    <a href="#gestion">Gestion locative</a>
+    <a href="#topographie">Topographie</a>
+    <a href="#foncier">Foncier</a>
+    <a href="#travaux">Travaux</a>
+    <a href="#villa">Villa</a>
+    <a href="#surveillance">Surveillance</a>
+    <a href="#securisation">Sécurisation</a>
+    <a class="btn btn-gold" href="#devis">Devis</a>
+  </nav>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</div></header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero cine">
+  <div class="hero-bg">
+    <img class="hero-bgimg" id="heroBg" src="./assets/villa-luxe.jpg" alt="" aria-hidden="true">
+    <div class="hero-scrim"></div>
+    <div class="bpgrid"></div>
+    <div class="aurora a1"></div><div class="aurora a2"></div>
+  </div>
+  <div class="wrap hero-inner">
+    <div class="hero-copy reveal in">
+      <span class="tag"><i></i> BTP · Immobilier · Topographie · Dakar &amp; Paris</span>
+      <h1>Du terrain sécurisé<br><span class="g">à l’ouvrage livré.</span></h1>
+      <p class="lead">Nous sécurisons votre foncier, étudions votre terrain et bâtissons votre projet —
+        avec un engagement simple : <b>zéro litige, transparence totale</b>.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="#devis">Demander un devis
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-ghost" href="#immobilier">Découvrir nos services</a>
+      </div>
+      <div class="hero-trust">
+        <span><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Vérification foncière</span>
+        <span><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Levé par drone</span>
+        <span><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Villa clé en main</span>
+      </div>
+    </div>
+    <figure class="hero-card reveal in">
+      <img src="./assets/ingenieur.jpg" alt="Ingénieur SAO, maîtrise d’œuvre sur chantier" loading="lazy" decoding="async">
+      <figcaption><b>Sur le terrain</b><span>Maîtrise d’œuvre &amp; suivi de chantier</span></figcaption>
+    </figure>
+  </div>
+  <img class="hero-guardian" src="./assets/saoty2.png" data-optionnel alt="SAOTY">
+  <a class="scrollcue" href="#immobilier" aria-label="Défiler vers le contenu"><span></span></a>
+</section>
+
+<!-- SIGNATURE : bandeau métiers -->
+<div class="marquee" aria-hidden="true"><div class="track">
+  <i>Immobilier</i><i>Topographie</i><i>Bornage &amp; lotissement</i><i>Terrassement</i><i>Génie civil</i><i>Villa clé en main</i><i>Surveillance de chantier</i><i>Sécurisation foncière</i>
+  <i>Immobilier</i><i>Topographie</i><i>Bornage &amp; lotissement</i><i>Terrassement</i><i>Génie civil</i><i>Villa clé en main</i><i>Surveillance de chantier</i><i>Sécurisation foncière</i>
+</div></div>
+
+<!-- IMMOBILIER -->
+<section class="sec" id="immobilier"><div class="wrap split2">
+  <div class="reveal">
+    <p class="eyebrow">§01 — Immobilier</p>
+    <h2>Vente &amp; location-vente immobilière.</h2>
+    <p class="lead" style="margin-top:16px">Nous accompagnons nos clients dans l’acquisition de biens
+      fiables, sécurisés et conformes aux exigences légales — de la recherche à la signature.</p>
+    <div class="badge-hl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg> Engagement zéro litige · transparence totale</div>
+  </div>
+  <div class="reveal">
+    <img class="shot" src="./assets/villa-luxe.jpg" alt="Villa contemporaine livrée par SAO" loading="lazy" decoding="async">
+    <ul class="panel tick checklist" style="padding:24px 28px;margin-top:16px">
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Terrains sécurisés pour l’habitat ou l’investissement</li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Location-vente de maisons — paiement échelonné</li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Conseil &amp; accompagnement personnalisé du début à la fin</li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Vérification foncière complète, documents légaux garantis</li>
+    </ul>
+  </div>
+</div></section>
+
+<!-- GESTION IMMOBILIÈRE PREMIUM -->
+<section class="sec band" id="gestion"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">§02 — Gestion immobilière premium</p>
+    <h2>Confiez-nous votre bien.<br>Percevez vos revenus. Vivez serein.</h2>
+    <p>Vous ne nous confiez pas un loyer : vous nous confiez votre tranquillité d’esprit. Nous gérons l’intégralité de la relation avec votre bien et votre locataire — vous percevez vos loyers, nous gérons tout le reste.</p></div>
+
+  <!-- intro / pourquoi SAO -->
+  <div class="gim-intro">
+    <div class="reveal">
+      <p class="eyebrow">Pourquoi confier votre bien à SAO</p>
+      <h3 style="font-size:clamp(22px,3vw,30px);font-weight:800;margin-bottom:6px">Une gestion d’exception, pensée pour la diaspora.</h3>
+      <div class="gim-quote">« Vous gardez le contrôle, sans la charge. » — où que vous soyez dans le monde.</div>
+    </div>
+    <ul class="panel tick promise reveal" style="padding:28px">
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg><span><b>Revenus sécurisés</b> — loyers reversés dès encaissement, garantis selon la formule.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg><span><b>Locataires fiables</b> — vérification de solvabilité et sélection rigoureuse.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg><span><b>Transparence totale</b> — rapport mensuel, tableau de bord en ligne et application mobile.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg><span><b>Pensé pour la diaspora</b> — visite vidéo, reporting à distance, reversement international.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg><span><b>L’écosystème SAO</b> — sécurité, maintenance et technologie chez un seul partenaire.</span></li>
+    </ul>
+  </div>
+
+  <!-- FORMULES -->
+  <div class="sec-head c reveal" style="max-width:620px">
+    <p class="eyebrow" style="justify-content:center">Nos formules</p>
+    <h2 style="font-size:clamp(24px,3.4vw,36px)">Choisissez la formule adaptée à vos objectifs.</h2>
+    <p>Estimation gratuite du loyer et reporting régulier inclus dans chaque formule.</p>
+  </div>
+  <div class="formules">
+    <div class="panel tick formule reveal">
+      <span class="fname">Pack Essentiel</span>
+      <h3>Votre bien, notre gestion</h3>
+      <p class="ftag">L’essentiel d’une gestion sérieuse, sans vous soucier de rien au quotidien.</p>
+      <div class="price"><b>8 %</b><span>à partir de / loyer mensuel</span></div>
+      <ul class="flist">
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Estimation gratuite &amp; photos professionnelles</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Diffusion multi-plateformes &amp; recherche du locataire</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Vérification, bail &amp; état des lieux numérique</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Encaissement, relances &amp; rapport mensuel</li>
+      </ul>
+      <div class="ideal"><b>Idéal pour</b>Propriétaires au Sénégal, investisseurs, petits patrimoines.</div>
+      <a class="btn btn-ghost" href="#devis">Choisir Essentiel</a>
+    </div>
+
+    <div class="panel tick formule feat reveal">
+      <span class="feat-badge">★ Le plus demandé</span>
+      <span class="fname">Pack Sérénité</span>
+      <h3>Votre loyer, garanti</h3>
+      <p class="ftag">Vos revenus tombent, même en cas de retard du locataire.</p>
+      <div class="price"><b>12–15 %</b><span>à partir de / loyer mensuel</span></div>
+      <ul class="flist">
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Tout le Pack Essentiel, et en plus :</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Loyer garanti avant date convenue (selon contrat)</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Recouvrement amiable &amp; procédures juridiques</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Gestion des sinistres &amp; coordination des réparations</li>
+      </ul>
+      <div class="ideal"><b>Idéal pour</b>La diaspora, les expatriés, les propriétaires en quête de revenus réguliers.</div>
+      <a class="btn btn-gold" href="#devis">Choisir Sérénité</a>
+    </div>
+
+    <div class="panel tick formule reveal">
+      <span class="fname">Pack Gold Patrimoine</span>
+      <h3>Vous ne gérez plus rien</h3>
+      <p class="ftag">La gestion patrimoniale clé en main, pour une sérénité absolue.</p>
+      <div class="price"><b>18–20 %</b><span>à partir de / loyer mensuel</span></div>
+      <ul class="flist">
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Gestion administrative, juridique, technique &amp; fiscale</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Maintenance, travaux &amp; inspection mensuelle</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Conciergerie, interlocuteur dédié &amp; hotline 7j/7</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Optimisation du rendement &amp; audit annuel</li>
+      </ul>
+      <div class="ideal"><b>Idéal pour</b>Propriétaires exigeants recherchant une prise en charge totale.</div>
+      <a class="btn btn-ghost" href="#devis">Choisir Gold</a>
+    </div>
+  </div>
+
+  <!-- formules sur mesure -->
+  <div class="formules-sur">
+    <div class="panel tick formule wide reveal">
+      <span class="fname gold" style="color:var(--gold)">★ Pack Diaspora Premium</span>
+      <h3>Comme si vous étiez sur place</h3>
+      <div class="price"><b>Sur mesure</b><span>exclusivement pour les Sénégalais de l’étranger</span></div>
+      <ul class="flist">
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Visite &amp; inspection vidéo en direct chaque mois</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Reversement international &amp; tableau de bord en ligne</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Ligne WhatsApp dédiée &amp; gestion complète des artisans</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Paiement des factures, litiges &amp; archivage sécurisé</li>
+      </ul>
+    </div>
+    <div class="panel tick formule wide reveal">
+      <span class="fname">Pack Investisseur</span>
+      <h3>Pilotez votre portefeuille</h3>
+      <div class="price"><b>Sur mesure</b><span>pour plusieurs appartements ou immeubles</span></div>
+      <ul class="flist">
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Gestion multi-biens &amp; comptabilité consolidée</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Tableau de rentabilité &amp; prévision de trésorerie</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Optimisation des loyers &amp; conseils d’investissement</li>
+        <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Suivi des travaux &amp; audit annuel</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TABLEAU COMPARATIF -->
+  <div class="sec-head reveal" style="margin:64px 0 30px">
+    <p class="eyebrow">Comparatif</p>
+    <h2 style="font-size:clamp(22px,3vw,32px)">Ce que couvre chaque formule.</h2>
+  </div>
+  <div class="panel tick reveal" style="padding:22px">
+    <div class="cmp-wrap">
+      <table class="cmp">
+        <thead><tr><th>Prestation</th><th>Essentiel</th><th class="hl">Sérénité</th><th>Gold</th></tr></thead>
+        <tbody>
+          <tr><td>Estimation, photos &amp; diffusion</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Sélection &amp; vérification du locataire</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Encaissement &amp; rapport mensuel</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Relance des impayés &amp; recouvrement</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Loyer garanti (selon contrat)</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Gestion des sinistres &amp; réparations</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Gestion technique, travaux &amp; nettoyage</td><td class="no">—</td><td class="part">Partiel</td><td class="yes">✓</td></tr>
+          <tr><td>Gestion fiscale &amp; suivi des assurances</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>Inspection mensuelle, photos &amp; vidéos HD</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>Interlocuteur dédié &amp; hotline 7j/7</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>Optimisation du rendement &amp; audit annuel</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="cmp-note">Les Packs Diaspora Premium et Investisseur sont des formules sur mesure, combinables avec les garanties ci-dessus.</p>
+  </div>
+
+  <!-- SERVICES À LA CARTE -->
+  <div class="sec-head reveal" style="margin:64px 0 30px">
+    <p class="eyebrow">Services à la carte</p>
+    <h2 style="font-size:clamp(22px,3vw,32px)">Composez votre gestion sur mesure.</h2>
+    <p>Chaque option est disponible à l’unité et facturée sur devis.</p>
+  </div>
+  <div class="carte">
+    <div class="panel tick carte-cat reveal">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H4z"/><path d="M4 17l5-5 4 4 3-3 4 4"/><circle cx="9" cy="9" r="1.5"/></svg></div>
+      <h4>Valorisation du bien</h4>
+      <div class="opts"><span>Shooting photo pro</span><span>Vidéo drone</span><span>Home staging</span><span>Nettoyage avant location</span><span>Ameublement</span></div>
+    </div>
+    <div class="panel tick carte-cat reveal">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h4>Sécurité du bien</h4>
+      <div class="opts"><span>Vidéosurveillance</span><span>Alarme anti-intrusion</span><span>Serrures connectées</span><span>Contrôle d’accès</span><span>Remplacement de serrures</span></div>
+    </div>
+    <div class="panel tick carte-cat reveal">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M7 3h10v18H7z"/><path d="M10 7h4M10 11h4M10 15h4"/></svg></div>
+      <h4>Administratif &amp; juridique</h4>
+      <div class="opts"><span>Assistance notariale</span><span>Assistance juridique</span><span>Déclaration fiscale</span><span>Assurance habitation</span></div>
+    </div>
+    <div class="panel tick carte-cat reveal">
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M6 21V11h6v10M12 15h6v6M8 8l2-3 3 2"/></svg></div>
+      <h4>Logistique &amp; confort</h4>
+      <div class="opts"><span>Petit bricolage</span><span>Déménagement</span></div>
+    </div>
+  </div>
+
+  <!-- COMMENT ÇA MARCHE -->
+  <div class="sec-head reveal" style="margin:64px 0 30px">
+    <p class="eyebrow">Comment ça marche</p>
+    <h2 style="font-size:clamp(22px,3vw,32px)">Confier votre bien, en 5 étapes simples.</h2>
+  </div>
+  <div class="advice reveal" style="margin-top:0;grid-template-columns:repeat(5,1fr)">
+    <div class="panel tick acard"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><b>1 · Estimation</b><span>Estimation gratuite &amp; état des lieux numérique.</span></div>
+    <div class="panel tick acard"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H4z"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg></div><b>2 · Mise en valeur</b><span>Photos pro, annonce &amp; diffusion multi-plateformes.</span></div>
+    <div class="panel tick acard"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><b>3 · Sélection</b><span>Vérification de solvabilité &amp; signature du bail.</span></div>
+    <div class="panel tick acard"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><b>4 · Gestion</b><span>Encaissement, relances, maintenance &amp; interventions.</span></div>
+    <div class="panel tick acard"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg></div><b>5 · Sérénité</b><span>Loyer reversé, rapport mensuel &amp; tableau de bord.</span></div>
+  </div>
+
+  <div style="text-align:center;margin-top:46px" class="reveal">
+    <a class="btn btn-gold" href="#devis">Estimer mon loyer gratuitement
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</div></section>
+
+<!-- TOPOGRAPHIE -->
+<section class="sec" id="topographie"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">§03 — Topographie</p>
+    <h2>Topographie &amp; études foncières de haute précision.</h2>
+    <p>Des données fiables grâce aux technologies modernes, dont le levé par drone.</p></div>
+  <div class="shotband reveal"><img src="./assets/topographie.jpg" alt="Géomètre SAO en levé topographique" loading="lazy" decoding="async"><span class="cap-tag">Levé topographique · Sénégal</span></div>
+  <div class="grid4">
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 8l4-3 8 6 4-3M4 8v4l8 6 8-6V8M4 12l8 6"/></svg></div><h3>Levé par drone</h3><p>Acquisition rapide et précise des données du terrain.</p></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg></div><h3>Implantation &amp; délimitation</h3><p>Implantation et délimitation précises de parcelles.</p></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg></div><h3>Études techniques</h3><p>Pour projets immobiliers, BTP et aménagements fonciers.</p></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg></div><h3>Plans exploitables</h3><p>Plans pour permis de construire et exécution des travaux.</p></div>
+  </div>
+</div></section>
+
+<!-- FONCIER : BORNAGE & LOTISSEMENT -->
+<section class="sec" id="foncier"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">§04 — Bornage &amp; lotissement</p>
+    <h2>Sécuriser juridiquement et techniquement vos terrains.</h2>
+    <p>Avant toute exploitation, nous mettons vos parcelles en conformité.</p></div>
+  <div class="grid4">
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 20V6l8-3 8 3v14M4 20h16M8 20v-6h8v6"/></svg></div><h3>Bornage officiel</h3><p>En collaboration avec un géomètre agréé.</p></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg></div><h3>Lotissement conforme</h3><p>Aux normes et réglementations en vigueur.</p></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M6 21v-8h4v8M14 21v-5h4v5M6 13l4-4 4 4"/></svg></div><h3>Viabilisation</h3><p>Organisation, structuration et viabilisation des parcelles.</p></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 3h10v18H7z"/><path d="M10 7h4M10 11h4M10 15h4"/></svg></div><h3>Accompagnement administratif</h3><p>Auprès des services compétents, de bout en bout.</p></div>
+  </div>
+</div></section>
+
+<!-- TRAVAUX BTP -->
+<section class="sec band" id="travaux"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">§05 — Travaux publics &amp; génie civil</p>
+    <h2>Les travaux lourds, exécutés avec méthode.</h2>
+    <p>Nous intervenons sur l’ensemble des travaux préparatoires et lourds de vos projets.</p></div>
+  <div class="shotduo reveal"><div class="shotband" style="margin:0"><img src="./assets/genie-civil.jpg" alt="Chantier de génie civil" loading="lazy" decoding="async"><span class="cap-tag">Génie civil &amp; infrastructures</span></div><div class="shotband" style="margin:0"><img src="./assets/gros-oeuvre.jpg" alt="Coulage de béton, gros œuvre" loading="lazy" decoding="async"><span class="cap-tag">Gros œuvre · béton armé</span></div></div>
+  <div class="grid4">
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 18h9l2-3h4l3 3M3 18v2h18v-2M5 15l2-4h4l1 4"/><circle cx="7" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg></div><h3>Terrassement &amp; préparation</h3>
+      <ul class="mini"><li>Maisons, immeubles, industriel, routes</li><li>Décapage, nivellement, remblayage</li><li>Mise en conformité avant fondations</li><li>Engins lourds modernes &amp; équipes qualifiées</li></ul></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M6 21V11h6v10M12 15h6v6M8 8l2-3 3 2"/></svg></div><h3>Démolition &amp; déblaiement</h3>
+      <ul class="mini"><li>Démolition contrôlée d’ouvrages</li><li>Partielle ou totale selon le projet</li><li>Déblaiement &amp; évacuation des gravats</li><li>Sécurisation complète des zones</li></ul></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v10M12 13c-3 0-5-2-5-5M12 13c3 0 5-2 5-5M9 21h6l-1-5h-4z"/></svg></div><h3>Coupage &amp; dégagement</h3>
+      <ul class="mini"><li>Coupage d’arbres &amp; débroussaillage</li><li>Dégagement et nettoyage de parcelles</li><li>Préparation de sites immobiliers &amp; BTP</li></ul></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 17h11v-4l4 1 3 3v0M3 17v2h18v-2M5 13h6M8 13V9"/><circle cx="7" cy="19" r="1.4"/><circle cx="18" cy="19" r="1.4"/></svg></div><h3>Location d’engins lourds</h3>
+      <ul class="mini"><li>Bulldozer avec chauffeur expérimenté</li><li>Terrassement, démolition, nivellement</li><li>Formules flexibles selon le chantier</li><li>Assistance technique sur site</li></ul></div>
+  </div>
+</div></section>
+
+<!-- VILLA CLÉ EN MAIN -->
+<section class="sec band" id="villa"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">§06 — Villa clé en main</p>
+    <h2>Votre villa, du premier croquis aux clés en main.</h2>
+    <p>Architecture, conseil et construction : nous concevons et bâtissons votre villa de A à Z, à vos côtés à chaque décision.</p></div>
+  <div class="villa">
+    <div class="panel tick villa-visual reveal">
+      <div class="cap"><span>VILLA CONTEMPORAINE · LIVRÉE</span><b>SAO</b></div>
+      <img class="shot-villa" src="./assets/villa-moderne.jpg" alt="Villa contemporaine livrée par SAO BTP" loading="lazy" decoding="async">
+    </div>
+    <div class="vtimeline reveal">
+      <div class="vstep"><span class="vdot">01</span><div><b>Étude &amp; conception</b><span>Besoins, terrain et budget → première esquisse.</span></div></div>
+      <div class="vstep"><span class="vdot">02</span><div><b>Plans &amp; architecture</b><span>Plans 2D/3D sur mesure et choix des matériaux.</span></div></div>
+      <div class="vstep"><span class="vdot">03</span><div><b>Permis de construire</b><span>Constitution du dossier et autorisations.</span></div></div>
+      <div class="vstep"><span class="vdot">04</span><div><b>Fondations &amp; gros œuvre</b><span>Structure béton armé, solide et durable.</span></div></div>
+      <div class="vstep"><span class="vdot">05</span><div><b>Second œuvre</b><span>Électricité, plomberie, menuiseries, cloisons.</span></div></div>
+      <div class="vstep"><span class="vdot">06</span><div><b>Finitions &amp; aménagements</b><span>Revêtements, peinture, extérieurs et piscine.</span></div></div>
+      <div class="vstep"><span class="vdot">07</span><div><b>Livraison clés en main</b><span>Réception, levée des réserves, remise des clés.</span></div></div>
+    </div>
+  </div>
+  <div class="advice">
+    <div class="panel tick acard reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 13a8 8 0 0 1 16 0M4 13v3a2 2 0 0 0 2 2M20 13v3a2 2 0 0 1-2 2h-4"/></svg></div><b>Conseil personnalisé</b><span>Un accompagnement à chaque décision, du plan au chantier.</span></div>
+    <div class="panel tick acard reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg></div><b>Architecture sur mesure</b><span>Des plans qui vous ressemblent, optimisés et fonctionnels.</span></div>
+    <div class="panel tick acard reveal"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2 0 0 1 5 0c0 2-5 1-5 3a2.5 2 0 0 0 5 0"/></svg></div><b>Budget optimisé</b><span>Chiffrage transparent et maîtrise des coûts.</span></div>
+    <div class="panel tick acard reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div><b>Suivi transparent</b><span>Reporting régulier et visites de chantier.</span></div>
+  </div>
+</div></section>
+
+<!-- SURVEILLANCE DE CHANTIER À DISTANCE -->
+<section class="sec" id="surveillance"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">§07 — Surveillance de chantier à distance</p>
+    <h2>Suivez votre chantier en direct, où que vous soyez.</h2>
+    <p>Nous réunissons vidéosurveillance et géolocalisation en un seul dispositif : gardez l’œil sur votre chantier, vos engins et votre matériel — depuis Dakar comme depuis l’étranger.</p></div>
+
+  <div class="split2">
+    <div class="reveal">
+      <p class="eyebrow">Pensé pour la diaspora</p>
+      <h2 style="font-size:clamp(24px,3.4vw,34px);font-weight:800">Votre villa se construit.<br>Vous la regardez grandir.</h2>
+      <p class="lead" style="margin-top:16px">Financer une construction à distance ne devrait jamais rimer avec incertitude. Caméra en direct, suivi GPS des engins et rapport vidéo mensuel : nous vous apportons la preuve, pas les promesses.</p>
+      <div class="badge-hl"><svg viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg> Anti-vol · avancement réel · zéro litige</div>
+    </div>
+    <ul class="panel tick checklist reveal" style="padding:28px">
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Caméras 4G autonomes &amp; solaires — sans électricité ni internet fixe sur le site</li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Vision en direct 24/7, vision nocturne &amp; alertes d’intrusion en temps réel</li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Sirène et haut-parleur pilotables à distance pour la dissuasion active</li>
+      <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>Stockage sécurisé (cloud + local) et flux chiffrés — cybersécurité SAO</li>
+    </ul>
+  </div>
+
+  <div class="shotband reveal" style="margin-top:8px"><img src="./assets/chantier-suivi.jpg" alt="Suivi de chantier SAO sur le terrain" loading="lazy" decoding="async"><span class="cap-tag">Suivi de chantier · sur le terrain</span></div>
+
+  <div class="grid4" style="margin-top:46px">
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H4z"/><path d="M4 17l5-5 4 4 3-3 4 4"/><circle cx="9" cy="9" r="1.5"/></svg></div><h3>Vidéosurveillance en direct</h3><p>Flux live et enregistrements accessibles depuis votre smartphone, à tout moment.</p></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg></div><h3>Géolocalisation des engins</h3><p>Bulldozers, camions et matériel de valeur suivis par GPS sur la même carte.</p></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Suivi d’avancement</h3><p>Timelapse du chantier : la preuve visuelle de l’avancée réelle, mois après mois.</p></div>
+    <div class="panel tick card reveal"><div class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></div><h3>Une seule application</h3><p>Vidéo, position des engins, alertes et rapport mensuel réunis en un tableau de bord.</p></div>
+  </div>
+
+  <div style="text-align:center;margin-top:44px" class="reveal">
+    <a class="btn btn-gold" href="#devis">Sécuriser mon chantier
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</div></section>
+
+<!-- SECURISATION FONCIERE (signature) -->
+<section class="sec band" id="securisation"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">§08 — Service spécial</p>
+    <h2>Recherche foncière &amp; sécurisation des terrains.</h2>
+    <p>Avant d’acheter, nous vérifions. Trois contrôles pour sécuriser chaque acquisition.</p></div>
+  <div class="cycle reveal">
+    <div class="steps" id="steps">
+      <button class="stepbtn active" data-i="0"><span class="n">01</span><b>Documents du vendeur</b></button>
+      <button class="stepbtn" data-i="1"><span class="n">02</span><b>Recherche DSCOS</b></button>
+      <button class="stepbtn" data-i="2"><span class="n">03</span><b>Service des Domaines</b></button>
+    </div>
+    <div class="panel tick screen">
+      <div class="bar"><span>SAO · SÉCURISATION FONCIÈRE</span><span class="ph" id="phLabel">Contrôle 01 / 03</span></div>
+      <h3 id="phTitle"></h3>
+      <p id="phDesc"></p>
+      <ul class="deliv" id="phDeliv"></ul>
+      <div class="progress"><div class="track"><div class="fill" id="phFill"></div></div>
+        <div class="pl"><span>Vérification</span><span>Terrain sécurisé</span></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ENGAGEMENTS -->
+<section class="sec band"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">§09 — Notre engagement</p>
+    <h2>Ce sur quoi nous ne transigeons pas.</h2></div>
+  <div class="eng reveal">
+    <div class="e"><svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg><b>Fiabilité &amp; transparence</b><span>Aucune zone d’ombre, à chaque étape.</span></div>
+    <div class="e"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>Normes &amp; délais</b><span>Respect des règles et du planning.</span></div>
+    <div class="e"><svg viewBox="0 0 24 24"><path d="M7 3h10v18H7z"/><path d="M10 7h4M10 11h4"/></svg><b>Sécurité juridique &amp; technique</b><span>Le foncier verrouillé avant travaux.</span></div>
+    <div class="e"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><path d="M9.5 10l2 2 3.5-4"/></svg><b>Satisfaction client</b><span>Au cœur de chaque projet.</span></div>
+  </div>
+</div></section>
+
+<!-- PARTENAIRES -->
+<section class="sec"><div class="wrap">
+  <div class="sec-head c reveal"><p class="eyebrow" style="justify-content:center">§10 — Partenaires &amp; collaborations</p>
+    <h2>La fiabilité, garantie par les bons partenaires.</h2></div>
+  <div class="partners reveal">
+    <div class="panel tick partner"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 9l6-6 12 12-6 6z"/><path d="M8 8l2 2M11 5l2 2M14 8l2 2"/></svg></div><b>Cabinet Alpha Mané</b><div class="role">Géomètre agréé</div><p>Bornage officiel et travaux topographiques.</p></div>
+    <div class="panel tick partner"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v7M6 10h12M5 10l-2 6a4 4 0 0 0 8 0zM19 10l2 6a4 4 0 0 1-8 0z"/></svg></div><b>Maître Djibi Diagne</b><div class="role">Notaire / Avocat</div><p>Sécurité juridique des transactions.</p></div>
+    <div class="panel tick partner"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13M4 21h16M9 21v-6h6v6M8 11h.01M16 11h.01"/></svg></div><b>Cadastre &amp; Domaines</b><div class="role">Services de l’État</div><p>Suivi administratif et conformité (DSCOS, Domaines).</p></div>
+  </div>
+</div></section>
+
+<!-- SAOTY -->
+<section class="sec band"><div class="wrap saoty">
+  <div class="saoty-art reveal"><div class="halo"></div><img src="./assets/saoty2.png" data-optionnel alt="SAOTY, la mascotte de SAO"></div>
+  <div class="reveal"><p class="eyebrow">Signé SAO</p>
+    <h2>Le foncier, sécurisé de bout en bout.</h2>
+    <p class="lead" style="margin-top:16px">SAO BTP · Immobilier · Topographie est une filiale de SAO Consulting Group —
+      Safety &amp; Cybersecurity. La même exigence de sécurité, appliquée à votre terrain et à votre ouvrage.
+      <b>Votre sérénité, notre expertise.</b></p>
+    <div class="hero-cta" style="margin-top:22px"><a class="btn btn-gold" href="#devis">Parler de mon projet</a></div>
+  </div>
+</div></section>
+
+<!-- DEVIS -->
+<section class="sec" id="devis"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">§11 — Devis &amp; contact</p>
+    <h2>Parlons de votre projet.</h2>
+    <p>Terrain, maison, topographie ou travaux : décrivez votre besoin, réponse sous 24h ouvrées.</p></div>
+  <div class="formwrap">
+    <div class="reveal">
+      <a class="cline" href="tel:+221777762693"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span><b>Sénégal</b>+221 77 776 26 93</span></a>
+      <a class="cline" href="tel:+33605775287"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span><b>France</b>+33 6 05 77 52 87</span></a>
+      <a class="cline" href="mailto:contact@saoconsultingroup.com"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span><b>Email</b>contact@saoconsultingroup.com</span></a>
+      <div class="cline"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.2"/></svg><span><b>Adresse</b>Keur Massar, Dakar, Sénégal</span></div>
+      <p class="lead" style="margin-top:22px;font-size:15px">SAO BTP · Immobilier · Topographie — filiale de SAO Consulting Group.</p>
+    </div>
+    <form class="panel tick" id="btpForm" novalidate>
+      <input type="hidden" name="access_key" value="0ad28fb0-7b80-47e0-a5ae-8bd70ffd39bc">
+      <input type="hidden" name="subject" value="Demande — SAO BTP / Immobilier / Topographie">
+      <input type="hidden" name="from_name" value="Site SAO BTP-Immo-Topo">
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off">
+      <div class="row2">
+        <div class="field"><label>Nom complet</label><input name="nom" required placeholder="Votre nom"></div>
+        <div class="field"><label>Organisation</label><input name="organisation" placeholder="Entreprise / particulier"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Téléphone / WhatsApp</label><input name="telephone" placeholder="+221…"></div>
+        <div class="field"><label>Email</label><input name="email" type="email" required placeholder="vous@email.com"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Votre besoin</label><select name="type"><option>Gestion locative / immobilière</option><option>Surveillance de chantier / vidéosurveillance</option><option>Achat de terrain</option><option>Location-vente maison</option><option>Topographie / levé drone</option><option>Bornage / lotissement</option><option>Sécurisation foncière</option><option>Terrassement</option><option>Démolition</option><option>Location d’engins</option><option>Autre</option></select></div>
+        <div class="field"><label>Localisation</label><input name="localisation" placeholder="Ville / zone"></div>
+      </div>
+      <div class="field"><label>Détails du projet</label><textarea name="message" required placeholder="Nature, superficie, délais, budget indicatif…"></textarea></div>
+      <button class="btn btn-gold" type="submit" id="btpBtn" style="width:100%;justify-content:center">Envoyer ma demande</button>
+      <a class="btn btn-ghost" id="waBtn" href="#" style="width:100%;justify-content:center;margin-top:10px">Envoyer via WhatsApp</a>
+      <p class="fmsg" id="btpMsg"></p>
+    </form>
+  </div>
+</div></section>
+
+<section class="cta-final"><div class="wrap">
+  <h2>Un terrain, un bien, un chantier ?</h2>
+  <p>De la sécurisation foncière à la livraison, SAO vous accompagne.</p>
+  <a class="btn btn-gold" href="#devis">Demander un devis gratuit</a>
+  <a class="btn btn-ghost" href="tel:+221777762693">Nous appeler</a>
+</div></section>
+
+</main>
+
+<footer><div class="wrap">
+  <div class="fgrid">
+    <div class="fbrand"><img src="./assets/logo.png" alt="SAO BTP"><p>SAO BTP &amp; Ingénierie — construire avec rigueur, dans les délais et les normes. Une filiale de SAO Consulting Group.</p></div>
+    <div class="fcol"><h4>Navigation</h4><a href="#expertises">Expertises</a><a href="#cycle">Méthode</a><a href="#ouvrages">Ouvrages</a><a href="#engagements">Engagements</a><a href="#realisations">Réalisations</a></div>
+    <div class="fcol"><h4>Contact</h4><a href="tel:+221777762693">+221 77 776 26 93</a><a href="tel:+33605775287">+33 6 05 77 52 87</a><a href="mailto:contact@saoconsultingroup.com">contact@saoconsultingroup.com</a><a href="#devis">Demander un devis</a></div>
+  </div>
+  <div class="fbar"><span>© 2026 SAO Consulting Group — SAO BTP &amp; Ingénierie.</span><span>Bâtir la confiance · Dakar · Paris</span></div>
+</div></footer>
+
+<script>
+var hdr=document.getElementById('hdr');
+addEventListener('scroll',function(){hdr.classList.toggle('scrolled',scrollY>20)},{passive:true});
+var b=document.getElementById('burger'),m=document.getElementById('menu');
+b.addEventListener('click',function(){m.classList.toggle('open')});
+m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open')})});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+
+/* Cycle de chantier */
+var PHASES=[
+ {t:'Vérification des documents du vendeur',d:'Nous contrôlons l\u2019ensemble des pièces fournies par le vendeur avant toute transaction, pour écarter tout risque dès le départ.',liv:['Analyse des documents de propriété','Cohérence identité et droits du vendeur','Première levée de doute avant engagement']},
+ {t:'Recherche auprès de la DSCOS',d:'Nous vérifions la situation réelle du terrain auprès de la DSCOS : occupation légale du sol et éventuels conflits.',liv:['Vérification de l\u2019occupation légale du sol','Détection de litiges ou conflits déclarés','Situation réelle et statut du terrain']},
+ {t:'Recherche au Service des Domaines',d:'Nous confirmons l\u2019authenticité des titres auprès du Service des Domaines : la garantie finale avant l\u2019acquisition.',liv:['Authenticité du Titre Foncier / Bail','Statut administratif du terrain','Sécurisation confirmée avant acquisition']}
+];
+var steps=document.querySelectorAll('.stepbtn');
+function renderPhase(i){
+  var p=PHASES[i];
+  document.getElementById('phTitle').textContent=p.t;
+  document.getElementById('phDesc').textContent=p.d;
+  document.getElementById('phLabel').textContent='Contrôle 0'+(i+1)+' / 03';
+  document.getElementById('phDeliv').innerHTML=p.liv.map(function(l){
+    return '<li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7"/></svg>'+l+'</li>';}).join('');
+  document.getElementById('phFill').style.width=((i+1)/PHASES.length*100)+'%';
+  steps.forEach(function(s){s.classList.toggle('active',+s.dataset.i===i)});
+}
+steps.forEach(function(s){s.addEventListener('click',function(){renderPhase(+s.dataset.i)})});
+renderPhase(0);
+
+/* Formulaire devis -> Web3Forms + repli WhatsApp */
+var WA='221777762693';
+var form=document.getElementById('btpForm'),btn=document.getElementById('btpBtn'),msg=document.getElementById('btpMsg');
+form.addEventListener('submit',function(e){
+  e.preventDefault(); msg.className='fmsg'; btn.disabled=true; btn.textContent='Envoi en cours…';
+  fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(form)})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      if(j.success){ msg.className='fmsg ok'; msg.textContent='\u2713 Demande envoyée. Merci, nous revenons vers vous rapidement.'; form.reset(); }
+      else { msg.className='fmsg err'; msg.textContent='\u2717 '+(j.message||'Envoi impossible, réessayez.'); }
+    })
+    .catch(function(){ msg.className='fmsg err'; msg.textContent='\u2717 Erreur réseau. Utilisez le bouton WhatsApp.'; })
+    .finally(function(){ btn.disabled=false; btn.textContent='Envoyer ma demande de devis'; });
+});
+document.getElementById('waBtn').addEventListener('click',function(e){
+  e.preventDefault(); var f=form;
+  var t='Bonjour SAO BTP,%0A%0ANom : '+f.nom.value+'%0AType : '+f.type.value+'%0ALocalisation : '+f.localisation.value+'%0A%0A'+f.message.value;
+  window.open('https://wa.me/'+WA+'?text='+t,'_blank');
+});
+</script>
+
+<script>
+(function(){
+  var prog=document.getElementById('sprog'), heroBg=document.getElementById('heroBg');
+  var ids=['immobilier','gestion','topographie','foncier','travaux','villa','surveillance','securisation','devis'];
+  var links={}; ids.forEach(function(id){var a=document.querySelector('.menu a[href="#'+id+'"]'); if(a)links[id]=a;});
+  function onScroll(){
+    var st=window.scrollY||document.documentElement.scrollTop;
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    if(prog) prog.style.width=(h>0?(st/h*100):0)+'%';
+    if(heroBg && st<window.innerHeight){ heroBg.style.transform='translateY('+(st*0.28)+'px) scale(1.06)'; }
+    var cur=null, mid=st+window.innerHeight*0.35;
+    ids.forEach(function(id){var el=document.getElementById(id); if(el && el.offsetTop<=mid) cur=id;});
+    for(var k in links) links[k].classList.toggle('active', k===cur);
+  }
+  addEventListener('scroll',onScroll,{passive:true}); addEventListener('resize',onScroll); onScroll();
+})();
+
+/* Visuels optionnels (mascotte SAOTY) : masqués si le fichier est absent,
+   pour éviter une icône d'image cassée. */
+document.querySelectorAll('img[data-optionnel]').forEach(function(im){
+  function cacher(){ var w=im.closest('.saoty-art'); if(w){w.remove();} else {im.remove();} }
+  if(im.complete && im.naturalWidth===0){ cacher(); }
+  im.addEventListener('error', cacher);
+});
+</script>
+</body>
+</html>
