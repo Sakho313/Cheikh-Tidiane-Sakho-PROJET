@@ -2,7 +2,7 @@
 
 Site vitrine de la filiale sécurité du groupe SAO Consulting Group.
 Statique (HTML/CSS/JS, aucune dépendance de build), destiné à
-**securite.saoconsultingroup.com**.
+**sc-secu.saoconsultingroup.com**.
 
 Le cahier des charges et les garde-fous sont dans `CLAUDE.md` — **le lire avant
 toute modification**, en particulier son §0 sur les images.
@@ -40,7 +40,7 @@ Output `.`. Sur Netlify : glisser `site/` sur <https://app.netlify.com/drop>.
 Le formulaire bascule automatiquement sur Web3Forms — il marche, simplement
 la clé est visible dans la page (c'est une clé publique, donc sans risque).
 
-Dans les deux cas, brancher ensuite `securite.saoconsultingroup.com`.
+Dans les deux cas, brancher ensuite `sc-secu.saoconsultingroup.com`.
 
 ### Option C — le fichier unique (si tout le reste a échoué)
 

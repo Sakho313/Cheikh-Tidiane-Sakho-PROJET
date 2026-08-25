@@ -55,7 +55,7 @@ But : présenter l'offre et **générer des demandes de devis** (email + WhatsAp
 - Mascotte **SAOTY** (`assets/saoty2.png`). Logo : `assets/logo.png`. Favicon : `assets/favicon.png`.
 - Contacts : **+221 77 776 26 93** · +33 6 05 77 52 87 · contact@saoconsultingroup.com · Keur Massar, Dakar.
 - **WhatsApp** : `https://wa.me/221777762693` (bouton « Nous écrire sur WhatsApp » + repli formulaire).
-- Sous-domaine cible : **securite.saoconsultingroup.com**.
+- Sous-domaine cible : **sc-secu.saoconsultingroup.com**.
 - Société **agréée** : bouton « Consulter l'agrément » → `assets/agrement.pdf`.
 
 ## 3. Design system
@@ -184,6 +184,6 @@ Header (logo + nav : Services, Boutique, Télésurveillance, Méthode, Engagemen
 
 ## 11. Déploiement (rappel)
 
-1. Netlify : glisser **le dossier** sur app.netlify.com/drop → brancher `securite.saoconsultingroup.com`.
+1. Netlify : glisser **le dossier** sur app.netlify.com/drop → brancher `sc-secu.saoconsultingroup.com`.
 2. Vercel : déployer le dossier (ou connecter Git). En Hobby = non commercial ; usage pro → plan Pro.
 3. Vérifier l'affichage des images (checklist §9).

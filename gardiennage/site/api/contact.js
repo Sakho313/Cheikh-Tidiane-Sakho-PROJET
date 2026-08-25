@@ -106,7 +106,7 @@ module.exports = async (req, res) => {
     const html =
       '<div style="font-family:Arial,Helvetica,sans-serif;color:#0a1614">' +
       '<h2 style="color:#03393B;margin:0 0 4px">Nouvelle demande de devis</h2>' +
-      '<p style="color:#7e9695;margin:0 0 18px">Envoyée depuis securite.saoconsultingroup.com</p>' +
+      '<p style="color:#7e9695;margin:0 0 18px">Envoyée depuis sc-secu.saoconsultingroup.com</p>' +
       '<table cellpadding="8" cellspacing="0" style="border-collapse:collapse;font-size:14px">' +
       lignes
         .map(
