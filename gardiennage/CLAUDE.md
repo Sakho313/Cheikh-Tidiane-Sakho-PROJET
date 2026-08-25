@@ -99,6 +99,14 @@ Header (logo + nav : Services, Boutique, Télésurveillance, Méthode, Engagemen
 
 ## 6. Formulaire de contact
 
+> **Détail complet : `gardiennage/FORMULAIRE.md`.** Trois routes en cascade —
+> `/api/contact` (Mailtrap, jeton côté serveur) → Web3Forms → WhatsApp. La
+> première n'existe qu'en déploiement Git ; en glisser-déposer elle répond 404
+> et le navigateur bascule tout seul. **Ne pas casser cet enchaînement.**
+
+- **Route serveur** : `site/api/contact.js`, fonction Vercel. Jeton dans la
+  variable d'environnement `MAILTRAP_TOKEN` — **jamais dans le code**. Sans
+  jeton, la route répond 501 pour laisser le repli agir.
 - **Web3Forms** (envoi email sans backend). Clé publique : `0ad28fb0-7b80-47e0-a5ae-8bd70ffd39bc`
   (champ caché `access_key`). Idéalement, en framework, la placer dans une variable d'env `PUBLIC_WEB3FORMS_KEY`.
 - Champs : nom*, organisation, téléphone, email*, type de besoin, localisation, message*. Honeypot `botcheck`.
@@ -115,6 +123,8 @@ Header (logo + nav : Services, Boutique, Télésurveillance, Méthode, Engagemen
   gardiennage/index-autonome.html   <- le meme site en UN fichier (repli anti-assets-oublies)
   gardiennage/prototype/       <- reference visuelle, ne pas deployer
   gardiennage/verifier-images.py    <- checklist §9 automatisee
+  gardiennage/banc-dessai.js        <- teste le formulaire en local, sans rien envoyer
+  gardiennage/FORMULAIRE.md         <- fonctionnement et configuration du formulaire
   outils/construire-autonome.py     <- regenere index-autonome.html
   ```
 - **Si évolution en framework** : **Astro** (idéal, sortie statique). Structure proposée :
@@ -167,7 +177,8 @@ Header (logo + nav : Services, Boutique, Télésurveillance, Méthode, Engagemen
 
 - Respecter la charte (couleurs, typo, mascotte, ton premium).
 - Ne pas réintroduire de **prix** sans validation client (actuellement « Sur devis »).
-- Ne pas casser le **panier de devis** ni le **formulaire** (Web3Forms + WhatsApp).
+- Ne pas casser le **panier de devis** ni le **formulaire** (les trois routes :
+  `/api/contact`, Web3Forms, WhatsApp). Tester avec `node gardiennage/banc-dessai.js`.
 - Ne jamais committer de secret sensible ; la clé Web3Forms est publique par nature (OK en clair).
 - Performances : images optimisées (déjà en place), `loading="lazy"`, viser Lighthouse ≥ 95.
 

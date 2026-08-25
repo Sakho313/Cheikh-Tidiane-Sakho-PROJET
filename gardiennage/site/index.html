@@ -822,22 +822,82 @@ function signaler(manque){
   premier.focus();
 }
 
+function reussite(){
+  smsg.className='fmsg ok';
+  smsg.textContent='✓ Demande envoyée. Merci, nous vous recontactons vite.';
+  form.reset(); panier=[]; updateCart();
+}
+
+/* Route 1 — /api/contact : le jeton reste sur le serveur.
+   Disponible uniquement si le site est deploye en projet Vercel (pas en
+   glisser-deposer statique). Rejette si la route est absente ou non
+   configuree, pour laisser la main a Web3Forms. */
+/* Le panier remplit le message ET part dans son propre champ : on retire du
+   message le bloc genere, sinon la liste arrive en double dans l'email. */
+function messageSansPanier(){
+  var t=form.message.value;
+  if(!panier.length)return t;
+  var bloc='Matériel souhaité :\n- '+panier.join('\n- ');
+  if(t.indexOf(bloc)===0)t=t.slice(bloc.length).replace(/^\s+/,'');
+  return t||'Demande de devis pour le matériel sélectionné.';
+}
+
+function envoyerParApi(){
+  var d={};
+  ['nom','organisation','telephone','email','type','localisation']
+    .forEach(function(k){ d[k]=form[k]?form[k].value:''; });
+  d.message=messageSansPanier();
+  d.botcheck = form.botcheck && form.botcheck.checked ? 'on' : '';
+  if(panier.length)d.materiel='- '+panier.join('\n- ');
+
+  return fetch('/api/contact',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(d)
+  }).then(function(r){
+    // 404 = pas de route (site statique) · 501 = route presente mais sans jeton.
+    if(r.status===404||r.status===501)throw new Error('indisponible');
+    return r.json().then(function(j){
+      if(r.ok&&j.ok)return true;
+      // 400 = donnees refusees : c'est definitif, inutile de reessayer ailleurs.
+      if(r.status===400){var e=new Error(j.error||'Demande refusée');e.definitif=true;e.metier=true;throw e;}
+      var e2=new Error(j.error||'Envoi impossible');e2.metier=true;throw e2;
+    });
+  });
+}
+
+/* Route 2 — Web3Forms : fonctionne meme en deploiement statique. */
+function envoyerParWeb3Forms(){
+  var fd=new FormData(form);
+  if(panier.length){
+    fd.set('message',messageSansPanier());
+    fd.append('materiel','- '+panier.join('\n- '));
+  }
+  return fetch('https://api.web3forms.com/submit',{method:'POST',body:fd})
+    .then(function(r){return r.json()})
+    .then(function(j){
+      if(j.success)return true;
+      var e3=new Error(j.message||'Envoi impossible, réessayez.');e3.metier=true;throw e3;
+    });
+}
+
 form.addEventListener('submit',function(e){
   e.preventDefault();
   var manque=champsManquants();
   if(manque.length){signaler(manque);return;}
   smsg.className='fmsg'; smsg.textContent=''; sbtn.disabled=true; sbtn.textContent='Envoi en cours…';
-  fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(form)})
-    .then(function(r){return r.json()})
-    .then(function(j){
-      if(j.success){
-        smsg.className='fmsg ok';
-        smsg.textContent='✓ Demande envoyée. Merci, nous vous recontactons vite.';
-        form.reset(); panier=[]; updateCart();
-      }
-      else{smsg.className='fmsg err';smsg.textContent='✗ '+(j.message||'Envoi impossible, réessayez.');}
+
+  envoyerParApi()
+    .catch(function(err){
+      if(err.definitif)throw err;         // rejet de validation : on n'insiste pas
+      return envoyerParWeb3Forms();       // route absente ou en panne : repli
     })
-    .catch(function(){smsg.className='fmsg err';smsg.textContent='✗ Erreur réseau. Utilisez le bouton WhatsApp.';})
+    .then(reussite)
+    .catch(function(err){
+      smsg.className='fmsg err';
+      var texte=err.metier&&err.message?err.message:'Envoi impossible pour le moment';
+      smsg.textContent='✗ '+texte+' — utilisez le bouton WhatsApp ci-dessous.';
+    })
     .finally(function(){sbtn.disabled=false;sbtn.textContent='Envoyer ma demande';});
 });
 
