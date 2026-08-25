@@ -1,0 +1,25 @@
+---
+import SectionHead from '../components/SectionHead.astro';
+import partenaires from '../content/partenaires.json';
+import p from '../content/prestations.json';
+---
+<section class="sec" id="partenaires">
+  <div class="wrap">
+    <SectionHead
+      num="10"
+      label="Partenaires & collaborations"
+      titre="La fiabilité, garantie par les bons partenaires."
+      centre
+    />
+    <div class="partners reveal">
+      {partenaires.map((pa, i) => (
+        <div class="panel tick partner">
+          <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={p.partenairesIcones[i] ?? p.partenairesIcones[0]} /></svg></div>
+          <b>{pa.nom}</b>
+          <div class="role">{pa.role}</div>
+          <p>{pa.detail}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

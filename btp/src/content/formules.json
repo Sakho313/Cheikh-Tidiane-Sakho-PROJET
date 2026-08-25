@@ -1,0 +1,85 @@
+{
+  "_note": "Tarifs volontairement absents : à confirmer par le client (garde-fou CLAUDE.md §13). Renseigner « tarif » pour l'afficher automatiquement.",
+  "formules": [
+    {
+      "id": "essentiel",
+      "nom": "Essentiel",
+      "accroche": "L’indispensable, bien fait.",
+      "tarif": null,
+      "tarifNote": "Tarif sur devis",
+      "populaire": false,
+      "inclus": [
+        "Recherche et sélection du locataire",
+        "Rédaction du bail et état des lieux",
+        "Encaissement des loyers",
+        "Relevé mensuel en ligne"
+      ]
+    },
+    {
+      "id": "serenite",
+      "nom": "Sérénité",
+      "accroche": "Vous ne gérez plus rien.",
+      "tarif": null,
+      "tarifNote": "Tarif sur devis",
+      "populaire": true,
+      "inclus": [
+        "Tout l’Essentiel",
+        "Relances et gestion des impayés",
+        "Petites réparations et interventions",
+        "Suivi des charges et taxes",
+        "Reporting photo trimestriel",
+        "Interlocuteur unique dédié"
+      ]
+    },
+    {
+      "id": "gold",
+      "nom": "Gold Patrimoine",
+      "accroche": "Comme si vous étiez sur place.",
+      "tarif": null,
+      "tarifNote": "Tarif sur devis",
+      "populaire": false,
+      "inclus": [
+        "Tout le Sérénité",
+        "Loyer garanti",
+        "Travaux d’entretien et valorisation",
+        "Visite technique semestrielle",
+        "Conseil patrimonial",
+        "Assistance 7j/7"
+      ]
+    }
+  ],
+  "criteres": [
+    { "label": "Recherche et sélection du locataire", "essentiel": true, "serenite": true, "gold": true },
+    { "label": "Bail et état des lieux", "essentiel": true, "serenite": true, "gold": true },
+    { "label": "Encaissement des loyers", "essentiel": true, "serenite": true, "gold": true },
+    { "label": "Relevé mensuel en ligne", "essentiel": true, "serenite": true, "gold": true },
+    { "label": "Relances et gestion des impayés", "essentiel": false, "serenite": true, "gold": true },
+    { "label": "Petites réparations", "essentiel": false, "serenite": true, "gold": true },
+    { "label": "Suivi des charges et taxes", "essentiel": false, "serenite": true, "gold": true },
+    { "label": "Reporting photo trimestriel", "essentiel": false, "serenite": true, "gold": true },
+    { "label": "Interlocuteur unique dédié", "essentiel": false, "serenite": true, "gold": true },
+    { "label": "Loyer garanti", "essentiel": false, "serenite": false, "gold": true },
+    { "label": "Travaux de valorisation", "essentiel": false, "serenite": false, "gold": true },
+    { "label": "Visite technique semestrielle", "essentiel": false, "serenite": false, "gold": true },
+    { "label": "Conseil patrimonial", "essentiel": false, "serenite": false, "gold": true },
+    { "label": "Assistance 7j/7", "essentiel": false, "serenite": false, "gold": true }
+  ],
+  "options": [
+    { "id": "recherche", "label": "Recherche de locataire", "socle": true },
+    { "id": "loyers", "label": "Encaissement des loyers", "socle": true },
+    { "id": "impayes", "label": "Gestion des impayés" },
+    { "id": "reparations", "label": "Petites réparations" },
+    { "id": "reporting", "label": "Reporting photo trimestriel" },
+    { "id": "charges", "label": "Suivi des charges et taxes" },
+    { "id": "garanti", "label": "Loyer garanti" },
+    { "id": "valorisation", "label": "Travaux de valorisation" },
+    { "id": "assistance", "label": "Assistance 7j/7" }
+  ],
+  "parcours": [
+    { "n": "01", "titre": "Vous nous confiez le bien", "desc": "Un échange, les documents, et nous prenons le relais." },
+    { "n": "02", "titre": "Visite et état des lieux", "desc": "Diagnostic complet, photos datées, estimation du loyer." },
+    { "n": "03", "titre": "Mise en location", "desc": "Annonce, visites, sélection et vérification du locataire." },
+    { "n": "04", "titre": "Gestion au quotidien", "desc": "Loyers, charges, entretien, relances — vous ne gérez plus rien." },
+    { "n": "05", "titre": "Reporting régulier", "desc": "Relevés, photos et point d’avancement, où que vous soyez." }
+  ]
+}

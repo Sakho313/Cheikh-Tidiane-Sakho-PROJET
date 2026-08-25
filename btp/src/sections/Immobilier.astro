@@ -1,0 +1,30 @@
+---
+const points = [
+  "Terrains sécurisés pour l’habitat ou l’investissement",
+  "Location-vente de maisons — paiement échelonné",
+  "Conseil & accompagnement personnalisé du début à la fin",
+  "Vérification foncière complète, documents légaux garantis",
+];
+---
+<section class="sec" id="immobilier">
+  <div class="wrap split2">
+    <div class="reveal">
+      <p class="eyebrow">§01 — Immobilier</p>
+      <h2>Vente &amp; location-vente immobilière.</h2>
+      <p class="lead" style="margin-top:16px">
+        Nous accompagnons nos clients dans l’acquisition de biens fiables, sécurisés et conformes
+        aux exigences légales — de la recherche à la signature.
+      </p>
+      <div class="badge-hl">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z" /><path d="M9 12l2 2 4-4" /></svg>
+        Engagement zéro litige · transparence totale
+      </div>
+    </div>
+
+    <ul class="panel tick checklist reveal" style="padding:28px">
+      {points.map((p) => (
+        <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>{p}</li>
+      ))}
+    </ul>
+  </div>
+</section>

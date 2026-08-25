@@ -1,0 +1,81 @@
+---
+import SectionHead from '../components/SectionHead.astro';
+import p from '../content/prestations.json';
+import site from '../content/site.json';
+---
+<section class="sec" id="surveillance">
+  <div class="wrap">
+    <SectionHead
+      num="07"
+      label="Surveillance de chantier"
+      titre="Votre chantier sous les yeux, même à 5 000 km."
+      intro="Vidéosurveillance, géolocalisation des engins et suivi d’avancement — réunis dans une seule application."
+    />
+
+    <div class="split2">
+      <div class="panel tick surv-visual reveal">
+        <div class="cap"><span>Console — chantier en direct</span><b>SAO</b></div>
+        <svg class="bpsvg" viewBox="0 0 460 260" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Vue d’un chantier surveillé : caméras, engin géolocalisé et clôture de périmètre">
+          <path class="bp dim" style="animation-delay:.1s" d="M20 222 H440" />
+          <path class="bp g" style="animation-delay:.25s" d="M46 222 V78 H414 V222" />
+          <path class="bp dim" style="animation-delay:.4s" d="M46 100 H414 M46 140 H414 M46 180 H414" />
+          <path class="bp" style="animation-delay:.7s" d="M120 222 V150 H210 V222 M120 186 H210" />
+          <g>
+            <path class="bp g" style="animation-delay:.9s" d="M74 96 v-16 h22 l14 10 -14 10 h-22" />
+            <path class="bp g" style="animation-delay:1s" d="M386 96 v-16 h-22 l-14 10 14 10 h22" />
+          </g>
+          <path class="bp" style="animation-delay:1.2s" d="M262 222 v-26 h58 v-18 l24 6 14 12 v26 z" />
+          <circle class="bp" style="animation-delay:1.35s" cx="280" cy="222" r="7" />
+          <circle class="bp" style="animation-delay:1.4s" cx="344" cy="222" r="7" />
+          <circle class="bp g" style="animation-delay:1.55s" cx="304" cy="150" r="9" />
+          <path class="bp g" style="animation-delay:1.65s" d="M304 150 v-22" />
+          <g>
+            <rect class="win" style="animation-delay:1.7s" x="132" y="158" width="24" height="18" />
+            <rect class="win" style="animation-delay:1.8s" x="170" y="158" width="24" height="18" />
+          </g>
+          <text class="lbl" x="46" y="248">CAM 01 · CAM 02 · ENGIN GÉOLOCALISÉ · PÉRIMÈTRE</text>
+        </svg>
+      </div>
+
+      <div class="reveal">
+        <div class="grid-surv">
+          {p.surveillance.map((c) => (
+            <div class="panel tick fcard">
+              <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={c.icone} /></svg></div>
+              <b>{c.titre}</b>
+              <span>{c.desc}</span>
+            </div>
+          ))}
+        </div>
+        <div class="badge-hl">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z" /><path d="M9 12l2 2 4-4" /></svg>
+          Technologie du pôle Télématique de {site.groupe}
+        </div>
+        <div class="hero-cta" style="margin-top:22px">
+          <a class="btn btn-gold" href="#devis">Sécuriser mon chantier</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .surv-visual { padding: 22px; }
+  .surv-visual .cap {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--aqua2); border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 8px;
+  }
+  .surv-visual .cap b { color: var(--gold); font-weight: 700; }
+  .grid-surv { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .fcard { padding: 22px; }
+  .fcard .ic {
+    width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center;
+    background: rgb(7 130 173 / 0.14); border: 1px solid var(--line); margin-bottom: 12px;
+  }
+  .fcard .ic svg { width: 24px; height: 24px; stroke: var(--aqua2); fill: none; stroke-width: 1.6; }
+  .fcard b { font-family: var(--display); font-size: 15px; display: block; margin-bottom: 6px; }
+  .fcard span { color: var(--muted); font-size: 13px; }
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  @media (max-width: 560px) { .grid-surv { grid-template-columns: 1fr; } }
+</style>

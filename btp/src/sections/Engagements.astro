@@ -1,0 +1,17 @@
+---
+import SectionHead from '../components/SectionHead.astro';
+import p from '../content/prestations.json';
+---
+<section class="sec band" id="engagements">
+  <div class="wrap">
+    <SectionHead num="09" label="Notre engagement" titre="Ce sur quoi nous ne transigeons pas." />
+    <div class="eng reveal">
+      {p.engagements.map((e) => (
+        <div class="e">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={e.icone} /></svg>
+          <b>{e.titre}</b><span>{e.desc}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

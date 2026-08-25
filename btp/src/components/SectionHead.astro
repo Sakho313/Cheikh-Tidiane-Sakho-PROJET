@@ -1,0 +1,15 @@
+---
+interface Props {
+  num: string;      // ex. « 01 »
+  label: string;    // ex. « Immobilier »
+  titre: string;
+  intro?: string;
+  centre?: boolean;
+}
+const { num, label, titre, intro, centre = false } = Astro.props;
+---
+<div class:list={['sec-head', 'reveal', { c: centre }]}>
+  <p class="eyebrow">§{num} — {label}</p>
+  <h2>{titre}</h2>
+  {intro && <p>{intro}</p>}
+</div>

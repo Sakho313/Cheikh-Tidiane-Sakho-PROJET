@@ -1,0 +1,25 @@
+---
+import site from '../content/site.json';
+---
+<section class="sec band">
+  <div class="wrap saoty">
+    <div class="saoty-art reveal">
+      <div class="halo"></div>
+      <img src="/brand/saoty2.png" data-optionnel alt="SAOTY, la mascotte gardienne de SAO" width="340" height="340" loading="lazy" />
+    </div>
+    <div class="reveal">
+      <p class="eyebrow">Signé SAO</p>
+      <h2>Le foncier, sécurisé de bout en bout.</h2>
+      <p class="lead" style="margin-top:16px">
+        {site.nom} est une filiale de {site.groupe} — Safety &amp; Cybersecurity.
+        La même exigence de sécurité, appliquée à votre terrain et à votre ouvrage.
+        <b>{site.signature}</b>
+      </p>
+      <div class="saoty-cta"><a class="btn btn-gold" href="#devis">Parler de mon projet</a></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .saoty-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 22px; }
+</style>

@@ -1,0 +1,173 @@
+---
+import SectionHead from '../components/SectionHead.astro';
+import site from '../content/site.json';
+
+/* Clé Web3Forms — publique par nature, mais sortie du code source (CLAUDE.md §8).
+   Définir PUBLIC_WEB3FORMS_KEY dans .env / les variables Vercel.
+   Sans clé, le formulaire bascule automatiquement sur WhatsApp. */
+const web3key = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+---
+<section class="sec" id="devis">
+  <div class="wrap">
+    <SectionHead
+      num="11"
+      label="Devis & contact"
+      titre="Parlons de votre projet."
+      intro="Terrain, maison, gestion locative, topographie ou travaux : décrivez votre besoin, réponse sous 24 h ouvrées."
+    />
+
+    <div class="formwrap">
+      <div class="reveal">
+        <a class="cline" href={`https://wa.me/${site.telSNraw}`} target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>
+          <span><b>Sénégal · WhatsApp</b>{site.telSN}</span>
+        </a>
+        <a class="cline" href={`tel:+${site.telFRraw}`}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>
+          <span><b>France</b>{site.telFR}</span>
+        </a>
+        <a class="cline" href={`mailto:${site.email}`}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
+          <span><b>Email</b>{site.email}</span>
+        </a>
+        <div class="cline">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z" /><circle cx="12" cy="10" r="2.2" /></svg>
+          <span><b>Adresse</b>{site.adresse}, Sénégal</span>
+        </div>
+        <p class="lead sig">{site.nom} — filiale de {site.groupe}.<br /><b>{site.engagement}</b></p>
+      </div>
+
+      <form class="panel tick" id="btpForm" novalidate>
+        {web3key && <input type="hidden" name="access_key" value={web3key} />}
+        <input type="hidden" name="subject" value="Demande — SAO BTP / Immobilier / Topographie" />
+        <input type="hidden" name="from_name" value="Site SAO BTP" />
+        <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <div class="row2">
+          <div class="field">
+            <label for="f-nom">Nom complet <span class="req">*</span></label>
+            <input id="f-nom" name="nom" required autocomplete="name" placeholder="Votre nom" />
+          </div>
+          <div class="field">
+            <label for="f-org">Organisation</label>
+            <input id="f-org" name="organisation" autocomplete="organization" placeholder="Entreprise / particulier" />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="f-tel">Téléphone / WhatsApp</label>
+            <input id="f-tel" name="telephone" type="tel" autocomplete="tel" placeholder="+221…" />
+          </div>
+          <div class="field">
+            <label for="f-mail">Email <span class="req">*</span></label>
+            <input id="f-mail" name="email" type="email" required autocomplete="email" placeholder="vous@email.com" />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="f-type">Votre besoin</label>
+            <select id="f-type" name="type">{site.besoins.map((b) => <option>{b}</option>)}</select>
+          </div>
+          <div class="field">
+            <label for="f-loc">Localisation</label>
+            <input id="f-loc" name="localisation" placeholder="Ville / zone" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-msg">Détails du projet <span class="req">*</span></label>
+          <textarea id="f-msg" name="message" required placeholder="Nature, superficie, délais, budget indicatif…"></textarea>
+        </div>
+
+        <button class="btn btn-gold full" type="submit" id="btpBtn">Envoyer ma demande</button>
+        <button class="btn btn-ghost full mt" type="button" id="waBtn">Envoyer via WhatsApp</button>
+        <p class="fmsg" id="btpMsg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ wa: site.telSNraw }}>
+  const form = document.getElementById('btpForm');
+  const btn = document.getElementById('btpBtn');
+  const msg = document.getElementById('btpMsg');
+  const waBtn = document.getElementById('waBtn');
+  const aCle = !!form?.querySelector('input[name="access_key"]');
+
+  const recap = () => {
+    const f = form;
+    const g = (n) => f.elements[n]?.value?.trim() ?? '';
+    return (
+      'Bonjour SAO BTP,\n\n' +
+      `Nom : ${g('nom')}\n` +
+      (g('organisation') ? `Organisation : ${g('organisation')}\n` : '') +
+      (g('telephone') ? `Téléphone : ${g('telephone')}\n` : '') +
+      (g('email') ? `Email : ${g('email')}\n` : '') +
+      `Besoin : ${g('type')}\n` +
+      (g('localisation') ? `Localisation : ${g('localisation')}\n` : '') +
+      `\n${g('message')}`
+    );
+  };
+
+  const ouvrirWa = () => window.open(`https://wa.me/${wa}?text=${encodeURIComponent(recap())}`, '_blank', 'noopener');
+  waBtn?.addEventListener('click', ouvrirWa);
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = form;
+    const g = (n) => f.elements[n]?.value?.trim() ?? '';
+
+    if (!g('nom') || !g('email') || !g('message')) {
+      msg.className = 'fmsg err';
+      msg.textContent = '✗ Merci de renseigner votre nom, votre email et les détails du projet.';
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(g('email'))) {
+      msg.className = 'fmsg err';
+      msg.textContent = '✗ Cette adresse email ne semble pas valide.';
+      return;
+    }
+
+    // Sans clé Web3Forms configurée : repli WhatsApp, aucune demande perdue.
+    if (!aCle) {
+      msg.className = 'fmsg err';
+      msg.textContent = '✗ Envoi en ligne non configuré — votre message est prêt, on l’ouvre dans WhatsApp.';
+      ouvrirWa();
+      return;
+    }
+
+    msg.className = 'fmsg';
+    btn.disabled = true;
+    const label = btn.textContent;
+    btn.textContent = 'Envoi en cours…';
+
+    fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(form) })
+      .then((r) => r.json())
+      .then((j) => {
+        if (j.success) {
+          msg.className = 'fmsg ok';
+          msg.textContent = '✓ Demande envoyée. Merci, nous revenons vers vous sous 24 h ouvrées.';
+          form.reset();
+        } else {
+          msg.className = 'fmsg err';
+          msg.textContent = '✗ ' + (j.message || 'Envoi impossible. Utilisez le bouton WhatsApp.');
+        }
+      })
+      .catch(() => {
+        msg.className = 'fmsg err';
+        msg.textContent = '✗ Erreur réseau. Utilisez le bouton WhatsApp juste en dessous.';
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btn.textContent = label;
+      });
+  });
+</script>
+
+<style>
+  .full { width: 100%; justify-content: center; }
+  .mt { margin-top: 10px; }
+  .sig { margin-top: 22px; font-size: 15px; }
+</style>

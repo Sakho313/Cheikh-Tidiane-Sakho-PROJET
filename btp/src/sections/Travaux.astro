@@ -1,0 +1,23 @@
+---
+import SectionHead from '../components/SectionHead.astro';
+import p from '../content/prestations.json';
+---
+<section class="sec band" id="travaux">
+  <div class="wrap">
+    <SectionHead
+      num="05"
+      label="Travaux publics & génie civil"
+      titre="Les travaux lourds, exécutés avec méthode."
+      intro="Nous intervenons sur l’ensemble des travaux préparatoires et lourds de vos projets."
+    />
+    <div class="grid4">
+      {p.travaux.map((c) => (
+        <div class="panel tick card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={c.icone} /></svg></div>
+          <h3>{c.titre}</h3>
+          <ul class="mini">{c.points.map((pt) => <li>{pt}</li>)}</ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

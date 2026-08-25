@@ -1,0 +1,6 @@
+# Config Cloudflare Pages (déploiement du frontend télématique).
+# Utilisée par `wrangler pages deploy dist` et `wrangler pages dev`.
+# En intégration Git, les réglages de build (root dir, build command, sortie,
+# variables VITE_*) se définissent dans le tableau de bord Cloudflare Pages.
+name = "telematique"
+pages_build_output_dir = "dist"
