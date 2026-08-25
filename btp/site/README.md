@@ -8,7 +8,7 @@ sur cette version plutôt que sur le projet Astro du dossier parent).
 | Fichier | Usage |
 |---|---|
 | `index.html` + `assets/` | **Version recommandée** — images séparées, mises en cache par le navigateur, chargement plus rapide. Déposer le dossier entier sur Vercel. |
-| `index-autonome.html` | Même site en **un seul fichier** (1,9 Mo, images en base64). À renommer `index.html`, seul dans un dossier, si l'on veut éviter toute gestion de fichiers. |
+| `../index-autonome.html` | Même site en **un seul fichier** (3,0 Mo, images en base64). À renommer `index.html`, seul dans un dossier, si l'on veut éviter toute gestion de fichiers. Il est rangé **hors** de `site/` pour ne pas alourdir le dossier à déposer ; le régénérer avec `python3 outils/construire-autonome.py btp/site`. |
 | `_photos-sources/` | Photos d'origine non optimisées, conservées pour pouvoir régénérer `assets/` autrement (autres dimensions, WebP…). Ne pas déployer. |
 
 ## Correctifs appliqués (par rapport à la première mise en ligne)
@@ -37,12 +37,18 @@ manquante.
 | `f6` suivi de chantier | `chantier-suivi.jpg` | section Suivi |
 | `f7` coulage de béton | `gros-oeuvre.jpg` | section Gros œuvre |
 
-## Reste à fournir
+5. **`saoty2.png` ajouté** — la mascotte SAOTY, récupérée depuis les assets de
+   SAO Sécurité. Les deux emplacements (hero et section « Signé SAO ») sont
+   désormais remplis, dans les deux variantes du site.
 
-- **`saoty2.png`** — la mascotte SAOTY. Dans `index.html` les deux emplacements
-  sont conservés et masqués automatiquement tant que le fichier est absent :
-  il suffit de le déposer dans `assets/`. Dans `index-autonome.html` ils ont été
-  retirés (section « Signé SAO » passée en pleine largeur).
+## Vérifier avant de mettre en ligne
+
+```bash
+cd btp/site && python3 -m http.server   # puis ouvrir http://localhost:8000
+```
+
+Contrôler que le logo, le fond du hero et les photos de section s'affichent —
+c'est exactement ce qui manquait à la première mise en ligne.
 
 ## Déploiement
 
