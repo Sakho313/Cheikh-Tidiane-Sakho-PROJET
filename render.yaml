@@ -63,10 +63,11 @@ services:
       - key: NODE_ENV
         value: production
       - key: CORS_ORIGIN
-        # Frontend origin allowed to call the API cross-origin. The backend also
-        # accepts any *.onrender.com origin for convenience; set this to your
-        # exact frontend URL (and tighten the code) for production.
-        value: https://nis2-frontend.onrender.com
+        # Comma-separated allow-list (app.ts splits on comma & trims). The backend
+        # also accepts any *.onrender.com origin for convenience. Same-origin in
+        # practice (the frontend proxies /api/*), but the custom domain is listed
+        # so any direct/cross-origin call is accepted too.
+        value: https://nis2-frontend.onrender.com,https://pilotage-nis2.saoconsultingroup.com
       - key: RATE_LIMIT_WINDOW_MS
         value: 900000
       - key: RATE_LIMIT_MAX

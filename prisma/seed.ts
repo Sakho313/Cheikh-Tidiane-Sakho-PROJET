@@ -293,7 +293,7 @@ async function seedComplianceAssessments(
     "Aucun audit d'efficacité formalisé. Revue ad hoc uniquement.",
     'Plan de sensibilisation annuel en place. Taux de complétion : 78 %.',
     'Politique de chiffrement définie pour les données en transit. Données au repos non couvertes.',
-    'Contrôle d'accès basé sur les rôles implémenté. Revue des habilitations annuelle.',
+    "Contrôle d'accès basé sur les rôles implémenté. Revue des habilitations annuelle.",
     'MFA déployé sur les acctes à privilèges. Déploiement en cours pour les utilisateurs standard (62%).',
     "Processus de gestion des vulnérabilités défini mais sans SLA formalisé.",
   ];
