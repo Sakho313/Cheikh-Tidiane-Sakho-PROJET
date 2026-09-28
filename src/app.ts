@@ -35,10 +35,16 @@ const allowedOrigins = env.CORS_ORIGIN.split(',')
 
 function isAllowedOrigin(origin: string): boolean {
   if (allowedOrigins.includes(origin)) return true;
-  // Test convenience: allow any Render-hosted frontend (*.onrender.com).
+  // Convenience: allow any Render-hosted frontend (*.onrender.com) and the SAO
+  // Consulting custom domain (saoconsultingroup.com and its subdomains).
   try {
     const url = new URL(origin);
-    return url.protocol === 'https:' && url.hostname.endsWith('.onrender.com');
+    if (url.protocol !== 'https:') return false;
+    return (
+      url.hostname.endsWith('.onrender.com') ||
+      url.hostname === 'saoconsultingroup.com' ||
+      url.hostname.endsWith('.saoconsultingroup.com')
+    );
   } catch {
     return false;
   }

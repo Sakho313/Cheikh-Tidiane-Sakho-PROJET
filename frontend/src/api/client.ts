@@ -30,13 +30,15 @@ export function clearTokens(): void {
   localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
-// Base URL of the API. In production, set VITE_API_URL to the backend's public
-// URL (e.g. https://nis2-api.onrender.com) — the client calls it cross-origin
-// and appends /api/v1. When unset (local dev), it falls back to the relative
+// Base URL of the API. Set VITE_API_URL to override (e.g. https://nis2-api.onrender.com).
+// When unset: production builds call the deployed API directly, cross-origin — this
+// avoids relying on a static-site /api/* proxy rewrite. Local dev keeps the relative
 // /api/v1 path served by the Vite dev proxy.
+const DEFAULT_PROD_API_URL = 'https://nis2-api.onrender.com/api/v1';
+
 function resolveApiBaseUrl(): string {
   const raw = import.meta.env.VITE_API_URL?.trim();
-  if (!raw) return '/api/v1';
+  if (!raw) return import.meta.env.PROD ? DEFAULT_PROD_API_URL : '/api/v1';
   const origin = (/^https?:\/\//.test(raw) ? raw : `https://${raw}`).replace(/\/+$/, '');
   return origin.endsWith('/api/v1') ? origin : `${origin}/api/v1`;
 }
